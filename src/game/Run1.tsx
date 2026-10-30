@@ -78,12 +78,12 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
     <motion.div className="g-center" {...fade}>
       <div className="g-vig-coral" />
       <div className="g-kicker coral">Run 1 · The humans</div>
-      <div className="g-title" style={{ fontSize: "clamp(26px,4vw,44px)" }}>
-        Last month, on a Dubai–Tel Aviv flight,<br />a co-pilot attacked the captain.
+      <div className="g-title" style={{ fontSize: "clamp(30px,4.6vw,52px)" }}>
+        Last month,<br />a co-pilot attacked<br />the captain.
       </div>
-      <p className="g-prose" style={{ margin: "22px auto 0" }}>
-        174 people landed safely. You will find out <b>why</b> — from inside it. You will be
-        the captain, then a passenger, then the only hand on the controls.
+      <p className="g-prose" style={{ margin: "24px auto 0" }}>
+        On a Dubai–Tel Aviv flight. 174 people landed safely. You will find out <b>why</b> — from
+        inside it. You will be the captain, then a passenger, then the only hand on the controls.
       </p>
       <div className="g-legend">
         <div className="li"><span className="k">HOLD</span><span className="t">keep pressing</span></div>
@@ -172,7 +172,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 3,
         background: `radial-gradient(ellipse at 50% 50%, transparent ${40 - vignette * 28}%, rgba(0,0,0,${0.35 + vignette * 0.55}) 100%)` }} />
 
-      <div className="g-scene-label">Scene 1 · In the air<span className="role coral">You are the captain</span></div>
+      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>01</b> · In the air<span className="role coral">You are the captain</span></div>
 
       {phase === "struggle" ? (
         <Dock objective="Unlock the flight-deck door"
@@ -189,7 +189,8 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
         </Dock>
       ) : (
         <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-          <div className="g-beat">He reached the lock with his <span className="coral">remaining strength</span>.<br />Ten seconds earlier into unconsciousness — <span className="coral">this door is a wall.</span></div>
+          <div className="g-beat">He reached the lock.<br /><span className="coral">Barely.</span></div>
+          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>With his remaining strength. Ten seconds earlier into unconsciousness — this door is a wall.</div>
         </motion.div>
       )}
     </motion.div>
@@ -201,7 +202,7 @@ function HoldRingMini({ value }: { value: number }) {
   return (
     <svg className="ring" width="26" height="26" viewBox="0 0 26 26">
       <circle cx="13" cy="13" r={R} fill="none" stroke="rgba(212,175,106,0.2)" strokeWidth="3" />
-      <circle cx="13" cy="13" r={R} fill="none" stroke={value >= 100 ? "var(--ai)" : "var(--gold)"}
+      <circle cx="13" cy="13" r={R} fill="none" stroke={value >= 100 ? "var(--g-cyan)" : "var(--g-gold)"}
         strokeWidth="3" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - value / 100)} transform="rotate(-90 13 13)" />
     </svg>
   );
@@ -273,7 +274,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
           fallback={<FlightDeck doorOpen={1} threat={phase === "struggle"} attackerDown={phase === "beat"} paxAtDoor={2 + hits} />} />
       </motion.div>
 
-      <div className="g-scene-label">Scene 2 · In the cabin<span className="role coral">You are a passenger</span></div>
+      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>02</b> · In the cabin<span className="role coral">You are a passenger</span></div>
 
       {phase === "struggle" ? (
         <Dock objective="Get in and subdue the attacker"
@@ -290,7 +291,8 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
         </Dock>
       ) : (
         <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-          <div className="g-beat">Taken down. But the aircraft is still falling — and <span className="coral">nobody up here can fly it.</span></div>
+          <div className="g-beat">Taken down.<br /><span className="coral">Still falling.</span></div>
+          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>And nobody up here can fly it.</div>
         </motion.div>
       )}
     </motion.div>
@@ -370,7 +372,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
           fallback={<div style={{ display: "grid", placeItems: "center", height: "100%" }}><AltitudeTrace mode={phase === "beat" ? "guarded" : "dive"} progress={progress} showSafeBand /></div>} />
       </motion.div>
 
-      <div className="g-scene-label">Scene 3 · At the controls<span className="role coral">You have never flown a plane</span></div>
+      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>03</b> · At the controls<span className="role coral">You have never flown a plane</span></div>
 
       {phase === "struggle" ? (
         <Dock objective="Pull out of the dive — hold level flight"
@@ -392,7 +394,8 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
         </Dock>
       ) : (
         <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-          <div className="g-beat"><span className="teal">Stabilized.</span> Not landed — just no longer falling.<br />And nobody alive up here knows how to land it.</div>
+          <div className="g-beat"><span className="teal">Stabilized.</span><br />Not landed.</div>
+          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Just no longer falling. And nobody alive up here knows how to land it.</div>
         </motion.div>
       )}
     </motion.div>
@@ -423,25 +426,25 @@ function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: bool
       {step === 0 && (
         <svg className="g-deck" viewBox="0 0 520 300" style={{ position: "absolute", width: "min(600px,88vw)", pointerEvents: "none", opacity: 0.9, zIndex: 3 }}>
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-            <Figure x={300} y={110} scale={1.1} color="var(--ai)" />
-            <Figure x={352} y={200} scale={1.1} color="var(--ai)" />
-            <circle className="node-ring ai" cx={300} cy={110} r="18" fill="none" stroke="var(--ai)" strokeWidth="1.5" />
-            <circle className="node-ring ai" cx={352} cy={200} r="18" fill="none" stroke="var(--ai)" strokeWidth="1.5" />
+            <Figure x={300} y={110} scale={1.1} color="var(--g-cyan)" />
+            <Figure x={352} y={200} scale={1.1} color="var(--g-cyan)" />
+            <circle className="node-ring ai" cx={300} cy={110} r="18" fill="none" stroke="var(--g-cyan)" strokeWidth="1.5" />
+            <circle className="node-ring ai" cx={352} cy={200} r="18" fill="none" stroke="var(--g-cyan)" strokeWidth="1.5" />
           </motion.g>
         </svg>
       )}
 
-      <div className="g-scene-label">Scene 4 · The reveal</div>
+      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>04</b> · The reveal</div>
       <motion.div className="g-center" style={{ zIndex: 6, marginTop: step >= 3 ? 120 : 0, transition: "margin 0.8s" }}
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
         <AnimatePresence mode="wait">
           {step === 0 && (<motion.div key="s0" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">Two people stand up from the cabin and walk to the flight deck.</div></motion.div>)}
           {step === 1 && (<motion.div key="s1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They are <span className="teal">two off-duty pilots</span>. Sitting in the cabin. By chance.</div></motion.div>)}
-          {step === 2 && (<motion.div key="s2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They land it safely. 174 people walk away — a dying man's arm, a handful of strangers, and two licences that <span className="coral">happened to be aboard.</span></div></motion.div>)}
+          {step === 2 && (<motion.div key="s2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They land it safely. <span className="teal">174 walk away.</span></div><div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>A dying man's arm. A handful of strangers. Two licences that happened to be aboard.</div></motion.div>)}
           {step >= 3 && (
             <motion.div key="s3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="g-title" style={{ fontSize: "clamp(22px,3.4vw,40px)", color: "var(--gold)" }}>Luck is not a safety system.</div>
-              <div style={{ marginTop: 18, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--ink-faint)", fontWeight: 500 }}>Now run it again — with a nervous system</div>
+              <div className="g-title" style={{ fontSize: "clamp(30px,4.4vw,52px)", color: "var(--g-gold)" }}>Luck is not a safety system.</div>
+              <div style={{ marginTop: 16, fontSize: 10.5, letterSpacing: "0.24em", textTransform: "uppercase", color: "var(--g-faint)", fontWeight: 500 }}>Now run it again — with a nervous system</div>
             </motion.div>
           )}
         </AnimatePresence>

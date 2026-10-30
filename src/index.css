@@ -1,39 +1,40 @@
 /* ============================================================
-   "The Door · T+0" — style system (Option D: cinematic spine
-   + operations texture)
-
+   "The Door · T+0" — deep-dive page style system
+   Reskinned to the Slidesgo Video Game Pitch Deck language:
+   deep indigo canvas, cyan neon accent, Teko display + Source
+   Code Pro body (self-hosted, see game.css @font-face).
    Palette discipline:
-   - coral (Today) and teal (AI-native) never share an element
+   - coral (Today) and cyan (AI-native) never share an element
    - gold is reserved for human decisions, never for data
    ============================================================ */
 
 :root {
-  --bg: #05070c;
-  --bg-2: #0a0e17;
-  --panel: #0e1320;
-  --panel-2: #131a2b;
-  --line: rgba(148, 163, 184, 0.14);
-  --line-soft: rgba(148, 163, 184, 0.08);
+  --bg: #070221;
+  --bg-2: #0b0330;
+  --panel: #110940;
+  --panel-2: #1a0f52;
+  --line: rgba(168, 168, 224, 0.16);
+  --line-soft: rgba(168, 168, 224, 0.08);
 
-  --ink: #e8edf6;
-  --ink-dim: #94a3b8;
-  --ink-faint: #5b6b83;
+  --ink: #f3f3f8;
+  --ink-dim: #a8a8c8;
+  --ink-faint: #6a6a94;
 
-  --today: #f97362;
-  --today-soft: rgba(249, 115, 98, 0.12);
-  --today-line: rgba(249, 115, 98, 0.3);
+  --today: #ff7a66;
+  --today-soft: rgba(255, 122, 102, 0.12);
+  --today-line: rgba(255, 122, 102, 0.32);
 
-  --ai: #4fd1c5;
-  --ai-soft: rgba(79, 209, 197, 0.12);
-  --ai-line: rgba(79, 209, 197, 0.3);
+  --ai: #11ffff;
+  --ai-soft: rgba(17, 255, 255, 0.1);
+  --ai-line: rgba(17, 255, 255, 0.32);
 
-  --gold: #d4af6a;
-  --gold-soft: rgba(212, 175, 106, 0.1);
-  --gold-line: rgba(212, 175, 106, 0.32);
+  --gold: #e6c07a;
+  --gold-soft: rgba(230, 192, 122, 0.1);
+  --gold-line: rgba(230, 192, 122, 0.34);
 
-  --mono: "JetBrains Mono", ui-monospace, monospace;
-  --serif: "Instrument Serif", Georgia, serif;
-  --sans: "Inter", -apple-system, sans-serif;
+  --mono: "Source Code Pro", ui-monospace, monospace;
+  --serif: "Teko", "Arial Narrow", sans-serif;   /* display role = Teko now */
+  --sans: "Source Code Pro", ui-monospace, monospace;
 
   --nav-h: 56px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -636,3 +637,24 @@ footer .inner .sp { margin-left: auto; }
   .wrap { padding: 0 20px; }
   .ground-card, .trap, .boundary { padding: 24px 20px; }
 }
+
+/* ============================================================
+   Teko display adaptation (appended — overrides earlier rules).
+   Teko is condensed & uppercase-oriented with no true italic, so:
+   neutralize faux-italic, uppercase the big display lines, tighten
+   line-height, and nudge weights. Body/labels stay Source Code Pro.
+   ============================================================ */
+.accent, .accent-coral, .accent-gold { font-style: normal !important; font-weight: 500; }
+h2.head, .hero h1, .pullquote, .quote, .closing .big, .closing-line,
+.detail-card h3, .door h3, .trap .concl, .pivot, .judgment-foot,
+.ground-card .punch, .path .p h4 { text-transform: uppercase; }
+h2.head, .hero h1, .closing .big, .closing-line, .detail-card h3 { letter-spacing: 0.01em; line-height: 1.02; }
+.hero h1 { font-weight: 600; }
+.pullquote, .quote, .pivot, .trap .concl, .judgment-foot, .ground-card .punch, .boundary p {
+  font-weight: 500; line-height: 1.18; letter-spacing: 0.01em;
+}
+.stat-strip .s .v, .door .toll .big, .g-metric .v { font-weight: 500; }
+/* display lines were sized for a serif; Teko runs visually smaller — bump slightly */
+h2.head { font-size: clamp(34px, 4.6vw, 58px); }
+.pullquote, .quote { font-size: clamp(26px, 3.2vw, 40px); }
+.detail-card h3 { font-size: 30px; }

@@ -62,7 +62,7 @@ export function FlightDeck({
 
       {/* captain figure (at the door when trying to unlock) */}
       <Figure x={captainDown ? 121 : 168} y={captainDown ? 111 : 130} scale={1.05}
-        color={captainDown ? "var(--today)" : "rgba(232,237,246,0.62)"}
+        color={captainDown ? "var(--g-coral)" : "rgba(232,237,246,0.62)"}
         rotate={captainDown ? 78 : 0} />
 
       {/* threat marker: the attacker at the controls — abstract, no weapon */}
@@ -71,7 +71,7 @@ export function FlightDeck({
           <motion.circle className="threat-ring" cx="121" cy="189" r="15"
             animate={{ r: [13, 20, 13], opacity: [0.9, 0.3, 0.9] }}
             transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }} />
-          <Figure x={121} y={189} scale={1.05} color="var(--today)" />
+          <Figure x={121} y={189} scale={1.05} color="var(--g-coral)" />
         </g>
       )}
       {attackerDown && <Figure x={150} y={205} scale={1} rotate={84} color="rgba(249,115,98,0.5)" />}
@@ -90,7 +90,7 @@ export function FlightDeck({
           initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.12, duration: 0.5 }}>
           <Figure x={214 + (i % 2) * 26} y={132 + Math.floor(i / 2) * 22} scale={0.92}
-            color={i === 0 ? "var(--ai)" : "rgba(148,163,184,0.5)"} />
+            color={i === 0 ? "var(--g-cyan)" : "rgba(148,163,184,0.5)"} />
         </motion.g>
       ))}
 
@@ -110,7 +110,7 @@ export function FlightDeck({
 
       {/* AI "eyes" indicator corners */}
       {aiEyes && (
-        <g stroke="var(--ai)" strokeWidth="1.4" fill="none" opacity="0.7">
+        <g stroke="var(--g-cyan)" strokeWidth="1.4" fill="none" opacity="0.7">
           <path d="M70 66 L70 56 L84 56" />
           <path d="M450 66 L450 56 L436 56" />
           <path d="M70 234 L70 244 L84 244" />
@@ -161,7 +161,7 @@ export function AltitudeTrace({
 }
 
 /** A stylized aircraft icon (top-down) for the guidance/divert animation. */
-export function AircraftIcon({ color = "var(--ai)", size = 40 }: { color?: string; size?: number }) {
+export function AircraftIcon({ color = "var(--g-cyan)", size = 40 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" role="img" aria-label="Aircraft">
       <path d="M20 3 L23 17 L36 24 L36 27 L23 24 L22 33 L26 37 L26 39 L20 37 L14 39 L14 37 L18 33 L17 24 L4 27 L4 24 L17 17 Z"

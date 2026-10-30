@@ -97,7 +97,7 @@ function Title({ onBegin, onDeepDive }: { onBegin: () => void; onDeepDive: () =>
           </div>
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3, duration: 1 }}
-          style={{ marginTop: 40, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--ink-faint)" }}>
+          style={{ marginTop: 40, fontFamily: "var(--g-body)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--g-faint)" }}>
           ~4 min · two runs · grounded in a real event · abstract depiction, no imagery of the event
         </motion.div>
       </div>
@@ -130,18 +130,21 @@ function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean
           )}
           {step === 1 && (
             <motion.div key="1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-beat">In 2015, it kept the wrong man at the controls. <span className="coral">150 dead.</span></div>
+              <div className="g-beat">In 2015, it kept the wrong man<br />at the controls. <span className="coral">150 dead.</span></div>
             </motion.div>
           )}
           {step === 2 && (
             <motion.div key="2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-beat">Last month, it kept help outside. <span className="teal">174 lived — by inches.</span></div>
+              <div className="g-beat">Last month, it kept help outside.<br /><span className="teal">174 lived — by inches.</span></div>
             </motion.div>
           )}
           {step >= 3 && (
             <motion.div key="3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-title" style={{ fontSize: "clamp(22px,3.2vw,40px)", color: "var(--gold)" }}>
-                Luck is not a safety system.<br />Run it again — with a nervous system.
+              <div className="g-title" style={{ fontSize: "clamp(30px,4.4vw,50px)", color: "var(--g-gold)" }}>
+                Luck is not a safety system.
+              </div>
+              <div style={{ marginTop: 16, fontSize: 10.5, letterSpacing: "0.26em", textTransform: "uppercase", color: "var(--g-faint)", fontWeight: 500 }}>
+                Run it again — with a nervous system
               </div>
             </motion.div>
           )}

@@ -31,7 +31,7 @@ export default function Dossier({ choices, onRestart, onDeepDive }: {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="g-kicker gold">Outcome · Run 2</div>
           <h2 className="g-title" style={{ fontSize: "clamp(22px,3.2vw,38px)" }}>
-            By the time you hear the alarm,<br />the urgent steps are <span style={{ color: "var(--gold)" }}>already taken care of.</span>
+            By the time you hear the alarm,<br />the urgent steps are <span style={{ color: "var(--g-gold)" }}>already taken care of.</span>
           </h2>
 
           <div className="g-metrics">
@@ -40,10 +40,10 @@ export default function Dossier({ choices, onRestart, onDeepDive }: {
             <div className="g-metric"><div className="v gold">{decisions}</div><div className="k">Decisions you made · the machine did the rest</div></div>
             <div className="g-metric"><div className="v">~40s</div><div className="k">Sooner the door opened than a dying man's arm</div></div>
           </div>
-          <p style={{ marginTop: 18, fontSize: 14, color: "var(--ink-dim)", lineHeight: 1.7, maxWidth: 760 }}>
+          <p className="g-prose" style={{ marginTop: 18, maxWidth: 760 }}>
             In Run 1, 174 people lived on luck — a dying man's arm and two strangers' licences. In Run 2, the
-            same 174 lived because a nervous system <em style={{ color: "var(--ink)" }}>saw, judged, and acted</em>, and
-            stopped only for the calls that are genuinely yours. That difference is the entire pitch.
+            same 174 lived because a nervous system <b>saw, judged, and acted</b>, and stopped only for the calls
+            that are genuinely yours. That difference is the entire pitch.
           </p>
         </motion.div>
 
@@ -64,7 +64,7 @@ export default function Dossier({ choices, onRestart, onDeepDive }: {
           <div className="line">
             You don't build the AI-native airport.<br />You teach it <span className="accent">one reflex</span> — then you add the next.
           </div>
-          <p style={{ marginTop: 20, fontSize: 15, color: "var(--ink-dim)", maxWidth: 620, margin: "20px auto 0", lineHeight: 1.7 }}>
+          <p style={{ marginTop: 20, fontSize: 15, color: "var(--g-dim)", maxWidth: 620, margin: "20px auto 0", lineHeight: 1.7 }}>
             Ninety days, one closed loop on an ordinary problem — transfer queues. One number that moves: the
             delay between cause and understanding. The emergency day isn't a special project; it's the same
             nervous system at full stretch.

@@ -217,7 +217,7 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
         Same event. Same clock.<br />This time, the airport has hands.
       </div>
       <p className="g-prose" style={{ margin: "22px auto 0" }}>
-        You are no longer the person in the seat. You are the <b style={{ color: "var(--ai)" }}>decision-maker</b> the
+        You are no longer the person in the seat. You are the <b style={{ color: "var(--g-cyan)" }}>decision-maker</b> the
         system reports to. It does the physical work; it stops only for the calls that are
         genuinely yours — money, care, risk. Watch how calm this is.
       </p>
@@ -290,8 +290,8 @@ function Consequence({ good, goodText, badText, onNext, nextLabel }: {
   return (
     <motion.div className="g-report" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }} style={{ borderColor: good ? "var(--ai-line)" : "var(--today-line)" }}>
-      <div className="src"><span className="dot" style={{ background: good ? "var(--ai)" : "var(--today)" }} />
-        <span className="nm" style={{ color: good ? "var(--ai)" : "var(--today)" }}>{good ? "Outcome" : "Alternate outcome"}</span></div>
+      <div className="src"><span className="dot" style={{ background: good ? "var(--g-cyan)" : "var(--g-coral)" }} />
+        <span className="nm" style={{ color: good ? "var(--g-cyan)" : "var(--g-coral)" }}>{good ? "Outcome" : "Alternate outcome"}</span></div>
       <div className="g-consequence" style={{ marginTop: 0 }}>{good ? goodText : badText}</div>
       <div className="acts" style={{ marginTop: 20 }}>
         <button className="g-btn teal" onClick={onNext}>{nextLabel}</button>
@@ -315,9 +315,9 @@ function DiveResolve() {
       <motion.div style={{ position: "absolute", right: 30, top: 34 }}
         initial={{ rotate: -30, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}>
-        <AircraftIcon color="var(--ai)" size={44} />
+        <AircraftIcon color="var(--g-cyan)" size={44} />
       </motion.div>
-      <div style={{ position: "absolute", bottom: 6, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: "0.1em", color: "var(--ai)", textTransform: "uppercase" }}>
+      <div style={{ position: "absolute", bottom: 6, fontFamily: "var(--g-body)", fontSize: 10, letterSpacing: "0.1em", color: "var(--g-cyan)", textTransform: "uppercase" }}>
         envelope held · guidance vector to nearest suitable
       </div>
     </div>
@@ -330,22 +330,22 @@ function AirportContact({ contacted }: { contacted: boolean }) {
     <svg width="min(520px,86vw)" height="200" viewBox="0 0 520 200" style={{ display: "block" }} role="img" aria-label="Airport contact">
       {/* aircraft inbound */}
       <motion.g initial={{ x: 0 }} animate={{ x: contacted ? 150 : 0 }} transition={{ duration: 2, ease: "easeInOut" }}>
-        <g transform="translate(60 60)"><AircraftIcon color="var(--ai)" size={36} /></g>
+        <g transform="translate(60 60)"><AircraftIcon color="var(--g-cyan)" size={36} /></g>
       </motion.g>
       {/* airport */}
       <rect x="360" y="120" width="120" height="40" rx="6" fill="rgba(148,163,184,0.06)" stroke="rgba(148,163,184,0.3)" />
-      <text x="368" y="145" style={{ fontFamily: "var(--mono)", fontSize: 10, fill: "var(--ink-faint)" }}>NEAREST SUITABLE</text>
+      <text x="368" y="145" style={{ fontFamily: "var(--g-body)", fontSize: 10, fill: "var(--g-faint)" }}>NEAREST SUITABLE</text>
       {/* data link */}
-      <motion.line x1="110" y1="78" x2="360" y2="130" stroke="var(--ai)" strokeWidth="1.4" strokeDasharray="4 4"
+      <motion.line x1="110" y1="78" x2="360" y2="130" stroke="var(--g-cyan)" strokeWidth="1.4" strokeDasharray="4 4"
         initial={{ opacity: 0.2 }} animate={{ opacity: contacted ? 1 : 0.4 }} transition={{ duration: 0.6 }} />
       {/* services light up */}
       {["FIRE", "MEDICAL", "STAND CLEAR", "COUNSELLORS"].map((s, i) => (
         <motion.g key={s} initial={{ opacity: 0 }} animate={{ opacity: contacted ? 1 : 0.15 }} transition={{ delay: contacted ? i * 0.25 : 0, duration: 0.4 }}>
-          <circle cx={372 + i * 28} cy="180" r="5" fill="var(--ai)" />
-          <text x={372 + i * 28} y="196" textAnchor="middle" style={{ fontFamily: "var(--mono)", fontSize: 7.5, fill: "var(--ai)" }}>{s}</text>
+          <circle cx={372 + i * 28} cy="180" r="5" fill="var(--g-cyan)" />
+          <text x={372 + i * 28} y="196" textAnchor="middle" style={{ fontFamily: "var(--g-body)", fontSize: 7.5, fill: "var(--g-cyan)" }}>{s}</text>
         </motion.g>
       ))}
-      <text x="60" y="180" style={{ fontFamily: "var(--mono)", fontSize: 9, fill: contacted ? "var(--ai)" : "var(--ink-faint)" }}>
+      <text x="60" y="180" style={{ fontFamily: "var(--g-body)", fontSize: 9, fill: contacted ? "var(--g-cyan)" : "var(--g-faint)" }}>
         {contacted ? "INFORMED · SERVICES PRE-POSITIONED" : "AWAITING CONFIRMATION"}
       </text>
     </svg>
@@ -362,8 +362,8 @@ function Run2Ending({ onNext }: { onNext: () => void }) {
         <div className="g-title" style={{ fontSize: "clamp(28px,4.4vw,50px)" }}>
           Same 174. Nobody needed luck —<br />and nobody needed a rule that happened to fit.
         </div>
-        <p style={{ marginTop: 24, fontSize: 17, color: "var(--ink-dim)", maxWidth: 600, margin: "24px auto 0", lineHeight: 1.65 }}>
-          You made <span style={{ color: "var(--gold)" }}>four decisions</span>. The machine did the rest — saw the scene,
+        <p className="g-prose" style={{ margin: "24px auto 0", textAlign: "center" }}>
+          You made <b style={{ color: "var(--g-gold)" }}>four decisions</b>. The machine did the rest — saw the scene,
           guarded the envelope, opened the door, guided the aircraft, informed the airport.
         </p>
         <div className="g-actions" style={{ marginTop: 34 }}>
