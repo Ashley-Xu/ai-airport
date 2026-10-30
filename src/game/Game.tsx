@@ -16,7 +16,11 @@ import "./game.css";
 type Phase = "title" | "coldopen" | "run1" | "run2" | "dossier";
 
 export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => void; demo?: boolean }) {
-  const [phase, setPhase] = useState<Phase>(demo ? "coldopen" : "title");
+  const [phase, setPhase] = useState<Phase>(() => {
+    // test hook: ?r2=<step> jumps straight into Run 2 at that step
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("r2")) return "run2";
+    return demo ? "coldopen" : "title";
+  });
   const [choices, setChoices] = useState<Run2Choices>({});
   const clockRef = useRef(0); // seconds within a run
   const [clock, setClock] = useState(0);

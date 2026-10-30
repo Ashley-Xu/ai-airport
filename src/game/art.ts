@@ -24,7 +24,14 @@ export type ArtKey =
   // Scene 4 — the reveal
   | "s4-pilots"    // two off-duty pilots rush to the cockpit door
   | "s4-landing"   // the two pilots land the plane
-  | "s4-reunion";  // families reunited at the airport
+  | "s4-reunion"   // families reunited at the airport
+  // Run 2 — the nervous system (AI in control)
+  | "r2-alert"     // cabin alert broadcast: human intervention needed
+  | "r2-detected"  // AI detects the captain stabbed (scene summary)
+  | "r2-unlocked"  // AI terminal releases the door latch
+  | "r2-stabilized"// AI stabilizes the aircraft
+  | "r2-airport-alarm" // the nearest airport gets the alarm
+  | "r2-airport-ready"; // the airport fully pre-positioned
 
 export const ART: Record<ArtKey, string> = {
   "s1-captain": "/assets/s1-captain.jpg",
@@ -39,6 +46,12 @@ export const ART: Record<ArtKey, string> = {
   "s4-pilots": "/assets/s4-pilots.jpg",
   "s4-landing": "/assets/s4-landing.jpg",
   "s4-reunion": "/assets/s4-reunion.jpg",
+  "r2-alert": "/assets/r2-alarmed-door.jpg",
+  "r2-detected": "/assets/r2-detected.jpg",
+  "r2-unlocked": "/assets/r2-unlocked.jpg",
+  "r2-stabilized": "/assets/r2-stabilized.jpg",
+  "r2-airport-alarm": "/assets/r2-airport-alarm.jpg",
+  "r2-airport-ready": "/assets/r2-airport-ready.jpg",
 };
 
 // Which slots currently have a file on disk (so we can skip the load-error
@@ -56,4 +69,10 @@ export const HAVE: Record<ArtKey, boolean> = {
   "s4-pilots": true,
   "s4-landing": true,
   "s4-reunion": true,
+  "r2-alert": true,
+  "r2-detected": true,
+  "r2-unlocked": true,
+  "r2-stabilized": true,
+  "r2-airport-alarm": true,
+  "r2-airport-ready": true,
 };

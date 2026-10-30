@@ -278,6 +278,26 @@
 .g-fineprint { margin-top: 22px; font-size: 9.5px; letter-spacing: 0.18em;
   text-transform: uppercase; color: var(--g-faint); }
 
+/* ── floating data-model card (Run 2 photos + schematic overlay) ── */
+.g-datacard {
+  background: linear-gradient(180deg, rgba(9,4,38,0.88), rgba(7,2,33,0.92));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(17,255,255,0.28); border-radius: 12px;
+  padding: 12px 14px 10px; max-width: min(460px, 52vw);
+  box-shadow: 0 16px 48px rgba(3,1,14,0.65), 0 0 0 1px rgba(17,255,255,0.06) inset;
+  margin-top: 8px;
+}
+.g-datacard-h {
+  font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600;
+  color: var(--g-cyan); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.g-datacard-h::before { content: ""; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--g-cyan); box-shadow: 0 0 10px var(--g-cyan); flex: none;
+  animation: g-pulse 2s ease-in-out infinite; }
+@keyframes g-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+.g-datacard .g-deck { width: 100%; height: auto; }
+.g-datacard .g-alt { width: 100%; height: auto; }
+
 /* ── svg schematic (fallback art) ── */
 .g-deck { width: min(600px, 88vw); height: auto; display: block; position: relative; z-index: 4; }
 .g-deck .hull-soft { fill: rgba(168,168,224,0.04); }
