@@ -101,7 +101,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
 
         {/* D1 — the door */}
         {step === "d1_door" && (
-          <Run2Scene key="d1" photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-detected" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d1" brief={<>T+1:05, flight deck. The captain is down at the door — and the lock is still sealed. In a minute you will be asked about it.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-detected" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={0} threat captainDown highlightDoor aiEyes paxAtDoor={2} />}
             vignette="teal">
             <ReportCard
@@ -119,7 +119,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d1_result" && (
-          <Run2Scene key="d1r" photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-unlocked" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d1r" brief={<>The latch releases on your word. Help is moving through the door.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-unlocked" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={1} threat captainDown aiEyes paxAtDoor={4} scanning />} vignette="teal">
             <Consequence
               good={choices.door === "release"}
@@ -131,7 +131,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
 
         {/* D2 — the dive (softened: stabilize + guide) */}
         {step === "d2_dive" && (
-          <Run2Scene key="d2" photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d2" brief={<>The aircraft is falling — uncommanded, 14,000 feet in under 30 seconds. The cabin knows.</>} demo={demo} photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<AltitudeTrace mode={diveMode} progress={guardProgress} showSafeBand />} vignette="teal">
             <ReportCard
               t={t}
@@ -146,7 +146,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d2_result" && (
-          <Run2Scene key="d2r" photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-stabilized" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d2r" brief={<>The nose comes up. The envelope is being held around two human hands.</>} demo={demo} photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-stabilized" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<DiveResolve />} vignette="teal">
             <Consequence
               good
@@ -157,7 +157,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
 
         {/* D3 — contact the airport */}
         {step === "d3_airport" && (
-          <Run2Scene key="d3" photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-alarm" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d3" brief={<>Below: the nearest suitable airport. Lights, trucks, a cleared stand — all before anyone phoned.</>} demo={demo} photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-alarm" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<AirportContact contacted={contacted} />} vignette="teal">
             <ReportCard
               t={t}
@@ -172,7 +172,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d3_result" && (
-          <Run2Scene key="d3r" photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d3r" brief={<>Fire rolling before the aircraft stops. Families will be met, not greeted by chaos.</>} demo={demo} photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<AirportContact contacted />} vignette="teal">
             <Consequence good
               goodText={<>Fire arrives before the aircraft stops rolling. Counsellors briefed <b>before the first family calls</b>. The report is auto-assembled from the full log — second by second, court-ready. <span className="dim">This is the cut ground phase, in five seconds.</span></>}
@@ -182,7 +182,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
 
         {/* D4 — the authority dial */}
         {step === "d4_dial" && (
-          <Run2Scene key="d4" photoLabel="Live model · flight deck" label="Scene 4 · After" photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d4" brief={<>It is over. 174 walked off. The full log — second by second — is already assembled.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After" photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={1} threat={false} aiEyes paxAtDoor={0} />} vignette="teal">
             <ReportCard
               t={t}
@@ -198,7 +198,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d4_result" && (
-          <Run2Scene key="d4r" photoLabel="Live model · flight deck" label="Scene 4 · After" photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d4r" brief={<>One question is left, and it is not about this flight. It is about the next one.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After" photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={1} threat={false} aiEyes />} vignette="teal">
             <Consequence good
               goodText={<DialResult dial={choices.dial} />}
@@ -240,27 +240,59 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
   );
 }
 
-function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo, photoLabel }: {
+function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo, photoLabel, brief, settleMs, demo }: {
   label: string; sub: string; subClass?: string; clock: string;
   art: React.ReactNode; children: React.ReactNode; vignette?: "teal" | "coral";
-  /** optional full-bleed scene photograph; the schematic then floats as a data overlay */
   photo?: ArtKey; photoLabel?: string;
+  /** orienting line shown during the "look" beat, before any decision is asked */
+  brief?: React.ReactNode;
+  /** ms to hold the photo before the decision card appears (0 = immediate) */
+  settleMs?: number; demo?: boolean;
 }) {
+  // decision steps breathe longer; result steps just get a short beat
+  const base = settleMs ?? (brief ? (demo ? 750 : 2400) : (demo ? 450 : 1100));
+  const [settled, setSettled] = useState(base <= 0);
+  useEffect(() => {
+    if (base <= 0) { setSettled(true); return; }
+    const id = setTimeout(() => setSettled(true), base);
+    return () => clearTimeout(id);
+  }, [base]);
+
   return (
     <motion.div className="g-stage" {...fade} style={{ justifyContent: "flex-start", paddingTop: 72 }}>
       {photo
-        ? <ArtCross art={photo} dim={0.46} fallback={<div className="g-vig-teal" />} />
+        ? <ArtCross art={photo} dim={settled ? 0.46 : 0.3} fallback={<div className="g-vig-teal" />} />
         : vignette === "teal" && <div className="g-vig-teal" />}
       {!photo && vignette === "coral" && <div className="g-vig-coral" />}
       <div className="g-scene-label">{label}<span className={`role ${subClass}`}>{sub}</span></div>
+
+      {/* the data-model overlay arrives WITH the decision — during the look-beat it's just the photo */}
       <div style={{ flex: 1, display: "grid", placeItems: photo ? "start end" : "center", width: "100%", minHeight: 0, padding: photo ? "0 24px" : 0 }}>
-        <div className={photo ? "g-datacard" : undefined} style={{ opacity: photo ? 1 : 0.85 }}>
+        <motion.div className={photo ? "g-datacard" : undefined}
+          initial={false}
+          animate={{ opacity: photo ? (settled ? 1 : 0) : 0.85, y: settled ? 0 : -10 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
           {photo && <div className="g-datacard-h">{photoLabel ?? "Live model"}</div>}
           {art}
-        </div>
+        </motion.div>
       </div>
-      <div style={{ position: "relative", zIndex: 6, width: "100%", display: "flex", justifyContent: "center", paddingBottom: 20 }}>
-        {children}
+
+      {/* bottom: orienting caption during the look-beat, decision/outcome card once settled */}
+      <div style={{ position: "relative", zIndex: 6, width: "100%", minHeight: 170 }}>
+        <AnimatePresence>
+          {!settled && brief && (
+            <motion.div key="brief" className="g-brief"
+              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8, transition: { duration: 0.22 } }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+              <span className="g-brief-k">Reading the scene</span>
+              <div className="g-brief-t">{brief}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* children (ReportCard/Consequence) mount only after the beat, so their
+            countdown/animation starts when the player is actually asked to decide */}
+        {settled && <div style={{ display: "flex", justifyContent: "center", paddingBottom: 20 }}>{children}</div>}
       </div>
     </motion.div>
   );

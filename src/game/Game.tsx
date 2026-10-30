@@ -17,8 +17,12 @@ type Phase = "title" | "coldopen" | "run1" | "run2" | "dossier";
 
 export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => void; demo?: boolean }) {
   const [phase, setPhase] = useState<Phase>(() => {
-    // test hook: ?r2=<step> jumps straight into Run 2 at that step
-    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("r2")) return "run2";
+    // test hooks: ?r2=<step> or ?r1=<scene> jump straight into that run (deterministic screenshots)
+    if (typeof window !== "undefined") {
+      const q = new URLSearchParams(window.location.search);
+      if (q.has("r2")) return "run2";
+      if (q.has("r1")) return "run1";
+    }
     return demo ? "coldopen" : "title";
   });
   const [choices, setChoices] = useState<Run2Choices>({});

@@ -21,7 +21,12 @@ preloadArt([
 type Scene = "intro" | "captain" | "passengers" | "controls" | "reveal" | "done";
 
 export default function Run1({ onComplete, clockRef, demo = false }: { onComplete: () => void; clockRef: React.MutableRefObject<number>; demo?: boolean }) {
-  const [scene, setScene] = useState<Scene>("intro");
+  const [scene, setScene] = useState<Scene>(() => {
+    // test hook: ?r1=captain deep-links to a scene (deterministic screenshots)
+    const s = new URLSearchParams(window.location.search).get("r1");
+    const valid: Scene[] = ["intro", "captain", "passengers", "controls", "reveal"];
+    return (s && valid.includes(s as Scene)) ? (s as Scene) : "intro";
+  });
   const next = (s: Scene) => setScene(s);
 
   useEffect(() => {
@@ -49,6 +54,19 @@ const fade = {
   initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 },
   transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
 };
+
+/* ── look beat: sync the image with the situation before the clock starts ── */
+function LookBeat({ text }: { text: React.ReactNode }) {
+  return (
+    <motion.div className="g-brief"
+      initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+      <span className="g-brief-k">Reading the scene</span>
+      <div className="g-brief-t">{text}</div>
+    </motion.div>
+  );
+}
 
 /* ── shared dock shell ── */
 function Dock({ objective, children, hint }: { objective: React.ReactNode; children: React.ReactNode; hint: React.ReactNode }) {
@@ -100,6 +118,8 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
 
 /* ── Scene 1: THE CAPTAIN — hold to unlock while strength drains ── */
 function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; clockRef: React.MutableRefObject<number>; demo?: boolean }) {
+  const [armed, setArmed] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setArmed(true), demo ? 700 : 2600); return () => clearTimeout(t); }, [demo]);
   const [strength, setStrength] = useState(100);
   const [ring, setRing] = useState(0);
   const [holding, setHolding] = useState(false);
@@ -111,7 +131,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
   const done = useRef(false);
 
   useEffect(() => {
-    if (!demo) return;
+    if (!demo || !armed) return;
     holdingRef.current = true; setHolding(true);
     const id = setInterval(() => {
       const dt = 0.2; elapsed.current += dt; clockRef.current = elapsed.current;
@@ -125,10 +145,10 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
     }, 200);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demo]);
+  }, [demo, armed]);
 
   useEffect(() => {
-    if (demo) return;
+    if (demo || !armed) return;
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -146,7 +166,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [onDone, clockRef]);
+  }, [onDone, clockRef, armed]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => { if (e.code === "Space") { e.preventDefault(); holdingRef.current = true; setHolding(true); } };
@@ -166,7 +186,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }}
         animate={phase === "struggle" ? { x: [0, shake * 6, -shake * 5, shake * 4, 0], rotate: [0, shake * 0.6, -shake * 0.5, 0] } : {}}
         transition={{ duration: 0.4, repeat: phase === "struggle" ? Infinity : 0, repeatType: "mirror" }}>
-        <ArtCross art={art} dim={0.5}
+        <ArtCross art={art} dim={armed || phase === "beat" ? 0.5 : 0.34}
           fallback={<FlightDeck doorOpen={phase === "beat" ? 1 : ring / 100 * 0.5} threat captainDown={phase === "beat"} highlightDoor={phase === "struggle"} paxAtDoor={phase === "beat" ? 3 : 0} />} />
       </motion.div>
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 3,
@@ -174,7 +194,9 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
 
       <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>01</b> · In the air<span className="role coral">You are the captain</span></div>
 
-      {phase === "struggle" ? (
+      {phase === "struggle" && !armed ? (
+        <LookBeat text={<>T+1:05 · 38,000 feet. You are the captain. A blade just found your side, your strength is draining — and the flight-deck door is locked from the inside.</>} />
+      ) : phase === "struggle" ? (
         <Dock objective="Unlock the flight-deck door"
           hint={<>Press and hold the button — or hold <span className="kbd">SPACE</span>. It slips as you fade.</>}>
           <button className={`g-holdbtn ${holding ? "on" : ""} ${ring >= 100 ? "done" : ""}`}
@@ -210,6 +232,8 @@ function HoldRingMini({ value }: { value: number }) {
 
 /* ── Scene 2: THE PASSENGERS — tap the timing bar ── */
 function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
+  const [armed, setArmed] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setArmed(true), demo ? 700 : 2600); return () => clearTimeout(t); }, [demo]);
   const [pos, setPos] = useState(0);
   const [hits, setHits] = useState(0);
   const [phase, setPhase] = useState<"struggle" | "beat">("struggle");
@@ -219,7 +243,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
   const elapsed = useRef(0);
 
   useEffect(() => {
-    if (!demo) return;
+    if (!demo || !armed) return;
     let p = 0; let d = 1;
     const id = setInterval(() => {
       p += d * 6; if (p > 100) { p = 100; d = -1; } if (p < 0) { p = 0; d = 1; }
@@ -231,10 +255,10 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     }, 130);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demo, hits]);
+  }, [demo, hits, armed]);
 
   useEffect(() => {
-    if (demo) return;
+    if (demo || !armed) return;
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -249,11 +273,11 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [armed]);
 
   function finish() { setPhase("beat"); setTimeout(onDone, demo ? 1400 : 3200); }
   function tryHit() {
-    if (phase !== "struggle" || done.current) return;
+    if (phase !== "struggle" || done.current || !armed) return;
     if (posRef.current > 38 && posRef.current < 62) {
       const h = hits + 1; setHits(h);
       if (h >= HITS_NEEDED) { done.current = true; finish(); }
@@ -270,13 +294,15 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
       <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }}
         animate={phase === "struggle" ? { x: [0, 5, -4, 3, 0] } : {}}
         transition={{ duration: 0.35, repeat: phase === "struggle" ? Infinity : 0, repeatType: "mirror" }}>
-        <ArtCross art={phase === "beat" ? "s2-subdued" : hits >= 2 ? "s2-fight" : "s2-passenger"} dim={0.52}
+        <ArtCross art={phase === "beat" ? "s2-subdued" : hits >= 2 ? "s2-fight" : "s2-passenger"} dim={armed || phase === "beat" ? 0.52 : 0.34}
           fallback={<FlightDeck doorOpen={1} threat={phase === "struggle"} attackerDown={phase === "beat"} paxAtDoor={2 + hits} />} />
       </motion.div>
 
       <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>02</b> · In the cabin<span className="role coral">You are a passenger</span></div>
 
-      {phase === "struggle" ? (
+      {phase === "struggle" && !armed ? (
+        <LookBeat text={<>Rows back, you are a passenger. The attacker is on the far side of that door. The captain is down — and the aircraft is still falling.</>} />
+      ) : phase === "struggle" ? (
         <Dock objective="Get in and subdue the attacker"
           hint={<>Tap the bar — or press <span className="kbd">SPACE</span> — when the marker is inside <b>HIT</b>. 4 clean moves.</>}>
           <div className="g-tap" onClick={tryHit} style={{ cursor: "pointer" }}>
@@ -301,6 +327,8 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
 
 /* ── Scene 3: THE CONTROLS — keep pitch in the band ── */
 function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
+  const [armed, setArmed] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setArmed(true), demo ? 700 : 2600); return () => clearTimeout(t); }, [demo]);
   const [pitch, setPitch] = useState(30);
   const [holding, setHolding] = useState(false);
   const [stable, setStable] = useState(0);
@@ -311,7 +339,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   const bandLo = 52, bandHi = 74;
 
   useEffect(() => {
-    if (!demo) return;
+    if (!demo || !armed) return;
     const id = setInterval(() => {
       const dt = 0.2; elapsed.current += dt;
       const target = (bandLo + bandHi) / 2;
@@ -328,10 +356,10 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       }
     }, 200);
     return () => clearInterval(id);
-  }, [demo, onDone]);
+  }, [demo, onDone, armed]);
 
   useEffect(() => {
-    if (demo) return;
+    if (demo || !armed) return;
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -348,7 +376,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [onDone]);
+  }, [onDone, armed]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => { if (e.code === "Space") { e.preventDefault(); holdRef.current = true; setHolding(true); } };
@@ -367,14 +395,16 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }}
         animate={phase === "struggle" ? { rotate: [(100 - pitchRef.current) * -0.12, (100 - pitchRef.current) * -0.12 - 1.5, (100 - pitchRef.current) * -0.12 + 1.5], x: [0, 7, -6, 0] } : { rotate: 0 }}
         transition={{ duration: 0.5, repeat: phase === "struggle" ? Infinity : 0, repeatType: "mirror" }}>
-        <ArtCross art={phase === "beat" ? "s3-controls" : stable > 1.2 ? "s3-interior" : "s3-dive"} dim={0.5}
+        <ArtCross art={phase === "beat" ? "s3-controls" : stable > 1.2 ? "s3-interior" : "s3-dive"} dim={armed || phase === "beat" ? 0.5 : 0.34}
           kenburns={phase === "beat"}
           fallback={<div style={{ display: "grid", placeItems: "center", height: "100%" }}><AltitudeTrace mode={phase === "beat" ? "guarded" : "dive"} progress={progress} showSafeBand /></div>} />
       </motion.div>
 
       <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>03</b> · At the controls<span className="role coral">You have never flown a plane</span></div>
 
-      {phase === "struggle" ? (
+      {phase === "struggle" && !armed ? (
+        <LookBeat text={<>The attacker is down. The captain is not getting up. The yoke is straight ahead — 14,000 feet below you is the Alps. You have never flown a plane.</>} />
+      ) : phase === "struggle" ? (
         <Dock objective="Pull out of the dive — hold level flight"
           hint={<>Press and hold to pull up · release to let it fall — or hold <span className="kbd">SPACE</span>. Keep the marker in <b>LEVEL</b>.</>}>
           <button className={`g-holdbtn ${holding ? "on" : ""}`}
