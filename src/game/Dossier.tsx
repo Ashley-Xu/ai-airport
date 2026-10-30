@@ -30,8 +30,8 @@ export default function Dossier({ choices, onRestart, onDeepDive }: {
       <div className="inner">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="g-kicker gold">Outcome · Run 2</div>
-          <h2 className="g-title" style={{ fontSize: "clamp(30px,4.6vw,52px)" }}>
-            By the time you hear the alarm,<br />the urgent steps are <span style={{ color: "var(--gold)", fontStyle: "italic" }}>already taken care of.</span>
+          <h2 className="g-title" style={{ fontSize: "clamp(22px,3.2vw,38px)" }}>
+            By the time you hear the alarm,<br />the urgent steps are <span style={{ color: "var(--gold)" }}>already taken care of.</span>
           </h2>
 
           <div className="g-metrics">

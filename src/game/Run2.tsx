@@ -213,16 +213,16 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
     <motion.div className="g-center" {...fade}>
       <div className="g-vig-teal" />
       <div className="g-kicker teal">Run 2 · The nervous system</div>
-      <div className="g-title" style={{ fontSize: "clamp(30px,4.6vw,54px)" }}>
+      <div className="g-title" style={{ fontSize: "clamp(24px,3.6vw,42px)" }}>
         Same event. Same clock.<br />This time, the airport has hands.
       </div>
-      <p style={{ marginTop: 22, fontSize: 17, color: "var(--ink-dim)", maxWidth: 640, margin: "22px auto 0", lineHeight: 1.65 }}>
-        You are no longer the person in the seat. You are the <span style={{ color: "var(--ai)" }}>decision-maker</span> the
+      <p className="g-prose" style={{ margin: "22px auto 0" }}>
+        You are no longer the person in the seat. You are the <b style={{ color: "var(--ai)" }}>decision-maker</b> the
         system reports to. It does the physical work; it stops only for the calls that are
         genuinely yours — money, care, risk. Watch how calm this is.
       </p>
       <div className="g-actions" style={{ marginTop: 36 }}>
-        <button className="g-btn big teal" onClick={onNext}>Run it again</button>
+        <button className="g-btn big teal" onClick={onNext}>Run it again →</button>
       </div>
     </motion.div>
   );

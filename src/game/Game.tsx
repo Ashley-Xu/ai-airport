@@ -140,7 +140,7 @@ function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean
           )}
           {step >= 3 && (
             <motion.div key="3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-title" style={{ fontSize: "clamp(24px,3.6vw,44px)", color: "var(--gold)", fontStyle: "italic" }}>
+              <div className="g-title" style={{ fontSize: "clamp(22px,3.2vw,40px)", color: "var(--gold)" }}>
                 Luck is not a safety system.<br />Run it again — with a nervous system.
               </div>
             </motion.div>
