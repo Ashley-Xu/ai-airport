@@ -3,7 +3,7 @@
 
 **Headline:**
 
-> # "By the time you hear about it, it's already handled."
+> # "By the time you hear the alarm, the urgent steps are already taken care of."
 
 **The idea, in one paragraph:**
 

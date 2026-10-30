@@ -174,7 +174,7 @@ scope · judgment over doctrine · one decision card (the authority card).
 > sharing. The emergency day isn't a special project; it's the same nervous system at
 > full stretch.
 >
-> **By the time the alarm rings, the most urgent steps are already taken.** And when the
+> **By the time you hear the alarm, the urgent steps are already taken care of.** And when the
 > next aircraft comes in sick, your airport won't need luck — and won't need a rule that
 > happens to fit."
 

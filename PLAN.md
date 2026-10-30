@@ -38,7 +38,7 @@
 
 **Headline:**
 
-> # "By the time you hear the alarm, the most urgent steps are taken."
+> # "By the time you hear the alarm, the urgent steps are already taken care of."
 
 **Sub-headline:** T+0:00. The axe swings in the flight deck. Zero warning. Zero seconds.
 Watch the same event, twice.
@@ -399,11 +399,11 @@ the delay between cause and understanding. Authority starts at live confirms and
 its way up. Then federate outward. The emergency day isn't a special project; it's the
 same nervous system at full stretch."
 
-**Closing line (approved v5.1):**
-> By the time the alarm rings, the most urgent steps are already taken.
+**Closing line (approved v5.1, unified with the §1 headline per Ashley):**
+> By the time you hear the alarm, the urgent steps are already taken care of.
 
-*(The §1 headline — "By the time you hear about it, it's already handled." — is
-unchanged: the headline opens the piece, the closing line ends the walkthrough.)*
+*(The §1 headline and the closing line are now the same sentence: the headline opens the
+piece, the closing line ends the walkthrough.)*
 
 ---
 
