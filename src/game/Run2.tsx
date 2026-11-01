@@ -30,6 +30,9 @@ type Step =
 
 export type Run2Choices = { door?: string; dive?: string; airport?: string; dial?: string };
 
+/** Confirm window before the AI takes its recommended action (Run 2). */
+const CONFIRM_MS = 10000;
+
 /** Decisions a human actually made (AI auto-actions are prefixed "auto:"). */
 export const humanDecisions = (c: Run2Choices) =>
   Object.values(c).filter((v) => v && !v.startsWith("auto:")).length;
@@ -347,10 +350,10 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
   actsLabel?: string;
   /** telemetry lines revealed by a "Show me more" action */
   tele?: string[];
-  /** 4 s confirm clock; at zero the AI takes the recommended action */
+  /** confirm clock; at zero the AI takes the recommended action */
   countdown?: boolean; onExpire?: () => void;
 }) {
-  const [ms, setMs] = useState(4000);
+  const [ms, setMs] = useState(CONFIRM_MS);
   const [more, setMore] = useState(false);
   const expRef = useRef(onExpire); expRef.current = onExpire;
   const fired = useRef(false);
@@ -359,7 +362,7 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
     if (!countdown) return;
     const start = Date.now();
     const id = setInterval(() => {
-      const left = Math.max(0, 4000 - (Date.now() - start)); setMs(left);
+      const left = Math.max(0, CONFIRM_MS - (Date.now() - start)); setMs(left);
       if (left <= 0 && !fired.current) { fired.current = true; clearInterval(id); expRef.current?.(); }
     }, 100);
     return () => clearInterval(id);
