@@ -4,6 +4,7 @@ import Run1 from "./Run1";
 import Run2, { type Run2Choices } from "./Run2";
 import Dossier from "./Dossier";
 import { AltitudeTrace } from "./Visuals";
+import { usePlateActive } from "./SceneArt";
 import "./game.css";
 
 /* ══════════════════════════════════════════════════════════════
@@ -28,6 +29,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   const [choices, setChoices] = useState<Run2Choices>({});
   const clockRef = useRef(0); // seconds within a run
   const [clock, setClock] = useState(0);
+  const plateActiveFlag = usePlateActive(); // hide HUD while a clean plate is up
 
   useEffect(() => {
     const id = setInterval(() => setClock(clockRef.current), 100);
@@ -40,7 +42,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
     <div className="g-root">
       <ClipLayer phase={phase} />
       {phase !== "title" && phase !== "dossier" && (
-        <div className="g-hud">
+        <div className={`g-hud${plateActiveFlag ? " plated" : ""}`}>
           <span className={`run ${phase === "run1" ? "today" : "ai"}`}>
             {phase === "run1" ? <>Run 1 · <b>The humans</b></> : phase === "run2" ? <>Run 2 · <b>The AI Nervous System</b></> : <b>&nbsp;</b>}
           </span>

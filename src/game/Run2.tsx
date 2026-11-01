@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FlightDeck, AltitudeTrace, AircraftIcon } from "./Visuals";
-import { ArtCross, preloadArt } from "./SceneArt";
+import { ArtCross, preloadArt, PlateOverlay } from "./SceneArt";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -267,14 +267,20 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
   /** ms to hold the photo before the decision card appears (0 = immediate) */
   settleMs?: number; demo?: boolean;
 }) {
+  // clean plate first: the picture alone, full brightness, nothing on it.
+  // The look beat only starts once the plate lifts.
+  const [revealed, setRevealed] = useState(!photo);
+  useEffect(() => { if (photo) setRevealed(false); }, [photo]);
+
   // decision steps breathe longer; result steps just get a short beat
   const base = settleMs ?? (brief ? (demo ? 750 : 2400) : (demo ? 450 : 1100));
   const [settled, setSettled] = useState(base <= 0);
   useEffect(() => {
+    if (!revealed) return;          // don't burn the beat while the plate is up
     if (base <= 0) { setSettled(true); return; }
     const id = setTimeout(() => setSettled(true), base);
     return () => clearTimeout(id);
-  }, [base]);
+  }, [base, revealed]);
 
   return (
     <motion.div className="g-stage" {...fade} style={{ justifyContent: "flex-start", paddingTop: 72 }}>
@@ -282,7 +288,7 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
         ? <ArtCross art={photo} dim={settled ? 0.46 : 0.3} fallback={<div className="g-vig-teal" />} />
         : vignette === "teal" && <div className="g-vig-teal" />}
       {!photo && vignette === "coral" && <div className="g-vig-coral" />}
-      <div className="g-scene-label">{label}<span className={`role ${subClass}`}>{sub}</span></div>
+      {revealed && <div className="g-scene-label">{label}<span className={`role ${subClass}`}>{sub}</span></div>}
 
       {/* the data-model overlay arrives WITH the decision — during the look-beat it's just the photo */}
       <div style={{ flex: 1, display: "grid", placeItems: photo ? "start end" : "center", width: "100%", minHeight: 0, padding: photo ? "0 24px" : 0 }}>
@@ -295,10 +301,12 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
         </motion.div>
       </div>
 
+      <PlateOverlay art={photo} demo={demo} onReveal={() => setRevealed(true)} />
+
       {/* bottom: orienting caption during the look-beat, decision/outcome card once settled */}
       <div style={{ position: "relative", zIndex: 6, width: "100%", minHeight: 170 }}>
         <AnimatePresence>
-          {!settled && brief && (
+          {revealed && !settled && brief && (
             <motion.div key="brief" className="g-brief"
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8, transition: { duration: 0.22 } }}
@@ -310,7 +318,7 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
         </AnimatePresence>
         {/* children mount only after the beat, so the confirm clock starts
             when the player is actually asked to decide */}
-        {settled && (
+        {revealed && settled && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, paddingBottom: 20 }}>
             {holdBrief && brief && (
               <div className="g-brief static">

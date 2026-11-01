@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FlightDeck, AltitudeTrace, Figure } from "./Visuals";
-import { ArtCross, preloadArt } from "./SceneArt";
+import { ArtCross, preloadArt, PlateOverlay, plateActive } from "./SceneArt";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -117,8 +117,15 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
 
 /* ── Scene 1: THE CAPTAIN — hold to unlock while strength drains ── */
 function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; clockRef: React.MutableRefObject<number>; demo?: boolean }) {
+  // clean plate: the picture alone first; nothing starts until it lifts
+  const [plateArt, setPlateArt] = useState<ArtKey>("s1-captain");
+  const [revealed, setRevealed] = useState(false);
   const [armed, setArmed] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setArmed(true), demo ? 700 : 2600); return () => clearTimeout(t); }, [demo]);
+  useEffect(() => {
+    if (!revealed) return;
+    const t = setTimeout(() => setArmed(true), demo ? 700 : 2600);
+    return () => clearTimeout(t);
+  }, [demo, revealed]);
   const [strength, setStrength] = useState(100);
   const [ring, setRing] = useState(0);
   const [holding, setHolding] = useState(false);
@@ -130,7 +137,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
   const done = useRef(false);
 
   useEffect(() => {
-    if (!demo || !armed) return;
+    if (!demo || !armed || !revealed) return;
     holdingRef.current = true; setHolding(true);
     const id = setInterval(() => {
       const dt = 0.2; elapsed.current += dt; clockRef.current = elapsed.current;
@@ -139,15 +146,17 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       ringRef.current = Math.max(0, Math.min(100, ringRef.current + (10 + 34 * (strRef.current / 100)) * dt));
       setRing(ringRef.current);
       if ((ringRef.current >= 100 || elapsed.current > 12) && !done.current) {
-        done.current = true; setRing(100); setPhase("beat"); clearInterval(id); setTimeout(onDone, 1600);
+        done.current = true; setRing(100); setPhase("beat"); clearInterval(id);
+        setRevealed(false); setPlateArt("s1-door-open");   // new image -> clean plate
+        setTimeout(onDone, 1600 + 2850); // + door-open plate hold & fade
       }
     }, 200);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demo, armed]);
+  }, [demo, armed, revealed]);
 
   useEffect(() => {
-    if (demo || !armed) return;
+    if (demo || !armed || !revealed) return;
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -159,13 +168,14 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       setRing(ringRef.current);
       if ((ringRef.current >= 100 || elapsed.current > 24) && !done.current) {
         done.current = true; ringRef.current = 100; setRing(100); setPhase("beat");
-        setTimeout(onDone, 3400); return;
+        setRevealed(false); setPlateArt("s1-door-open");   // new image -> clean plate
+        setTimeout(onDone, 3400 + 2850); return; // + door-open plate hold & fade
       }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [onDone, clockRef, armed]);
+  }, [onDone, clockRef, armed, revealed]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => { if (e.code === "Space") { e.preventDefault(); holdingRef.current = true; setHolding(true); } };
@@ -180,6 +190,11 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
   const hold = () => { holdingRef.current = true; setHolding(true); };
   const release = () => { holdingRef.current = false; setHolding(false); };
 
+  // the captain -> reaching-hand art switch gets its own clean plate
+  useEffect(() => {
+    if (phase === "struggle" && ring > 35) setPlateArt("s1-hand");
+  }, [ring, phase]);
+
   return (
     <motion.div className="g-stage" {...fade}>
       <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }}
@@ -191,11 +206,19 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 3,
         background: `radial-gradient(ellipse at 50% 50%, transparent ${40 - vignette * 28}%, rgba(0,0,0,${0.35 + vignette * 0.55}) 100%)` }} />
 
-      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>01</b> · In the air<span className="role coral">You are the captain</span></div>
+      {revealed && <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>01</b> · In the air<span className="role coral">You are the captain</span></div>}
 
-      {phase === "struggle" && !armed ? (
+      <PlateOverlay art={plateArt} demo={demo} onReveal={() => setRevealed(true)} />
+      {phase === "beat" ? (
+        revealed ? (
+          <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
+            <div className="g-beat">He reached the lock.<br /><span className="coral">Barely.</span></div>
+            <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Ten seconds later — unconscious — this door is a wall.</div>
+          </motion.div>
+        ) : null
+      ) : !revealed ? null : !armed ? (
         <LookBeat text={<>T+1:05 · 38,000 ft. You are the captain. Stabbed. Fading. The door locks from the inside.</>} />
-      ) : phase === "struggle" ? (
+      ) : (
         <Dock objective="Unlock the flight-deck door"
           hint={<>Hold — or <span className="kbd">SPACE</span>. It slips as you fade.</>}>
           <button className={`g-holdbtn ${holding ? "on" : ""} ${ring >= 100 ? "done" : ""}`}
@@ -208,11 +231,6 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
             <Meter name="Door unlocked" pct={ring} color="gold" />
           </div>
         </Dock>
-      ) : (
-        <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-          <div className="g-beat">He reached the lock.<br /><span className="coral">Barely.</span></div>
-          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Ten seconds later — unconscious — this door is a wall.</div>
-        </motion.div>
       )}
     </motion.div>
   );
@@ -231,8 +249,15 @@ function HoldRingMini({ value }: { value: number }) {
 
 /* ── Scene 2: THE PASSENGERS — tap the timing bar ── */
 function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
+  // clean plate on every new image: the picture alone before anything sits on it
+  const [plateArt, setPlateArt] = useState<ArtKey>("s2-passenger");
+  const [revealed, setRevealed] = useState(false);
   const [armed, setArmed] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setArmed(true), demo ? 700 : 2600); return () => clearTimeout(t); }, [demo]);
+  useEffect(() => {
+    if (!revealed) return;
+    const t = setTimeout(() => setArmed(true), demo ? 700 : 2600);
+    return () => clearTimeout(t);
+  }, [demo, revealed]);
   const [pos, setPos] = useState(0);
   const [hits, setHits] = useState(0);
   const [phase, setPhase] = useState<"struggle" | "beat">("struggle");
@@ -245,6 +270,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     if (!demo || !armed) return;
     let p = 0; let d = 1;
     const id = setInterval(() => {
+      if (plateActive()) return; // picture alone — the mechanic waits
       p += d * 6; if (p > 100) { p = 100; d = -1; } if (p < 0) { p = 0; d = 1; }
       posRef.current = p; setPos(p);
       if (p > 40 && p < 60 && !done.current) {
@@ -261,12 +287,14 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (!plateActive()) {
       elapsed.current += dt;
       posRef.current += dir.current * dt * 78;
       if (posRef.current > 100) { posRef.current = 100; dir.current = -1; }
       if (posRef.current < 0) { posRef.current = 0; dir.current = 1; }
       setPos(posRef.current);
       if (elapsed.current > 20 && !done.current) { done.current = true; finish(); }
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -274,7 +302,10 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [armed]);
 
-  function finish() { setPhase("beat"); setTimeout(onDone, demo ? 1400 : 3200); }
+  function finish() {
+    setPhase("beat"); setRevealed(false); setPlateArt("s2-subdued"); // new image -> clean plate
+    setTimeout(onDone, (demo ? 1400 : 3200) + 2850);
+  }
   function tryHit() {
     if (phase !== "struggle" || done.current || !armed) return;
     if (posRef.current > 38 && posRef.current < 62) {
@@ -288,6 +319,11 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hits, phase]);
 
+  // the struggle art switch (passenger -> fight) gets its own clean plate
+  useEffect(() => {
+    if (phase === "struggle" && hits >= 2) setPlateArt("s2-fight");
+  }, [hits, phase]);
+
   return (
     <motion.div className="g-stage" {...fade}>
       <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }}
@@ -297,11 +333,19 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
           fallback={<FlightDeck doorOpen={1} threat={phase === "struggle"} attackerDown={phase === "beat"} paxAtDoor={2 + hits} />} />
       </motion.div>
 
-      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>02</b> · In the cabin<span className="role coral">You are a passenger</span></div>
+      {revealed && <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>02</b> · In the cabin<span className="role coral">You are a passenger</span></div>}
 
-      {phase === "struggle" && !armed ? (
+      <PlateOverlay art={plateArt} demo={demo} onReveal={() => setRevealed(true)} />
+      {phase === "beat" ? (
+        revealed ? (
+          <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
+            <div className="g-beat">Taken down.<br /><span className="coral">Still falling.</span></div>
+            <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>And nobody here can fly it.</div>
+          </motion.div>
+        ) : null
+      ) : !revealed ? null : !armed ? (
         <LookBeat text={<>Rows back. You are a passenger. The captain is down. The aircraft is still falling.</>} />
-      ) : phase === "struggle" ? (
+      ) : (
         <Dock objective="Get in and subdue the attacker"
           hint={<>Tap when the marker hits <b>HIT</b> — or <span className="kbd">SPACE</span>. 4 clean moves.</>}>
           <div className="g-tap" onClick={tryHit} style={{ cursor: "pointer" }}>
@@ -314,11 +358,6 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
             </div>
           </div>
         </Dock>
-      ) : (
-        <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-          <div className="g-beat">Taken down.<br /><span className="coral">Still falling.</span></div>
-          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>And nobody here can fly it.</div>
-        </motion.div>
       )}
     </motion.div>
   );
@@ -326,8 +365,15 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
 
 /* ── Scene 3: THE CONTROLS — keep pitch in the band ── */
 function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
+  // clean plate on every new image: the picture alone before anything sits on it
+  const [plateArt, setPlateArt] = useState<ArtKey>("s3-dive");
+  const [revealed, setRevealed] = useState(false);
   const [armed, setArmed] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setArmed(true), demo ? 700 : 2600); return () => clearTimeout(t); }, [demo]);
+  useEffect(() => {
+    if (!revealed) return;
+    const t = setTimeout(() => setArmed(true), demo ? 700 : 2600);
+    return () => clearTimeout(t);
+  }, [demo, revealed]);
   const [pitch, setPitch] = useState(30);
   const [holding, setHolding] = useState(false);
   const [stable, setStable] = useState(0);
@@ -340,6 +386,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   useEffect(() => {
     if (!demo || !armed) return;
     const id = setInterval(() => {
+      if (plateActive()) return; // picture alone — the mechanic waits
       const dt = 0.2; elapsed.current += dt;
       const target = (bandLo + bandHi) / 2;
       holdRef.current = pitchRef.current < target; setHolding(holdRef.current);
@@ -351,7 +398,9 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       stableRef.current = Math.max(0, stableRef.current + (inBand ? dt : -dt * 1.6));
       setStable(stableRef.current);
       if ((stableRef.current > 3.2 || elapsed.current > 12) && !done.current) {
-        done.current = true; setPhase("beat"); clearInterval(id); setTimeout(onDone, 1600);
+        done.current = true; setPhase("beat"); clearInterval(id);
+        setRevealed(false); setPlateArt("s3-controls"); // new image -> clean plate
+        setTimeout(onDone, 1600 + 2850);
       }
     }, 200);
     return () => clearInterval(id);
@@ -362,6 +411,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (!plateActive()) {
       elapsed.current += dt;
       const wob = Math.sin(elapsed.current * 7) * 6;
       pitchRef.current += ((holdRef.current ? 78 : -46) + wob * (holdRef.current ? 0.6 : 1)) * dt;
@@ -370,7 +420,12 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       const inBand = pitchRef.current > bandLo && pitchRef.current < bandHi;
       stableRef.current = Math.max(0, stableRef.current + (inBand ? dt : -dt * 1.6));
       setStable(stableRef.current);
-      if ((stableRef.current > 3.2 || elapsed.current > 18) && !done.current) { done.current = true; setPhase("beat"); setTimeout(onDone, 3400); return; }
+      if ((stableRef.current > 3.2 || elapsed.current > 18) && !done.current) {
+        done.current = true; setPhase("beat");
+        setRevealed(false); setPlateArt("s3-controls"); // new image -> clean plate
+        setTimeout(onDone, 3400 + 2850); return;
+      }
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -389,6 +444,11 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   // marker position in the horizontal bar: dive(left) .. climb(right); band mapped to 52..74 → 38%..62%
   const markPct = Math.max(0, Math.min(100, pitch));
 
+  // the dive -> interior art switch gets its own clean plate
+  useEffect(() => {
+    if (phase === "struggle" && stable > 1.2) setPlateArt("s3-interior");
+  }, [stable, phase]);
+
   return (
     <motion.div className="g-stage" {...fade}>
       <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }}
@@ -399,11 +459,20 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
           fallback={<div style={{ display: "grid", placeItems: "center", height: "100%" }}><AltitudeTrace mode={phase === "beat" ? "guarded" : "dive"} progress={progress} showSafeBand /></div>} />
       </motion.div>
 
-      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>03</b> · At the controls<span className="role coral">You have never flown a plane</span></div>
+      <PlateOverlay art={plateArt} demo={demo} onReveal={() => setRevealed(true)} />
 
-      {phase === "struggle" && !armed ? (
+      {revealed && <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>03</b> · At the controls<span className="role coral">You have never flown a plane</span></div>}
+
+      {phase === "beat" ? (
+        revealed ? (
+          <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
+            <div className="g-beat"><span className="teal">Stabilized.</span><br />Not landed.</div>
+            <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Just no longer falling. Nobody here knows how to land it.</div>
+          </motion.div>
+        ) : null
+      ) : !revealed ? null : !armed ? (
         <LookBeat text={<>Attacker down. Captain not getting up. The yoke is right here. The plane is diving 500 ft per sec.</>} />
-      ) : phase === "struggle" ? (
+      ) : (
         <Dock objective="Pull out of the dive — hold level flight"
           hint={<>Hold to pull up · release to fall · or <span className="kbd">SPACE</span>. Keep it in <b>LEVEL</b>.</>}>
           <button className={`g-holdbtn ${holding ? "on" : ""}`}
@@ -421,29 +490,41 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
             <Meter name="Level flight held" pct={stable / 3.2 * 100} color="gold" />
           </div>
         </Dock>
-      ) : (
-        <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
-          <div className="g-beat"><span className="teal">Stabilized.</span><br />Not landed.</div>
-          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Just no longer falling. Nobody here knows how to land it.</div>
-        </motion.div>
       )}
     </motion.div>
   );
 }
 
-/* ── Scene 4: THE REVEAL ── */
+/* ── Scene 4: THE REVEAL ──
+   Each of the three images gets its own clean plate; the beat text appears
+   only after the picture has had the screen to itself, and the next image
+   waits for that beat to land before it cuts. No timer can collide with a
+   plate because the sequence is driven by the reveal event. */
 function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
-  const F = demo ? 0.4 : 1;
-  useEffect(() => { const t = setTimeout(onDone, 13000 * F); return () => clearTimeout(t); }, [onDone, F]);
   const [step, setStep] = useState(0);
-  useEffect(() => {
-    const t1 = setTimeout(() => setStep(1), 2200 * F);
-    const t2 = setTimeout(() => setStep(2), 5200 * F);
-    const t3 = setTimeout(() => setStep(3), 8600 * F);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [F]);
+  const [revealed, setRevealed] = useState(false);
 
+  const dwell = demo ? 900 : 2400;   // how long the beat text reads before the next picture
+  const last = step >= 3;
   const art: ArtKey = step === 0 ? "s4-pilots" : step === 1 ? "s4-landing" : "s4-reunion";
+
+  // a new PICTURE needs a new plate; step 3 reuses the reunion image, so it
+  // must not wait for a reveal that will never come
+  useEffect(() => { setRevealed(false); }, [art]);
+
+  // advance only after the current image has been revealed AND its beat has dwelled
+  useEffect(() => {
+    if (!revealed || last) return;
+    const t = setTimeout(() => setStep((s) => s + 1), dwell);
+    return () => clearTimeout(t);
+  }, [revealed, last, dwell]);
+
+  // the closing title ("Luck is not a safety system") holds, then hands off
+  useEffect(() => {
+    if (!revealed || !last) return;
+    const t = setTimeout(onDone, demo ? 2600 : 4200);
+    return () => clearTimeout(t);
+  }, [revealed, last, onDone, demo]);
 
   return (
     <motion.div className="g-stage" {...fade}>
@@ -452,7 +533,7 @@ function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: bool
         <ArtCross art={art} dim={step >= 2 ? 0.62 : 0.56}
           fallback={<div style={{ display: "grid", placeItems: "center", height: "100%", opacity: 0.5 }}><FlightDeck doorOpen={1} threat={false} attackerDown paxAtDoor={4} /></div>} />
       </div>
-      {step === 0 && (
+      {revealed && step === 0 && (
         <svg className="g-deck" viewBox="0 0 520 300" style={{ position: "absolute", width: "min(600px,88vw)", pointerEvents: "none", opacity: 0.9, zIndex: 3 }}>
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
             <Figure x={300} y={110} scale={1.1} color="var(--g-cyan)" />
@@ -463,14 +544,15 @@ function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: bool
         </svg>
       )}
 
-      <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>04</b> · The reveal</div>
-      <motion.div className="g-center" style={{ zIndex: 6, marginTop: step >= 3 ? 120 : 0, transition: "margin 0.8s" }}
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+      {revealed && <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>04</b> · The reveal</div>}
+      <PlateOverlay art={art} demo={demo} onReveal={() => setRevealed(true)} />
+      <motion.div className="g-center" style={{ zIndex: 6, marginTop: step >= 3 ? 120 : 0, transition: "margin 0.8s", opacity: revealed ? 1 : 0 }}
+        initial={{ opacity: 0 }} animate={{ opacity: revealed ? 1 : 0 }} transition={{ duration: 0.8 }}>
         <AnimatePresence mode="wait">
-          {step === 0 && (<motion.div key="s0" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">Two people stand up in the cabin and walk forward.</div></motion.div>)}
-          {step === 1 && (<motion.div key="s1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat"><span className="teal">Two off-duty pilots.</span> By chance.</div></motion.div>)}
-          {step === 2 && (<motion.div key="s2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They land it safely. <span className="teal">174 walk away.</span></div><div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>A dying man's arm. A handful of strangers. Two licences that happened to be aboard.</div></motion.div>)}
-          {step >= 3 && (
+          {revealed && step === 0 && (<motion.div key="s0" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">Two people stand up in the cabin and walk forward.</div></motion.div>)}
+          {revealed && step === 1 && (<motion.div key="s1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat"><span className="teal">Two off-duty pilots.</span> By chance.</div></motion.div>)}
+          {revealed && step === 2 && (<motion.div key="s2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They land it safely. <span className="teal">174 walk away.</span></div><div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>A dying man's arm. A handful of strangers. Two licences that happened to be aboard.</div></motion.div>)}
+          {revealed && step >= 3 && (
             <motion.div key="s3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <div className="g-title" style={{ fontSize: "clamp(30px,4.4vw,52px)", color: "var(--g-gold)" }}>Luck is not a safety system.</div>
               <div style={{ marginTop: 16, fontSize: 10.5, letterSpacing: "0.24em", textTransform: "uppercase", color: "var(--g-faint)", fontWeight: 500 }}>Now run it again — with a nervous system</div>
