@@ -97,11 +97,10 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
       <div className="g-vig-coral" />
       <div className="g-kicker coral">Run 1 · The humans</div>
       <div className="g-title" style={{ fontSize: "clamp(30px,4.6vw,52px)" }}>
-        Last month,<br />a co-pilot attacked<br />the captain.
+        <br />a co-pilot attacked<br />the captain.
       </div>
       <p className="g-prose" style={{ margin: "24px auto 0" }}>
-        Dubai–Tel Aviv. 174 landed safely. Find out <b>why</b> — from inside. Three seats: the captain,
-        a passenger, the controls.
+        Your roles: the captain, a passenger, the controls.
       </p>
       <div className="g-legend">
         <div className="li"><span className="k">HOLD</span><span className="t">keep pressing</span></div>
@@ -109,9 +108,9 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
         <div className="li"><span className="k">SPACE</span><span className="t">or use the key</span></div>
       </div>
       <div className="g-actions" style={{ marginTop: 34 }}>
-        <button className="g-btn big gold" onClick={onNext}>Take his seat →</button>
+        <button className="g-btn big gold" onClick={onNext}>Start →</button>
       </div>
-      <div className="g-fineprint">Stylized · no faces, no blood · based on a real event</div>
+      <div className="g-fineprint"></div>
     </motion.div>
   );
 }

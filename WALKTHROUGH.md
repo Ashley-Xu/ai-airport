@@ -1,4 +1,4 @@
-# 5-Minute Walkthrough — Script, v5.1 "The Door · T+0" (content APPROVED · Deliverable 3)
+# 5-Minute Walkthrough — Script, v5.2 "The Nervous System" (content APPROVED · Deliverable 3)
 
 **Audience:** the airport CEO, in person.
 **Props:** the interactive experience (form TBD — page or deck), driven live. The CEO

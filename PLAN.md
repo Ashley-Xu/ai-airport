@@ -1,4 +1,4 @@
-# PLAN v5.1 — "The Door · T+0" (content APPROVED · visual proposal pending)
+# PLAN v5.2 — "The Nervous System" (content APPROVED · visual proposal pending)
 
 > Status: **content approved (v5.1).** Script and copy are locked. Visual form and
 > style options are in **VISUAL-PROPOSAL.md** — awaiting Ashley's pick before any code.
@@ -439,8 +439,10 @@ piece, the closing line ends the walkthrough.)*
     escalate.
 
 **LOCKED (v5.1 — approved by Ashley):**
-11. **Piece title: "The Door · T+0"** (the door is the object where both catastrophes
-    turned; "T+0" keeps the zero-warning clock motif).
+11. **Piece title: "The Nervous System"** (renamed from "The Door · T+0" at Ashley's
+    direction; the door was where both catastrophes turned, but the nervous system is
+    what the CEO is buying — the title now names the product idea, and the T+0
+    zero-warning clock lives on in the story beats).
 12. **Closing line (grammar-tightened):** "By the time the alarm rings, the most urgent
     steps are already taken."
 13. **2015 stays unnamed** ("March 2015, the French Alps"), consistent with the
@@ -493,6 +495,6 @@ piece, the closing line ends the walkthrough.)*
 
 ## 7 · Not decided yet (deliberately)
 
-- Piece title: LOCKED — **"The Door · T+0"**. *(v5.1.)*
+- Piece title: **"The Nervous System"** (renamed from "The Door · T+0", v5.2).
 - Visual form and style: options presented in **VISUAL-PROPOSAL.md** — chosen after
   Ashley's pick, before any code.

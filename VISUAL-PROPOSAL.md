@@ -1,4 +1,4 @@
-# VISUAL-PROPOSAL — "The Door · T+0" (content approved; visual form pending)
+# VISUAL-PROPOSAL — "The Nervous System" (content approved; visual form pending)
 
 > Content is locked (PLAN.md v5.1). This document proposes the **visual form and style**
 > only. Nothing is built until Ashley picks. Each option is described in enough detail

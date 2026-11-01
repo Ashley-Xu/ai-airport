@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
 /* ══════════════════════════════════════════════════════════════
-   "The Door · T+0" — an AI-native airport concept
+   "The Nervous System" — an AI-native airport concept
    Option D: cinematic spine (snapped beats) + operations texture
    Palette discipline: coral = Today, teal = AI-native,
    gold = humans deciding (never data). Coral & teal never mix.
@@ -720,7 +720,7 @@ export default function DeepDive() {
     <>
       <div className="topnav">
         <div className="inner">
-          <div className="brand">THE DOOR <b>·</b> T+0</div>
+          <div className="brand">THE NERVOUS SYSTEM</div>
           <nav>
             <a href="#complaint">The complaint</a>
             <a href="#event">T+0:00</a>
@@ -1180,7 +1180,7 @@ export default function DeepDive() {
 
       <footer>
         <div className="inner">
-          <span>The Door · T+0</span>
+          <span>The Nervous System</span>
           <span className="sp">Concept exercise · "Imagine the AI-native airport"</span>
         </div>
       </footer>

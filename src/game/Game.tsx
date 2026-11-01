@@ -42,7 +42,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
       {phase !== "title" && phase !== "dossier" && (
         <div className="g-hud">
           <span className={`run ${phase === "run1" ? "today" : "ai"}`}>
-            {phase === "run1" ? <>Run 1 · <b>The humans</b></> : phase === "run2" ? <>Run 2 · <b>The nervous system</b></> : <b>&nbsp;</b>}
+            {phase === "run1" ? <>Run 1 · <b>The humans</b></> : phase === "run2" ? <>Run 2 · <b>The AI Nervous System</b></> : <b>&nbsp;</b>}
           </span>
           {phase === "coldopen" && <span className="run">Prologue</span>}
           {(phase === "run1" || phase === "run2") && (
@@ -90,23 +90,23 @@ function Title({ onBegin, onDeepDive }: { onBegin: () => void; onDeepDive: () =>
       <div className="g-vig-teal" />
       <div className="g-title-screen">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
-          <h1><span className="door">The Door</span> <span className="t0">· T+0</span></h1>
+          <h1><span className="ttl">The Nervous</span><span className="ttl">System</span></h1>
         </motion.div>
         <motion.div className="tag" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.9 }}>
           By the time you hear the alarm, the urgent steps are <span className="accent">already taken care of.</span>
         </motion.div>
         <motion.div className="sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75, duration: 0.9 }}>
-          An AI-native airport · a decision simulation
+          
         </motion.div>
         <motion.div className="actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95, duration: 0.8 }}>
-          <button className="g-btn big gold" onClick={onBegin}>Begin the shift</button>
+          <button className="g-btn-hud" onClick={onBegin}><span>Begin</span></button>
           <div style={{ marginTop: 14 }}>
             <button className="g-btn ghost" style={{ fontSize: 12, padding: "9px 16px" }} onClick={onDeepDive}>or read the argument</button>
           </div>
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3, duration: 1 }}
           style={{ marginTop: 40, fontFamily: "var(--g-body)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--g-faint)" }}>
-          ~4 min · two runs · based on a real event · no imagery of it
+          based on a real event: Israel flight hijacking 
         </motion.div>
       </div>
     </motion.div>

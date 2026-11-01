@@ -1,4 +1,4 @@
-# GAME-DESIGN v3 — "The Door · T+0" (build spec · APPROVED)
+# GAME-DESIGN v3 — "The Nervous System" (build spec · APPROVED)
 
 > Status: **approved — building now.** Content/story stays PLAN.md v5.1; this defines the
 > *interactive form* per Ashley's redesign + the three v3 decisions below.
@@ -73,7 +73,7 @@ for learner apps.)
 ## 2 · Game structure (screens, scenes, mechanics)
 
 ### Screens
-1. **Title** — "The Door · T+0". One line. `[ Begin ]`. *(clip slot #1: title loop.)*
+1. **Title** — "The Nervous System". One line. `[ Begin ]`. *(clip slot #1: title loop.)*
 2. **Cold-open (optional, ~15s, skippable)** — abstract: radar sweep, a door graphic, an
    altitude trace, two numbers (150 / 174). Ends: *"Luck is not a safety system. Run it
    again — with a nervous system."* No violence depicted. *(clip slot #2.)*
