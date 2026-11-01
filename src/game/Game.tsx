@@ -69,7 +69,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
         )}
         {phase === "dossier" && (
           <motion.div key="d" style={{ position: "absolute", inset: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-            <Dossier choices={choices} onRestart={restart} onDeepDive={onDeepDive} />
+            <Dossier onRestart={restart} onDeepDive={onDeepDive} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -101,12 +101,12 @@ function Title({ onBegin, onDeepDive }: { onBegin: () => void; onDeepDive: () =>
         <motion.div className="actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95, duration: 0.8 }}>
           <button className="g-btn big gold" onClick={onBegin}>Begin the shift</button>
           <div style={{ marginTop: 14 }}>
-            <button className="g-btn ghost" style={{ fontSize: 12, padding: "9px 16px" }} onClick={onDeepDive}>or read the full argument</button>
+            <button className="g-btn ghost" style={{ fontSize: 12, padding: "9px 16px" }} onClick={onDeepDive}>or read the argument</button>
           </div>
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3, duration: 1 }}
           style={{ marginTop: 40, fontFamily: "var(--g-body)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--g-faint)" }}>
-          ~4 min · two runs · grounded in a real event · abstract depiction, no imagery of the event
+          ~4 min · two runs · based on a real event · no imagery of it
         </motion.div>
       </div>
     </motion.div>
@@ -138,12 +138,12 @@ function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean
           )}
           {step === 1 && (
             <motion.div key="1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-beat">In 2015, it kept the wrong man<br />at the controls. <span className="coral">150 dead.</span></div>
+              <div className="g-beat">2015: it kept the wrong man<br />at the controls. <span className="coral">150 dead.</span></div>
             </motion.div>
           )}
           {step === 2 && (
             <motion.div key="2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-beat">Last month, it kept help outside.<br /><span className="teal">174 lived — by inches.</span></div>
+              <div className="g-beat">Last month: it kept help outside.<br /><span className="teal">174 lived — by inches.</span></div>
             </motion.div>
           )}
           {step >= 3 && (

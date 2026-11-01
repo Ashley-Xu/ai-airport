@@ -653,7 +653,7 @@ h2.head, .hero h1, .closing .big, .closing-line, .detail-card h3 { letter-spacin
 .pullquote, .quote, .pivot, .trap .concl, .judgment-foot, .ground-card .punch, .boundary p {
   font-weight: 500; line-height: 1.18; letter-spacing: 0.01em;
 }
-.stat-strip .s .v, .door .toll .big, .g-metric .v { font-weight: 500; }
+.stat-strip .s .v, .door .toll .big { font-weight: 500; }
 /* display lines were sized for a serif; Teko runs visually smaller — bump slightly */
 h2.head { font-size: clamp(34px, 4.6vw, 58px); }
 .pullquote, .quote { font-size: clamp(26px, 3.2vw, 40px); }

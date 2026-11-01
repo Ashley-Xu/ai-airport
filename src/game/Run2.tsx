@@ -11,10 +11,13 @@ preloadArt([
 
 /* ══════════════════════════════════════════════════════════════
    RUN 2 — "The nervous system." Cinematic replay. The AI does the
-   physical work and reports to YOU, the decision-maker. Calm,
-   few-and-weighty interactions. Softened claim: the AI stabilizes,
-   guards the envelope and GUIDES — humans fly it; auto-land only
-   where certified.
+   physical work and reports to YOU, the airport ops. Lean copy per
+   COPY-MAP.md. Every emergency card carries a 4 s confirm clock —
+   at zero the AI takes the recommended action (recorded "auto:…"
+   so the dossier never credits a human for it). The authority dial
+   has NO clock: that call is yours alone — "You decide; it never
+   does." Softened claim: the AI stabilizes, guards the envelope
+   and GUIDES — humans fly it; auto-land only where certified.
    ══════════════════════════════════════════════════════════════ */
 
 type Step =
@@ -26,6 +29,10 @@ type Step =
   | "ending" | "done";
 
 export type Run2Choices = { door?: string; dive?: string; airport?: string; dial?: string };
+
+/** Decisions a human actually made (AI auto-actions are prefixed "auto:"). */
+export const humanDecisions = (c: Run2Choices) =>
+  Object.values(c).filter((v) => v && !v.startsWith("auto:")).length;
 
 export default function Run2({ onComplete, onChoices, clockRef, demo = false }: {
   onComplete: () => void;
@@ -41,7 +48,6 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   });
   const [choices, setChoices] = useState<Run2Choices>({});
   const [t, setT] = useState("T+0:00");
-  const [doorOpen, setDoorOpen] = useState(0);
   const [diveMode, setDiveMode] = useState<"dive" | "guarded">("dive");
   const [guardProgress, setGuardProgress] = useState(0);
   const [contacted, setContacted] = useState(false);
@@ -77,7 +83,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
     if (step === "intro") { const t = setTimeout(() => go("d1_door"), 900); return () => clearTimeout(t); }
     if (step === "ending") { const t = setTimeout(onComplete, 2500); return () => clearTimeout(t); }
     const auto: Partial<Record<Step, { to: Step; patch?: Partial<Run2Choices>; act?: () => void }>> = {
-      d1_door: { to: "d1_result", patch: { door: "release" }, act: () => setDoorOpen(1) },
+      d1_door: { to: "d1_result", patch: { door: "release" } },
       d1_result: { to: "d2_dive" },
       d2_dive: { to: "d2_result", patch: { dive: "guide" }, act: () => setDiveMode("guarded") },
       d2_result: { to: "d3_airport" },
@@ -93,112 +99,124 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [demo, step]);
 
+  const held = choices.door === "hold";
+
   return (
     <div className="g-stage">
-      <div id="r2probe" data-step={step} style={{ display: "none" }} />
+      <div id="r2probe" data-step={step} data-choices={JSON.stringify(choices)} style={{ display: "none" }} />
       <AnimatePresence mode={demo ? "sync" : "wait"}>
         {step === "intro" && <Run2Intro key="i" onNext={() => go("d1_door")} />}
 
         {/* D1 — the door */}
         {step === "d1_door" && (
-          <Run2Scene key="d1" brief={<>T+1:05, flight deck. The captain is down at the door — and the lock is still sealed. In a minute you will be asked about it.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-detected" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d1" demo={demo} brief={<>T+1:05, flight deck. The captain is down at a sealed door.</>}
+            photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-detected"
+            sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={0} threat captainDown highlightDoor aiEyes paxAtDoor={2} />}
             vignette="teal">
             <ReportCard
               t={t}
-              said={<>Violent intrusion in the flight deck. <span className="em">Captain unresponsive</span> at the door. Aircraft deviating. 174 souls.</>}
-              rec={<>Searched 412 playbook branches — <b>none fit this scene</b>. I am not looking up a rule. I am looking at the door.</>}
-              question="Authorize the smart lock to release?"
+              said={<>Intrusion in the flight deck. <span className="em">Captain unresponsive</span>. Aircraft deviating. 174 souls.</>}
+              rec={<>412 playbook branches — <b>none fit</b>. I'm not looking up a rule. I'm looking at the door.</>}
+              question="Release the smart lock?"
+              tele={["CAM · LIDAR · ATC — FUSED", "CONFIDENCE 0.94", "6-s CLIP ATTACHED"]}
               actions={[
-                { label: "Authorize release", kind: "gold", onClick: () => { setDoorOpen(1); go("d1_result", { door: "release" }); } },
+                { label: "Release", kind: "gold", onClick: () => go("d1_result", { door: "release" }) },
                 { label: "Hold", kind: "ghost", onClick: () => go("d1_result", { door: "hold" }) },
-                { label: "Show me more", kind: "ghost", onClick: () => {} },
+                { label: "Show me more", kind: "ghost", more: true },
               ]}
               countdown
+              onExpire={demo ? undefined : () => go("d1_result", { door: "auto:release" })}
             />
           </Run2Scene>
         )}
         {step === "d1_result" && (
-          <Run2Scene key="d1r" brief={<>The latch releases on your word. Help is moving through the door.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-unlocked" sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<FlightDeck doorOpen={1} threat captainDown aiEyes paxAtDoor={4} scanning />} vignette="teal">
-            <Consequence
-              good={choices.door === "release"}
-              goodText={<>Door released on your authority. Help and medical reach the captain <b>~40 s sooner</b>. He never had to reach the lock. <span className="dim">A human said yes in 4.2 seconds — the machine saw, you decided.</span></>}
-              badText={<>You held. The lock stays sealed; the captain is on his own. In the real event, a dying man's arm was the only thing that opened it. <span className="dim">Re-run to see the other choice.</span></>}
-              onNext={() => go("d2_dive")} nextLabel="Continue →" />
+          <Run2Scene key="d1r" demo={demo} holdBrief
+            brief={held ? <>You held. The lock stays sealed.</> : <>The latch releases on your word.</>}
+            photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-unlocked"
+            sub="You are the decision-maker" subClass="teal" clock={t}
+            art={<FlightDeck doorOpen={held ? 0 : 1} threat captainDown aiEyes paxAtDoor={4} scanning />} vignette="teal">
+            <ResultBar onNext={() => go("d2_dive")} />
           </Run2Scene>
         )}
 
         {/* D2 — the dive (softened: stabilize + guide) */}
         {step === "d2_dive" && (
-          <Run2Scene key="d2" brief={<>The aircraft is falling — uncommanded, 14,000 feet in under 30 seconds. The cabin knows.</>} demo={demo} photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d2" demo={demo} brief={<>Falling. Uncommanded. 14,000 ft in 30 s.</>}
+            photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-alert"
+            sub="You are the decision-maker" subClass="teal" clock={t}
             art={<AltitudeTrace mode={diveMode} progress={guardProgress} showSafeBand />} vignette="teal">
             <ReportCard
               t={t}
-              said={<>Uncommanded dive detected — <span className="em">14,000 ft in under 30 s</span>. Intent-guard is rejecting it now; envelope held.</>}
-              rec={<>No one aboard can land this. Recommend I <b>stabilize the attitude and guide</b> a pilot — the off-duty crew or a ground pilot — to the nearest suitable airport. Auto-landing only where certified; a human keeps the controls.</>}
-              question="Authorize stabilize-and-guide?"
+              rec={<>No one aboard can land this. I <b>stabilize and guide</b> — the off-duty crew or a ground pilot flies. Auto-land only where certified.</>}
               actions={[
                 { label: "Authorize", kind: "teal", onClick: () => { setDiveMode("guarded"); go("d2_result", { dive: "guide" }); } },
-                { label: "Keep searching for a pilot", kind: "ghost", onClick: () => { setDiveMode("guarded"); go("d2_result", { dive: "search" }); } },
+                { label: "Keep searching", kind: "ghost", onClick: () => { setDiveMode("guarded"); go("d2_result", { dive: "search" }); } },
               ]}
+              countdown
+              onExpire={demo ? undefined : () => { setDiveMode("guarded"); go("d2_result", { dive: "auto:guide" }); }}
             />
           </Run2Scene>
         )}
         {step === "d2_result" && (
-          <Run2Scene key="d2r" brief={<>The nose comes up. The envelope is being held around two human hands.</>} demo={demo} photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-stabilized" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d2r" demo={demo} brief={<>The nose comes up.</>}
+            photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-stabilized"
+            sub="You are the decision-maker" subClass="teal" clock={t}
             art={<DiveResolve />} vignette="teal">
-            <Consequence
-              good
-              goodText={<>Attitude stabilized, dive arrested. The off-duty pilots take the controls with the AI holding the envelope around them. <span className="dim">Same two licences as Run 1 — this time not left to luck alone.</span></>}
+            <Consequence good
+              goodText={<>Dive arrested. The off-duty pilots take the controls; I hold the envelope.</>}
               onNext={() => go("d3_airport")} nextLabel="Continue →" />
           </Run2Scene>
         )}
 
         {/* D3 — contact the airport */}
         {step === "d3_airport" && (
-          <Run2Scene key="d3" brief={<>Below: the nearest suitable airport. Lights, trucks, a cleared stand — all before anyone phoned.</>} demo={demo} photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-alarm" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d3" demo={demo} brief={<>Below: the nearest suitable airport. Trucks, lights, a cleared stand. Nobody phoned.</>}
+            photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-alarm"
+            sub="You are the decision-maker" subClass="teal" clock={t}
             art={<AirportContact contacted={contacted} />} vignette="teal">
             <ReportCard
               t={t}
-              said={<>Nearest suitable airport identified and <span className="em">already contacted</span>. They are pre-positioning fire and medical, clearing the stand, opening family assistance.</>}
-              rec={<>They have the situation before the aircraft is on approach — <b>no phone tree</b>. Confirm the emergency message and services.</>}
-              question="Confirm and hand off to the airport?"
+              said={<>Nearest suitable airport <span className="em">contacted</span>. Trucks, lights, a cleared stand. Fire and medical rolling, family assistance opening.</>}
+              rec={<>They have it before you're on approach. <b>No phone tree.</b> Confirm services.</>}
               actions={[
                 { label: "Confirm", kind: "teal", onClick: () => { setContacted(true); go("d3_result", { airport: "confirm" }); } },
                 { label: "Redirect farther", kind: "ghost", onClick: () => { setContacted(true); go("d3_result", { airport: "redirect" }); } },
               ]}
+              countdown
+              onExpire={demo ? undefined : () => { setContacted(true); go("d3_result", { airport: "auto:confirm" }); }}
             />
           </Run2Scene>
         )}
         {step === "d3_result" && (
-          <Run2Scene key="d3r" brief={<>Fire rolling before the aircraft stops. Families will be met, not greeted by chaos.</>} demo={demo} photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d3r" demo={demo} photoLabel="Live model · airport response" label="Scene 3 · The ground"
+            photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<AirportContact contacted />} vignette="teal">
-            <Consequence good
-              goodText={<>Fire arrives before the aircraft stops rolling. Counsellors briefed <b>before the first family calls</b>. The report is auto-assembled from the full log — second by second, court-ready. <span className="dim">This is the cut ground phase, in five seconds.</span></>}
-              onNext={() => go("d4_dial")} nextLabel="Continue →" />
+            <ResultBar onNext={() => go("d4_dial")} />
           </Run2Scene>
         )}
 
-        {/* D4 — the authority dial */}
+        {/* D4 — the authority dial. No clock: this decision waits for a human. */}
         {step === "d4_dial" && (
-          <Run2Scene key="d4" brief={<>It is over. 174 walked off. The full log — second by second — is already assembled.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After" photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d4" demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After"
+            photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={1} threat={false} aiEyes paxAtDoor={0} />} vignette="teal">
             <ReportCard
               t={t}
-              said={<>Event resolved. <span className="em">174 souls</span>. Captain in surgery, stable. Zero further injuries. Full audit trail attached.</>}
-              rec={<>At T+1:05 I met a scene no playbook covered. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. The alternative was 2015: a rule that could not be broken.</>}
-              question="How much standing authority do you grant the nervous system going forward?"
+              said={<>Resolved. <span className="em">174 souls</span>. Captain stable in surgery. Audit trail attached.</>}
+              rec={<>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. 2015 was the alternative: a rule that couldn't be broken.</>}
+              actsLabel="Authority"
               actions={[
-                { label: "Standing adaptive authority", kind: "gold", onClick: () => go("d4_result", { dial: "standing" }) },
-                { label: "Live human confirms", kind: "ghost", onClick: () => go("d4_result", { dial: "confirms" }) },
-                { label: "Keep fixed doctrine", kind: "ghost", onClick: () => go("d4_result", { dial: "doctrine" }) },
+                { label: "Standing authority", kind: "gold", onClick: () => go("d4_result", { dial: "standing" }) },
+                { label: "Live confirms", kind: "ghost", onClick: () => go("d4_result", { dial: "confirms" }) },
+                { label: "Fixed doctrine", kind: "ghost", onClick: () => go("d4_result", { dial: "doctrine" }) },
               ]}
             />
           </Run2Scene>
         )}
         {step === "d4_result" && (
-          <Run2Scene key="d4r" brief={<>One question is left, and it is not about this flight. It is about the next one.</>} demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After" photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d4r" demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After"
+            photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
             art={<FlightDeck doorOpen={1} threat={false} aiEyes />} vignette="teal">
             <Consequence good
               goodText={<DialResult dial={choices.dial} />}
@@ -206,7 +224,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
 
-        {step === "ending" && <Run2Ending key="e" onNext={onComplete} />}
+        {step === "ending" && <Run2Ending key="e" decisions={humanDecisions(choices)} onNext={onComplete} />}
         {step === "done" && <motion.div key="done" exit={{ opacity: 0 }} />}
       </AnimatePresence>
     </div>
@@ -229,9 +247,7 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
         Same event. Same clock.<br />This time, the airport has hands.
       </div>
       <p className="g-prose" style={{ margin: "22px auto 0" }}>
-        You are no longer the person in the seat. You are the <b style={{ color: "var(--g-cyan)" }}>decision-maker</b> the
-        system reports to. It does the physical work; it stops only for the calls that are
-        genuinely yours — money, care, risk. Watch how calm this is.
+        You're now the <b style={{ color: "var(--g-cyan)" }}>airport ops</b> that the Nervous System reports to.
       </p>
       <div className="g-actions" style={{ marginTop: 36 }}>
         <button className="g-btn big teal" onClick={onNext}>Run it again →</button>
@@ -240,12 +256,14 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
   );
 }
 
-function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo, photoLabel, brief, settleMs, demo }: {
+function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo, photoLabel, brief, settleMs, demo, holdBrief }: {
   label: string; sub: string; subClass?: string; clock: string;
   art: React.ReactNode; children: React.ReactNode; vignette?: "teal" | "coral";
   photo?: ArtKey; photoLabel?: string;
   /** orienting line shown during the "look" beat, before any decision is asked */
   brief?: React.ReactNode;
+  /** keep the brief on screen after the beat (result steps with no card text) */
+  holdBrief?: boolean;
   /** ms to hold the photo before the decision card appears (0 = immediate) */
   settleMs?: number; demo?: boolean;
 }) {
@@ -290,26 +308,53 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
             </motion.div>
           )}
         </AnimatePresence>
-        {/* children (ReportCard/Consequence) mount only after the beat, so their
-            countdown/animation starts when the player is actually asked to decide */}
-        {settled && <div style={{ display: "flex", justifyContent: "center", paddingBottom: 20 }}>{children}</div>}
+        {/* children mount only after the beat, so the confirm clock starts
+            when the player is actually asked to decide */}
+        {settled && (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, paddingBottom: 20 }}>
+            {holdBrief && brief && (
+              <div className="g-brief static">
+                <div className="g-brief-t">{brief}</div>
+              </div>
+            )}
+            {children}
+          </div>
+        )}
       </div>
     </motion.div>
   );
 }
 
-type Action = { label: string; kind: "gold" | "teal" | "ghost"; onClick: () => void };
+type Action = { label: string; kind: "gold" | "teal" | "ghost"; onClick?: () => void; more?: boolean };
 
-function ReportCard({ t, said, rec, question, actions, countdown }: {
-  t: string; said: React.ReactNode; rec: React.ReactNode; question: string;
-  actions: Action[]; countdown?: boolean;
+function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdown, onExpire }: {
+  t: string;
+  /** machine report line — optional; when absent, rec leads the card */
+  said?: React.ReactNode;
+  rec: React.ReactNode;
+  /** the ask — optional; lean cards let the buttons carry it */
+  question?: string;
+  actions: Action[];
+  /** small gold group label above the buttons (e.g. the authority dial) */
+  actsLabel?: string;
+  /** telemetry lines revealed by a "Show me more" action */
+  tele?: string[];
+  /** 4 s confirm clock; at zero the AI takes the recommended action */
+  countdown?: boolean; onExpire?: () => void;
 }) {
-  const [ms, setMs] = useState(4200);
+  const [ms, setMs] = useState(4000);
+  const [more, setMore] = useState(false);
+  const expRef = useRef(onExpire); expRef.current = onExpire;
+  const fired = useRef(false);
   useEffect(() => {
+    // setInterval (not RAF) so the clock also advances under headless virtual-time
     if (!countdown) return;
-    const start = performance.now(); let raf = 0;
-    const tick = (now: number) => { const left = Math.max(0, 4200 - (now - start)); setMs(left); if (left > 0) raf = requestAnimationFrame(tick); };
-    raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
+    const start = Date.now();
+    const id = setInterval(() => {
+      const left = Math.max(0, 4000 - (Date.now() - start)); setMs(left);
+      if (left <= 0 && !fired.current) { fired.current = true; clearInterval(id); expRef.current?.(); }
+    }, 100);
+    return () => clearInterval(id);
   }, [countdown]);
 
   return (
@@ -318,16 +363,18 @@ function ReportCard({ t, said, rec, question, actions, countdown }: {
       {countdown && (
         <div className="g-confirm-ring" style={{ position: "absolute", top: -14, right: 20 }}>
           <div className="num">{(ms / 1000).toFixed(1)}s</div>
-          <div className="lab">human confirm</div>
+          <div className="lab">then AI acts</div>
         </div>
       )}
       <div className="src"><span className="dot" /><span className="nm">Nerve Center · to you</span><span className="t">{t}</span></div>
-      <div className="said">{said}</div>
-      <div className="rec">{rec}</div>
-      <div className="q">{question}</div>
+      {said && <div className="said">{said}</div>}
+      <div className={`rec${said ? "" : " lead"}`}>{rec}</div>
+      {more && tele && <div className="g-tele">{tele.map((l) => <span key={l}>{l}</span>)}</div>}
+      {question && <div className="q">{question}</div>}
+      {actsLabel && <div className="acts-label">{actsLabel}</div>}
       <div className="acts">
         {actions.map((a, i) => (
-          <button key={i} className={`g-btn ${a.kind}`} onClick={a.onClick}>{a.label}</button>
+          <button key={i} className={`g-btn ${a.kind}`} onClick={a.more ? () => setMore((v) => !v) : a.onClick}>{a.label}</button>
         ))}
       </div>
     </motion.div>
@@ -351,10 +398,19 @@ function Consequence({ good, goodText, badText, onNext, nextLabel }: {
   );
 }
 
+/** result step with no card copy left — the photo/animation is the content */
+function ResultBar({ onNext, label = "Continue →" }: { onNext: () => void; label?: string }) {
+  return (
+    <motion.div className="g-resultbar" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}>
+      <button className="g-btn teal" onClick={onNext}>{label}</button>
+    </motion.div>
+  );
+}
+
 function DialResult({ dial }: { dial?: string }) {
-  if (dial === "standing") return <>Standing adaptive authority granted. Irreversible acts proceed on scene judgment — logged, streamed to ATC, countermandable by any conscious crew member, low-confidence scenes still escalate. <span className="dim">Every action builds a trust record. Revocable in one tap.</span></>;
-  if (dial === "confirms") return <>Live human confirms retained. Median confirm time: 4.2 s. <span className="dim">Every confirm builds the trust record; the system will propose standing authority once it has earned it. You decide — it never does.</span></>;
-  if (dial === "doctrine") return <>Fixed doctrine retained. The system will log every scene that diverges from the playbook and show you a divergence report. <span className="dim">For reference: last month's T+1:05 scene had no matching rule — and would have waited for one.</span></>;
+  if (dial === "standing") return <>Granted. Irreversible acts proceed on scene judgment — logged, streamed to ATC, countermandable by any conscious crew member. Low confidence still escalates. <span className="dim">Revocable in one tap.</span></>;
+  if (dial === "confirms") return <>Retained. Median confirm: 4.2 s. <span className="dim">Every confirm builds the trust record; it proposes standing authority once it has earned it. You decide — it never does.</span></>;
   return <>Authority recorded.</>;
 }
 
@@ -375,7 +431,7 @@ function DiveResolve() {
   );
 }
 
-/* airport contact animation (the cut ground phase, as a 5s nod) */
+/* airport contact animation — with the S3 card copy cut, this IS the result beat */
 function AirportContact({ contacted }: { contacted: boolean }) {
   return (
     <svg width="min(520px,86vw)" height="200" viewBox="0 0 520 200" style={{ display: "block" }} role="img" aria-label="Airport contact">
@@ -403,19 +459,20 @@ function AirportContact({ contacted }: { contacted: boolean }) {
   );
 }
 
-function Run2Ending({ onNext }: { onNext: () => void }) {
+function Run2Ending({ decisions, onNext }: { decisions: number; onNext: () => void }) {
   useEffect(() => { const t = setTimeout(onNext, 8000); return () => clearTimeout(t); }, [onNext]);
+  const w = ["no", "one", "two", "three", "four"][Math.max(0, Math.min(4, decisions))];
   return (
     <motion.div className="g-stage" {...fade}>
       <div className="g-vig-teal" />
       <motion.div className="g-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
         <div className="g-kicker teal">Resolved</div>
         <div className="g-title" style={{ fontSize: "clamp(28px,4.4vw,50px)" }}>
-          Same 174. Nobody needed luck —<br />and nobody needed a rule that happened to fit.
+          Same 174. No luck needed.<br />No rule that happened to fit.
         </div>
         <p className="g-prose" style={{ margin: "24px auto 0", textAlign: "center" }}>
-          You made <b style={{ color: "var(--g-gold)" }}>four decisions</b>. The machine did the rest — saw the scene,
-          guarded the envelope, opened the door, guided the aircraft, informed the airport.
+          You made <b style={{ color: "var(--g-gold)" }}>{w} decision{decisions === 1 ? "" : "s"}</b>.
+          The machine did the rest: saw, guarded, opened, guided, informed.
         </p>
         <div className="g-actions" style={{ marginTop: 34 }}>
           <button className="g-btn big gold" onClick={onNext}>See the outcome & the risks</button>

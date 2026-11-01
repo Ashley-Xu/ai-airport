@@ -100,8 +100,8 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
         Last month,<br />a co-pilot attacked<br />the captain.
       </div>
       <p className="g-prose" style={{ margin: "24px auto 0" }}>
-        On a Dubai–Tel Aviv flight. 174 people landed safely. You will find out <b>why</b> — from
-        inside it. You will be the captain, then a passenger, then the only hand on the controls.
+        Dubai–Tel Aviv. 174 landed safely. Find out <b>why</b> — from inside. Three seats: the captain,
+        a passenger, the controls.
       </p>
       <div className="g-legend">
         <div className="li"><span className="k">HOLD</span><span className="t">keep pressing</span></div>
@@ -111,7 +111,7 @@ function Run1Intro({ onNext, demo = false }: { onNext: () => void; demo?: boolea
       <div className="g-actions" style={{ marginTop: 34 }}>
         <button className="g-btn big gold" onClick={onNext}>Take his seat →</button>
       </div>
-      <div className="g-fineprint">Abstract depiction · no faces, no blood · grounded in a real event</div>
+      <div className="g-fineprint">Stylized · no faces, no blood · based on a real event</div>
     </motion.div>
   );
 }
@@ -195,10 +195,10 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>01</b> · In the air<span className="role coral">You are the captain</span></div>
 
       {phase === "struggle" && !armed ? (
-        <LookBeat text={<>T+1:05 · 38,000 feet. You are the captain. A blade just found your side, your strength is draining — and the flight-deck door is locked from the inside.</>} />
+        <LookBeat text={<>T+1:05 · 38,000 ft. You are the captain. Stabbed. Fading. The door locks from the inside.</>} />
       ) : phase === "struggle" ? (
         <Dock objective="Unlock the flight-deck door"
-          hint={<>Press and hold the button — or hold <span className="kbd">SPACE</span>. It slips as you fade.</>}>
+          hint={<>Hold — or <span className="kbd">SPACE</span>. It slips as you fade.</>}>
           <button className={`g-holdbtn ${holding ? "on" : ""} ${ring >= 100 ? "done" : ""}`}
             onPointerDown={(e) => { e.preventDefault(); hold(); }} onPointerUp={release} onPointerLeave={release} onPointerCancel={release}>
             <HoldRingMini value={ring} />
@@ -212,7 +212,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       ) : (
         <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
           <div className="g-beat">He reached the lock.<br /><span className="coral">Barely.</span></div>
-          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>With his remaining strength. Ten seconds earlier into unconsciousness — this door is a wall.</div>
+          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Ten seconds later — unconscious — this door is a wall.</div>
         </motion.div>
       )}
     </motion.div>
@@ -301,10 +301,10 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
       <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>02</b> · In the cabin<span className="role coral">You are a passenger</span></div>
 
       {phase === "struggle" && !armed ? (
-        <LookBeat text={<>Rows back, you are a passenger. The attacker is on the far side of that door. The captain is down — and the aircraft is still falling.</>} />
+        <LookBeat text={<>Rows back. You are a passenger. The captain is down. The aircraft is still falling.</>} />
       ) : phase === "struggle" ? (
         <Dock objective="Get in and subdue the attacker"
-          hint={<>Tap the bar — or press <span className="kbd">SPACE</span> — when the marker is inside <b>HIT</b>. 4 clean moves.</>}>
+          hint={<>Tap when the marker hits <b>HIT</b> — or <span className="kbd">SPACE</span>. 4 clean moves.</>}>
           <div className="g-tap" onClick={tryHit} style={{ cursor: "pointer" }}>
             <div className="g-tap-track">
               <div className="g-tap-zone" style={{ left: "38%", width: "24%" }} />
@@ -318,7 +318,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
       ) : (
         <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
           <div className="g-beat">Taken down.<br /><span className="coral">Still falling.</span></div>
-          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>And nobody up here can fly it.</div>
+          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>And nobody here can fly it.</div>
         </motion.div>
       )}
     </motion.div>
@@ -403,10 +403,10 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>03</b> · At the controls<span className="role coral">You have never flown a plane</span></div>
 
       {phase === "struggle" && !armed ? (
-        <LookBeat text={<>The attacker is down. The captain is not getting up. The yoke is straight ahead — 14,000 feet below you is the Alps. You have never flown a plane.</>} />
+        <LookBeat text={<>Attacker down. Captain not getting up. The yoke is right here. The plane is diving 500 ft per sec.</>} />
       ) : phase === "struggle" ? (
         <Dock objective="Pull out of the dive — hold level flight"
-          hint={<>Press and hold to pull up · release to let it fall — or hold <span className="kbd">SPACE</span>. Keep the marker in <b>LEVEL</b>.</>}>
+          hint={<>Hold to pull up · release to fall · or <span className="kbd">SPACE</span>. Keep it in <b>LEVEL</b>.</>}>
           <button className={`g-holdbtn ${holding ? "on" : ""}`}
             onPointerDown={(e) => { e.preventDefault(); hold(); }} onPointerUp={release} onPointerLeave={release} onPointerCancel={release}>
             {holding ? "Pulling up…" : "Hold to pull up"}
@@ -425,7 +425,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       ) : (
         <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
           <div className="g-beat"><span className="teal">Stabilized.</span><br />Not landed.</div>
-          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Just no longer falling. And nobody alive up here knows how to land it.</div>
+          <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Just no longer falling. Nobody here knows how to land it.</div>
         </motion.div>
       )}
     </motion.div>
@@ -468,8 +468,8 @@ function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: bool
       <motion.div className="g-center" style={{ zIndex: 6, marginTop: step >= 3 ? 120 : 0, transition: "margin 0.8s" }}
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
         <AnimatePresence mode="wait">
-          {step === 0 && (<motion.div key="s0" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">Two people stand up from the cabin and walk to the flight deck.</div></motion.div>)}
-          {step === 1 && (<motion.div key="s1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They are <span className="teal">two off-duty pilots</span>. Sitting in the cabin. By chance.</div></motion.div>)}
+          {step === 0 && (<motion.div key="s0" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">Two people stand up in the cabin and walk forward.</div></motion.div>)}
+          {step === 1 && (<motion.div key="s1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat"><span className="teal">Two off-duty pilots.</span> By chance.</div></motion.div>)}
           {step === 2 && (<motion.div key="s2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}><div className="g-beat">They land it safely. <span className="teal">174 walk away.</span></div><div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>A dying man's arm. A handful of strangers. Two licences that happened to be aboard.</div></motion.div>)}
           {step >= 3 && (
             <motion.div key="s3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
