@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FlightDeck, AltitudeTrace, Figure } from "./Visuals";
-import { ArtCross, preloadArt, PlateOverlay, plateActive } from "./SceneArt";
+import { ArtCross, preloadArt, PlateOverlay, plateActive, resetPlates } from "./SceneArt";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -28,6 +28,13 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
     return (s && valid.includes(s as Scene)) ? (s as Scene) : "intro";
   });
   const next = (s: Scene) => setScene(s);
+
+  // A (re)started run plates every image again. Must happen during RENDER,
+  // not in an effect: child effects (PlateOverlay setting lastPlatedArt) run
+  // BEFORE parent effects, so an effect here would wipe the value the child
+  // had just written and repeat-detection would never fire.
+  const platesReset = useRef(false);
+  if (!platesReset.current) { platesReset.current = true; resetPlates(); }
 
   useEffect(() => {
     if (scene !== "done") return;

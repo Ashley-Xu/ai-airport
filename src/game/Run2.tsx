@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FlightDeck, AltitudeTrace, AircraftIcon } from "./Visuals";
-import { ArtCross, preloadArt, PlateOverlay } from "./SceneArt";
+import { ArtCross, preloadArt, PlateOverlay, resetPlates } from "./SceneArt";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -33,6 +32,28 @@ export type Run2Choices = { door?: string; dive?: string; airport?: string; dial
 /** Confirm window before the AI takes its recommended action (Run 2). */
 const CONFIRM_MS = 10000;
 
+/** Event clock per step, in seconds. Drives BOTH the report-card label and
+ *  the HUD clock, so they can never disagree. */
+const STEP_SECONDS: Record<Step, number> = {
+  intro: 0,
+  d1_door: 65,       // T+1:05
+  d1_result: 69,     // T+1:09
+  d2_dive: 30,       // T+0:30
+  d2_result: 180,    // T+3:00
+  d3_airport: 540,   // T+9:00
+  d3_result: 780,    // T+13:00
+  d4_dial: 2280,     // T+38:00
+  d4_result: 2284,   // T+38:04
+  ending: 7200,      // shown specially as T+2:00:00
+  done: 7200,
+};
+
+/** Matches the HUD formatter in Game.tsx, plus the 2h special case. */
+const fmtClock = (s: number) =>
+  s >= 7200
+    ? "T+2:00:00"
+    : `T+${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
+
 /** Decisions a human actually made (AI auto-actions are prefixed "auto:"). */
 export const humanDecisions = (c: Run2Choices) =>
   Object.values(c).filter((v) => v && !v.startsWith("auto:")).length;
@@ -51,29 +72,22 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   });
   const [choices, setChoices] = useState<Run2Choices>({});
   const [t, setT] = useState("T+0:00");
-  const [diveMode, setDiveMode] = useState<"dive" | "guarded">("dive");
-  const [guardProgress, setGuardProgress] = useState(0);
-  const [contacted, setContacted] = useState(false);
 
-  // clock display driven by step
+  // One clock, two places: the report card label AND the HUD (via clockRef,
+  // which Game.tsx formats with the same fmtClock). Previously Run2 never
+  // wrote clockRef, so the HUD stayed frozen at T+0:00 for the whole run
+  // while the cards read T+9:00.
   useEffect(() => {
-    const map: Partial<Record<Step, string>> = {
-      intro: "T+0:00", d1_door: "T+1:05", d1_result: "T+1:09",
-      d2_dive: "T+0:30", d2_result: "T+3:00", d3_airport: "T+9:00", d3_result: "T+13:00",
-      d4_dial: "T+38:00", d4_result: "T+38:04", ending: "T+2:00:00",
-    };
-    if (map[step]) setT(map[step]!);
-  }, [step]);
+    const s = STEP_SECONDS[step];
+    if (s === undefined) return;
+    clockRef.current = s;
+    setT(fmtClock(s));
+  }, [step, clockRef]);
 
-  // dive guard animation
-  useEffect(() => {
-    if (step === "d2_dive" || step === "d2_result") {
-      let raf = 0; let p = 0;
-      const loop = () => { p = Math.min(1, p + 0.012); setGuardProgress(p); if (p < 1) raf = requestAnimationFrame(loop); };
-      raf = requestAnimationFrame(loop);
-      return () => cancelAnimationFrame(raf);
-    }
-  }, [step]);
+  // A (re)started run plates every image again — see Run1 for why this is
+  // render-time and not an effect.
+  const platesReset = useRef(false);
+  if (!platesReset.current) { platesReset.current = true; resetPlates(); }
 
   const go = (s: Step, patch?: Partial<Run2Choices>) => {
     if (patch) { const nc = { ...choices, ...patch }; setChoices(nc); onChoices(nc); }
@@ -88,9 +102,9 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
     const auto: Partial<Record<Step, { to: Step; patch?: Partial<Run2Choices>; act?: () => void }>> = {
       d1_door: { to: "d1_result", patch: { door: "release" } },
       d1_result: { to: "d2_dive" },
-      d2_dive: { to: "d2_result", patch: { dive: "guide" }, act: () => setDiveMode("guarded") },
+      d2_dive: { to: "d2_result", patch: { dive: "guide" } },
       d2_result: { to: "d3_airport" },
-      d3_airport: { to: "d3_result", patch: { airport: "confirm" }, act: () => setContacted(true) },
+      d3_airport: { to: "d3_result", patch: { airport: "confirm" } },
       d3_result: { to: "d4_dial" },
       d4_dial: { to: "d4_result", patch: { dial: "confirms" } },
       d4_result: { to: "ending" },
@@ -113,9 +127,9 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {/* D1 — the door */}
         {step === "d1_door" && (
           <Run2Scene key="d1" demo={demo} brief={<>T+1:05, flight deck. The captain is down at a sealed door.</>}
-            photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-detected"
+            statusLabel="Flight deck · live" label="Scene 1 · In the air" photo="r2-detected"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<FlightDeck doorOpen={0} threat captainDown highlightDoor aiEyes paxAtDoor={2} />}
+            status={[["Door lock", "Sealed"], ["Souls", "174"], ["Playbook match", "None"], ["Cabin", "Surged forward"]]}
             vignette="teal">
             <ReportCard
               t={t}
@@ -136,9 +150,12 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {step === "d1_result" && (
           <Run2Scene key="d1r" demo={demo} holdBrief
             brief={held ? <>You held. The lock stays sealed.</> : <>The latch releases on your word.</>}
-            photoLabel="Live model · flight deck" label="Scene 1 · In the air" photo="r2-unlocked"
+            statusLabel="Flight deck · live" label="Scene 1 · In the air" photo="r2-unlocked"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<FlightDeck doorOpen={held ? 0 : 1} threat captainDown aiEyes paxAtDoor={4} scanning />} vignette="teal">
+            status={held
+              ? [["Door lock", "Held sealed"], ["Captain", "Unaided"], ["Souls", "174"]]
+              : [["Door lock", "Released"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Human · 4.2 s"]]}
+            vignette="teal">
             <ResultBar onNext={() => go("d2_dive")} />
           </Run2Scene>
         )}
@@ -146,26 +163,28 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {/* D2 — the dive (softened: stabilize + guide) */}
         {step === "d2_dive" && (
           <Run2Scene key="d2" demo={demo} brief={<>Falling. Uncommanded. 14,000 ft in 30 s.</>}
-            photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-alert"
+            statusLabel="Aircraft state · live" label="Scene 2 · The dive" photo="r2-alert"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<AltitudeTrace mode={diveMode} progress={guardProgress} showSafeBand />} vignette="teal">
+            status={[["Altitude", "−14,000 ft"], ["Rate", "500 ft / s"], ["Envelope", "Held by intent-guard"], ["Pilots aboard", "None able"]]}
+            vignette="teal">
             <ReportCard
               t={t}
               rec={<>No one aboard can land this. I <b>stabilize and guide</b> — the off-duty crew or a ground pilot flies. Auto-land only where certified.</>}
               actions={[
-                { label: "Authorize", kind: "teal", onClick: () => { setDiveMode("guarded"); go("d2_result", { dive: "guide" }); } },
-                { label: "Keep searching", kind: "ghost", onClick: () => { setDiveMode("guarded"); go("d2_result", { dive: "search" }); } },
+                { label: "Authorize", kind: "teal", onClick: () => go("d2_result", { dive: "guide" }) },
+                { label: "Keep searching", kind: "ghost", onClick: () => go("d2_result", { dive: "search" }) },
               ]}
               countdown
-              onExpire={demo ? undefined : () => { setDiveMode("guarded"); go("d2_result", { dive: "auto:guide" }); }}
+              onExpire={demo ? undefined : () => go("d2_result", { dive: "auto:guide" })}
             />
           </Run2Scene>
         )}
         {step === "d2_result" && (
           <Run2Scene key="d2r" demo={demo} brief={<>The nose comes up.</>}
-            photoLabel="Live model · altitude trace" label="Scene 2 · The dive" photo="r2-stabilized"
+            statusLabel="Aircraft state · live" label="Scene 2 · The dive" photo="r2-stabilized"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<DiveResolve />} vignette="teal">
+            status={[["Attitude", "Stabilized"], ["Dive", "Arrested"], ["Controls", "Off-duty crew"], ["Envelope", "Guarded"]]}
+            vignette="teal">
             <Consequence good
               goodText={<>Dive arrested. The off-duty pilots take the controls; I hold the envelope.</>}
               onNext={() => go("d3_airport")} nextLabel="Continue →" />
@@ -175,35 +194,38 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {/* D3 — contact the airport */}
         {step === "d3_airport" && (
           <Run2Scene key="d3" demo={demo} brief={<>Below: the nearest suitable airport. Trucks, lights, a cleared stand. Nobody phoned.</>}
-            photoLabel="Live model · airport response" label="Scene 3 · The ground" photo="r2-airport-alarm"
+            statusLabel="Ground response · live" label="Scene 3 · The ground" photo="r2-airport-alarm"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<AirportContact contacted={contacted} />} vignette="teal">
+            status={[["Nearest suitable", "Contacted"], ["Fire · medical", "Rolling"], ["Stand", "Clearing"], ["Phone tree", "None"]]}
+            vignette="teal">
             <ReportCard
               t={t}
               said={<>Nearest suitable airport <span className="em">contacted</span>. Trucks, lights, a cleared stand. Fire and medical rolling, family assistance opening.</>}
               rec={<>They have it before you're on approach. <b>No phone tree.</b> Confirm services.</>}
               actions={[
-                { label: "Confirm", kind: "teal", onClick: () => { setContacted(true); go("d3_result", { airport: "confirm" }); } },
-                { label: "Redirect farther", kind: "ghost", onClick: () => { setContacted(true); go("d3_result", { airport: "redirect" }); } },
+                { label: "Confirm", kind: "teal", onClick: () => go("d3_result", { airport: "confirm" }) },
+                { label: "Redirect farther", kind: "ghost", onClick: () => go("d3_result", { airport: "redirect" }) },
               ]}
               countdown
-              onExpire={demo ? undefined : () => { setContacted(true); go("d3_result", { airport: "auto:confirm" }); }}
+              onExpire={demo ? undefined : () => go("d3_result", { airport: "auto:confirm" })}
             />
           </Run2Scene>
         )}
         {step === "d3_result" && (
-          <Run2Scene key="d3r" demo={demo} photoLabel="Live model · airport response" label="Scene 3 · The ground"
+          <Run2Scene key="d3r" demo={demo} statusLabel="Ground response · live" label="Scene 3 · The ground"
             photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<AirportContact contacted />} vignette="teal">
+            status={[["Fire", "On stand"], ["Medical", "On stand"], ["Counsellors", "Briefed"], ["Log", "Court-ready"]]}
+            vignette="teal">
             <ResultBar onNext={() => go("d4_dial")} />
           </Run2Scene>
         )}
 
         {/* D4 — the authority dial. No clock: this decision waits for a human. */}
         {step === "d4_dial" && (
-          <Run2Scene key="d4" demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After"
+          <Run2Scene key="d4" demo={demo} statusLabel="Flight deck · live" label="Scene 4 · After"
             photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<FlightDeck doorOpen={1} threat={false} aiEyes paxAtDoor={0} />} vignette="teal">
+            status={[["Souls", "174 · all lived"], ["Captain", "Stable in surgery"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]}
+            vignette="teal">
             <ReportCard
               t={t}
               said={<>Resolved. <span className="em">174 souls</span>. Captain stable in surgery. Audit trail attached.</>}
@@ -218,9 +240,10 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d4_result" && (
-          <Run2Scene key="d4r" demo={demo} photoLabel="Live model · flight deck" label="Scene 4 · After"
+          <Run2Scene key="d4r" demo={demo} statusLabel="Flight deck · live" label="Scene 4 · After"
             photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
-            art={<FlightDeck doorOpen={1} threat={false} aiEyes />} vignette="teal">
+            status={[["Authority", "Recorded"], ["Trust record", "Building"], ["Revocable", "One tap"], ["Next divergence", "Logged"]]}
+            vignette="teal">
             <Consequence good
               goodText={<DialResult dial={choices.dial} />}
               onNext={() => go("ending")} nextLabel="See the outcome →" />
@@ -259,10 +282,12 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
   );
 }
 
-function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo, photoLabel, brief, settleMs, demo, holdBrief }: {
+function Run2Scene({ label, sub, subClass, clock, status, children, vignette, photo, statusLabel, brief, settleMs, demo, holdBrief }: {
   label: string; sub: string; subClass?: string; clock: string;
-  art: React.ReactNode; children: React.ReactNode; vignette?: "teal" | "coral";
-  photo?: ArtKey; photoLabel?: string;
+  /** plain-text situation readout, replacing the old schematic box */
+  status?: [string, string][];
+  children: React.ReactNode; vignette?: "teal" | "coral";
+  photo?: ArtKey; statusLabel?: string;
   /** orienting line shown during the "look" beat, before any decision is asked */
   brief?: React.ReactNode;
   /** keep the brief on screen after the beat (result steps with no card text) */
@@ -273,7 +298,14 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
   // clean plate first: the picture alone, full brightness, nothing on it.
   // The look beat only starts once the plate lifts.
   const [revealed, setRevealed] = useState(!photo);
-  useEffect(() => { if (photo) setRevealed(false); }, [photo]);
+  // Reset only when the photo actually CHANGES — not on mount. On mount a
+  // skipped plate (same image as the previous step) calls onReveal from the
+  // child, whose effects run before the parent's; resetting here would wipe
+  // that and leave the decision card permanently hidden.
+  const prevPhoto = useRef(photo);
+  useEffect(() => {
+    if (prevPhoto.current !== photo) { prevPhoto.current = photo; setRevealed(false); }
+  }, [photo]);
 
   // decision steps breathe longer; result steps just get a short beat
   const base = settleMs ?? (brief ? (demo ? 750 : 2400) : (demo ? 450 : 1100));
@@ -293,18 +325,27 @@ function Run2Scene({ label, sub, subClass, clock, art, children, vignette, photo
       {!photo && vignette === "coral" && <div className="g-vig-coral" />}
       {revealed && <div className="g-scene-label">{label}<span className={`role ${subClass}`}>{sub}</span></div>}
 
-      {/* the data-model overlay arrives WITH the decision — during the look-beat it's just the photo */}
-      <div style={{ flex: 1, display: "grid", placeItems: photo ? "start end" : "center", width: "100%", minHeight: 0, padding: photo ? "0 24px" : 0 }}>
-        <motion.div className={photo ? "g-datacard" : undefined}
+      {/* the readout arrives WITH the decision — during the look beat it's just the photo.
+          Plain text, no box: the picture is the visual, the words are the data. */}
+      {status && status.length > 0 && (
+        <motion.div className="g-status"
           initial={false}
-          animate={{ opacity: photo ? (settled ? 1 : 0) : 0.85, y: settled ? 0 : -10 }}
+          animate={{ opacity: settled ? 1 : 0, y: settled ? 0 : -8 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-          {photo && <div className="g-datacard-h">{photoLabel ?? "Live model"}</div>}
-          {art}
+          <div className="g-status-h">{statusLabel ?? "Live model"}</div>
+          <dl>
+            {status.map(([k, v]) => (
+              <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
+            ))}
+          </dl>
         </motion.div>
-      </div>
+      )}
 
       <PlateOverlay art={photo} demo={demo} onReveal={() => setRevealed(true)} />
+
+      {/* spacer: the readout is absolutely positioned, so this is what pushes
+          the caption / decision card to the bottom of the stage */}
+      <div style={{ flex: 1, minHeight: 0 }} />
 
       {/* bottom: orienting caption during the look-beat, decision/outcome card once settled */}
       <div style={{ position: "relative", zIndex: 6, width: "100%", minHeight: 170 }}>
@@ -423,51 +464,6 @@ function DialResult({ dial }: { dial?: string }) {
   if (dial === "standing") return <>Granted. Irreversible acts proceed on scene judgment — logged, streamed to ATC, countermandable by any conscious crew member. Low confidence still escalates. <span className="dim">Revocable in one tap.</span></>;
   if (dial === "confirms") return <>Retained. Median confirm: 4.2 s. <span className="dim">Every confirm builds the trust record; it proposes standing authority once it has earned it. You decide — it never does.</span></>;
   return <>Authority recorded.</>;
-}
-
-/* dive resolve: coral trace → teal guarded, with an aircraft icon steadying */
-function DiveResolve() {
-  return (
-    <div style={{ position: "relative", display: "grid", placeItems: "center" }}>
-      <AltitudeTrace mode="guarded" progress={1} showSafeBand />
-      <motion.div style={{ position: "absolute", right: 30, top: 34 }}
-        initial={{ rotate: -30, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
-        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}>
-        <AircraftIcon color="var(--g-cyan)" size={44} />
-      </motion.div>
-      <div style={{ position: "absolute", bottom: 6, fontFamily: "var(--g-body)", fontSize: 10, letterSpacing: "0.1em", color: "var(--g-cyan)", textTransform: "uppercase" }}>
-        envelope held · guidance vector to nearest suitable
-      </div>
-    </div>
-  );
-}
-
-/* airport contact animation — with the S3 card copy cut, this IS the result beat */
-function AirportContact({ contacted }: { contacted: boolean }) {
-  return (
-    <svg width="min(520px,86vw)" height="200" viewBox="0 0 520 200" style={{ display: "block" }} role="img" aria-label="Airport contact">
-      {/* aircraft inbound */}
-      <motion.g initial={{ x: 0 }} animate={{ x: contacted ? 150 : 0 }} transition={{ duration: 2, ease: "easeInOut" }}>
-        <g transform="translate(60 60)"><AircraftIcon color="var(--g-cyan)" size={36} /></g>
-      </motion.g>
-      {/* airport */}
-      <rect x="360" y="120" width="120" height="40" rx="6" fill="rgba(148,163,184,0.06)" stroke="rgba(148,163,184,0.3)" />
-      <text x="368" y="145" style={{ fontFamily: "var(--g-body)", fontSize: 10, fill: "var(--g-faint)" }}>NEAREST SUITABLE</text>
-      {/* data link */}
-      <motion.line x1="110" y1="78" x2="360" y2="130" stroke="var(--g-cyan)" strokeWidth="1.4" strokeDasharray="4 4"
-        initial={{ opacity: 0.2 }} animate={{ opacity: contacted ? 1 : 0.4 }} transition={{ duration: 0.6 }} />
-      {/* services light up */}
-      {["FIRE", "MEDICAL", "STAND CLEAR", "COUNSELLORS"].map((s, i) => (
-        <motion.g key={s} initial={{ opacity: 0 }} animate={{ opacity: contacted ? 1 : 0.15 }} transition={{ delay: contacted ? i * 0.25 : 0, duration: 0.4 }}>
-          <circle cx={372 + i * 28} cy="180" r="5" fill="var(--g-cyan)" />
-          <text x={372 + i * 28} y="196" textAnchor="middle" style={{ fontFamily: "var(--g-body)", fontSize: 7.5, fill: "var(--g-cyan)" }}>{s}</text>
-        </motion.g>
-      ))}
-      <text x="60" y="180" style={{ fontFamily: "var(--g-body)", fontSize: 9, fill: contacted ? "var(--g-cyan)" : "var(--g-faint)" }}>
-        {contacted ? "INFORMED · SERVICES PRE-POSITIONED" : "AWAITING CONFIRMATION"}
-      </text>
-    </svg>
-  );
 }
 
 function Run2Ending({ decisions, onNext }: { decisions: number; onNext: () => void }) {

@@ -88,37 +88,55 @@ export const plateMs = (demo?: boolean, base = 2200) => (demo ? Math.round(base 
 
 const FADE_MS = 650;
 
+/** The art the plate last showed. Survives remounts, so when consecutive
+ *  steps reuse the SAME image we don't replay a full-screen plate of a
+ *  picture that is already on screen — which reads to the player as the
+ *  screen not responding to their click at all. */
+let lastPlatedArt: ArtKey | undefined;
+
+/** Call when a run (re)starts, so a replay plates every image again. */
+export const resetPlates = () => { lastPlatedArt = undefined; };
+
 /**
  * The clean plate itself: an opaque full-bleed image at FULL brightness
  * (no dim, no vignette, no text, no HUD) that holds, then fades away to
  * reveal the scene underneath. Re-runs whenever `art` changes, so every
- * newly-shown image gets its moment alone. Skips itself if art is missing.
+ * newly-shown image gets its moment alone. Skips itself if the art is
+ * missing, or if this exact image was just plated.
  *
- * `onReveal` fires when the fade BEGINS — that's the cue for the scene to
- * start its own staging (captions, mechanics, HUD).
+ * `onReveal` fires when the fade BEGINS (or immediately on a skip) — that's
+ * the cue for the scene to start its own staging (captions, mechanics, HUD).
  */
 export function PlateOverlay({ art, demo, ms, onReveal }: {
   art?: ArtKey; demo?: boolean; ms?: number; onReveal?: () => void;
 }) {
   const [failed, setFailed] = useState(false);
   const have = !!art && HAVE[art] && !failed;
+
+  // A repeat of the image already on screen needs no plate. Decided once at
+  // mount (the plate is the scene's opening act, not a mid-scene event).
+  const [repeat] = useState(() => !!art && art === lastPlatedArt);
   const hold = ms ?? plateMs(demo);
 
   // reset when the image changes so each new picture gets its own plate
   useEffect(() => setFailed(false), [art]);
 
-  const [phase, setPhase] = useState<"up" | "fade" | "gone">(have ? "up" : "gone");
+  useEffect(() => {
+    if (have && !repeat && art) lastPlatedArt = art;
+  }, [have, repeat, art]);
+
+  const [phase, setPhase] = useState<"up" | "fade" | "gone">(have && !repeat ? "up" : "gone");
   const revealRef = useRef(onReveal); revealRef.current = onReveal;
 
   // re-trigger on every art change: each newly-shown image gets its own plate
   useEffect(() => {
-    if (!have) { setPhase("gone"); return; }
+    if (!have || repeat) { setPhase("gone"); return; }
     setPhase("up");
     const t1 = setTimeout(() => setPhase("fade"), hold);
     const t2 = setTimeout(() => setPhase("gone"), hold + FADE_MS);
     return () => { clearTimeout(t1); clearTimeout(t2); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [have, hold, art]);
+  }, [have, repeat, hold, art]);
 
   useEffect(() => {
     // "gone" also covers the skip case (missing/failed art) — the scene must
