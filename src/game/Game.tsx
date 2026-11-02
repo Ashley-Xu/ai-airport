@@ -49,6 +49,16 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   // A fresh playthrough starts live — don't carry a freeze from the last run.
   const restart = () => { clockRef.current = 0; setChoices({}); setFrozen(false); setPhase("title"); };
 
+  /* Jump straight to the outcome. A presenter tool: mid-walkthrough, reach the
+     conclusion without playing out every clock. Only offered inside a run —
+     during the prologue the existing "Skip →" already means something else
+     (skip the prologue), and two skips side by side would be ambiguous.
+     Unfreezes, because a paused state is meaningless on a static screen and
+     would otherwise leak into whatever is entered next. Choices are left
+     intact: the dossier ignores them today, and wiping them would discard
+     what the player actually did. */
+  const skipToEnd = () => { setFrozen(false); setPhase("dossier"); };
+
   return (
     <div className={`g-root${frozen ? " frozen" : ""}`}>
       <ClipLayer phase={phase} />
@@ -87,6 +97,14 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
               title={canBack ? "Back one step" : "Nothing to go back to"}>
               ← <span className="ctl-word">Back</span>
             </button>
+            {(phase === "run1" || phase === "run2") && (
+              <button
+                className="skip ctl end"
+                onClick={skipToEnd}
+                title="Skip to the ending — jump straight to the outcome and the risks">
+                ⏭ <span className="ctl-word">End</span>
+              </button>
+            )}
             <button className="skip home" onClick={restart} title="Back to the title screen">⌂ <span className="ctl-word">Home</span></button>
           </div>
         </div>

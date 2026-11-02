@@ -116,6 +116,11 @@
 .g-hud .skip.ctl.on { color: var(--g-gold); border-color: rgba(230,192,122,0.55);
   background: rgba(230,192,122,0.09); box-shadow: 0 0 14px rgba(230,192,122,0.18); }
 .g-hud .skip.ctl.on:hover { color: var(--g-gold); border-color: rgba(230,192,122,0.8); }
+/* Skip-to-end is a presenter utility, not part of the narrative: quiet at rest
+   so it never competes with Freeze/Back as a control to use, full strength on
+   hover. Kept neutral rather than gold (human decides) or cyan (system). */
+.g-hud .skip.ctl.end { opacity: 0.55; }
+.g-hud .skip.ctl.end:hover { opacity: 1; }
 /* frozen clock: gold and still, so the freeze is legible without narration */
 .g-hud .clock.frozen { color: var(--g-gold); text-shadow: 0 0 14px rgba(230,192,122,0.45); }
 .g-root.frozen .g-art.kb { animation-play-state: paused; }

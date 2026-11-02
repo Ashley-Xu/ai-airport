@@ -297,6 +297,12 @@ QA hooks, inert in normal play:
 - `?r2=<step>&hold=1` — pre-seed the held branch
 - `?demo=1` — auto-play the whole piece on canonical choices
 
+HUD controls during either run: `❚❚ Freeze` (pauses game time; a banner above every
+layer resumes it) · `← Back` (one step; rolls choices back with it) · `⏭ End` (jump
+straight to the dossier — presenter shortcut, unfreezes first, choices left intact) ·
+`⌂ Home` (title screen, clears choices). `⏭ End` appears only inside a run, not during
+the prologue, where `Skip →` already means "skip the prologue".
+
 ### Decision-count outcomes
 
 | You did | Ending says |
