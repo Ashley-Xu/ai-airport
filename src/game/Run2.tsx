@@ -7,7 +7,10 @@ import type { ArtKey } from "./art";
 
 preloadArt([
   "r2-detected", "r2-unlocked", "r2-alert",
-  "r2-stabilized", "r2-airport-alarm", "r2-airport-ready",
+  "r2-stabilized", "r2-flying", "r2-airport-alarm", "r2-airport-ready",
+  // d4_result closes on Run 1's reunion art — the same 174 people, now safe.
+  // Preloaded here too so the plate never flash-loads it on first arrival.
+  "s4-reunion",
 ]);
 
 /* ══════════════════════════════════════════════════════════════
@@ -281,8 +284,15 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d3_result" && (
-          <Run2Scene key="d3r" demo={demo} statusLabel="Ground response · live" label="Scene 3 · The ground"
-            photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
+          <Run2Scene key="d3r" demo={demo} holdBrief
+            brief={<>Everything is in place before you're on approach.</>}
+            statusLabel="Ground response · live" label="Scene 3 · The ground"
+            /* T+13:00 — the aircraft is still flying and does not land until
+               T+38:00, so the on-stand shot (door open, airstair attached)
+               gave away the ending 25 minutes early. The ops control room is
+               accurate for this moment. Plate skips, since d3_airport just
+               showed this image: the rows and caption are what change. */
+            photo="r2-airport-alarm" sub="You are the decision-maker" subClass="teal" clock={t}
             status={[["Fire", "On stand"], ["Medical", "On stand"], ["Counsellors", "Briefed"], ["Log", "Court-ready"]]}
             vignette="teal">
             <ResultBar onNext={() => go("d4_dial")} />
@@ -314,7 +324,13 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         )}
         {step === "d4_result" && (
           <Run2Scene key="d4r" demo={demo} statusLabel="Flight deck · live" label="Scene 4 · After"
-            photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
+            /* Families on the ground, safe. This screen is the payoff for the
+               authority decision, so it shows what the governance bought —
+               not the mid-crisis cabin (door open, blood) it used to, which
+               contradicted both the T+38:04 clock and rows like "Authority ·
+               Recorded" and "Revocable · One tap". Run 1's art, deliberately:
+               the same 174 people, now on the other side of it. */
+            photo="s4-reunion" sub="You are the decision-maker" subClass="teal" clock={t}
             status={[["Authority", "Recorded"], ["Trust record", "Building"], ["Revocable", "One tap"], ["Next divergence", "Logged"]]}
             vignette="teal">
             <Consequence
