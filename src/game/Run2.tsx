@@ -176,21 +176,27 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           <Run2Scene key="d1" demo={demo} brief={<>T+1:05, flight deck. The captain is down at a sealed door.</>}
             statusLabel="Flight deck · live" label="Scene 1 · In the air" photo="r2-detected"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            /* The attacker thread: he is INSIDE the flight deck (he is the
-               co-pilot), so he cannot be contained before you release — releasing
-               is what lets crew in. What the AI adds is TRACKING, which is why
-               releasing is the safe move: it knows exactly where he is and
-               vectors the three recognized crew straight to him.
-               "armed" not "axe"/"knife": canon says the cockpit's own crash axe
-               (PLAN.md:83, DeepDive.tsx:833), and naming a weapon in a row is
-               fine in text but the depiction rules keep weapons out of imagery —
-               "armed" states the threat without pinning a noun the art can't show.
-               Replaces the vaguer "Cabin · Surged forward". */
-            status={[["Door lock", "Sealed"], ["Attacker", "Inside flight deck, armed"], ["Crew at door", "3 · vectored"], ["Souls", "174"], ["Playbook match", "None"]]}
+            /* The attacker thread — canonical sequence (Ashley, locked):
+               the co-pilot is NOT down before the release, in EITHER run. He is
+               inside the flight deck, at the controls. The AI's contribution is
+               that it reports his location and status to the cabin crew BEFORE
+               the door opens, so they enter knowing what they are walking into —
+               and then the CREW handle him AFTER the release. The AI never
+               touches him; PLAN.md:121 holds ("cannot stop the axe from
+               swinging... everything after the swing").
+               This makes both runs the same event: in each, people get into the
+               flight deck and subdue him. The only difference is HOW the door
+               opened — a dying man's arm versus a tracked scene plus a human yes
+               — and that the crew are no longer going in blind. That contrast IS
+               the argument, so it belongs in the `said` line the player actually
+               reads, not only in these ambient rows.
+               "Crew · Briefed", not "vectored": informing is what was agreed;
+               "vectored" would imply the AI directing a grab. */
+            status={[["Door lock", "Sealed"], ["Attacker", "Inside flight deck, at controls"], ["Crew", "Briefed · 3 at door"], ["Souls", "174"], ["Playbook match", "None"]]}
             vignette="teal">
             <ReportCard
               t={t}
-              said={<>Intrusion in the flight deck. <span className="em">Captain unresponsive</span>. Aircraft deviating. 174 souls.</>}
+              said={<>Intrusion in the flight deck. <span className="em">Captain unresponsive</span>. Co-pilot at the controls. Crew briefed — location and status.</>}
               rec={<>412 playbook branches — <b>none fit</b>. I'm not looking up a rule. I'm looking at the door.</>}
               question="Release the smart lock?"
               tele={["CAM · LIDAR · ATC — FUSED", "CONFIDENCE 0.94", "6-s CLIP ATTACHED"]}
@@ -211,17 +217,19 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
             photo={held ? "r2-detected" : "r2-unlocked"}
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
-              ? [["Door lock", "Held sealed"], ["Attacker", "Sealed in with the captain"], ["Captain", "Unaided"], ["Souls", "174"]]
-              : [["Door lock", "Released"], ["Attacker", "Restrained at the door"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Human · 4.2 s"]]}
+              ? [["Door lock", "Held sealed"], ["Attacker", "Still inside with the captain"], ["Captain", "Unaided"], ["Souls", "174"]]
+              : [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Human · 4.2 s"]]}
             vignette="teal">
-            {/* One contrast line, released path only: this is where D's framing
-                lands — in Run 1 a passenger happened to reach him in time; here
-                he was tracked and the crew vectored straight to him. Held path
-                sealed him in with the captain, so the contrast doesn't apply. */}
+            {/* One contrast line, released path only. The true difference between
+                the two runs is NOT that the AI stopped him (it can't) — in both
+                runs crew physically subdue him. It's that here they entered
+                BRIEFED on his location and status, instead of going in blind on
+                a dying man's arm and luck. Held path: crew never get in, so the
+                contrast doesn't apply and the row above carries the cost. */}
             {!held && (
               <div style={{ fontFamily: "var(--g-body)", fontSize: 11, letterSpacing: "0.04em",
                 color: "var(--g-dim)", textAlign: "center", marginTop: -4, marginBottom: 2 }}>
-                In Run 1 this was luck. Here it was tracked.
+                In Run 1 they went in blind. Here they were briefed.
               </div>
             )}
             <ResultBar onNext={() => go("d2_dive")} />

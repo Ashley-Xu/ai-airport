@@ -480,7 +480,7 @@ function JudgmentBeat() {
   const confirmed = phase === 3 && ms === 0;
   const lines = [
     { st: "SEES", txt: <>Faces at the door: <b>senior cabin crew, 3 recognized</b>. No weapon visible.</> },
-    { st: "SEES", txt: <>Inside: <b>both pilots down</b>. Captain at the lock, unresponsive.</> },
+    { st: "SEES", txt: <>Inside: <b>captain down</b> at the lock, unresponsive. <b>Co-pilot at the controls.</b></> },
     { st: "SEES", txt: <>Aircraft: <b>envelope guarded</b>, assigned altitude held, 40 min of fuel.</> },
     { st: "NO MATCH", txt: <>Searches <b>412 playbook branches</b>. None fit this scene.</> },
   ];
@@ -509,7 +509,7 @@ function JudgmentBeat() {
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="lab">Recommendation · T+1:05</div>
-          <p>Release the flight-deck lock. Scene supports entry by recognized crew; aircraft is guarded; both pilots require medical aid. Confidence: high.</p>
+          <p>Release the flight-deck lock. Scene supports entry by recognized crew; co-pilot is at the controls and crew have his position and status; aircraft is guarded; the captain requires medical aid. Confidence: high.</p>
         </motion.div>
 
         <motion.div
