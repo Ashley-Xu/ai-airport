@@ -190,9 +190,15 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
                — and that the crew are no longer going in blind. That contrast IS
                the argument, so it belongs in the `said` line the player actually
                reads, not only in these ambient rows.
-               "Crew · Briefed", not "vectored": informing is what was agreed;
-               "vectored" would imply the AI directing a grab. */
-            status={[["Door lock", "Sealed"], ["Attacker", "Inside flight deck, at controls"], ["Crew", "Briefed · 3 at door"], ["Souls", "174"], ["Playbook match", "None"]]}
+               NOTE: the r2-detected art now carries the AI's own threat-ID overlay
+               ("CO-PILOT · UNAUTHORIZED CONTROL / ACTIVE INTRUSION") in the TOP-RIGHT
+               corner, where this status panel also sits — so the panel deliberately
+               OMITS an "Attacker" row. The image already names and locates him; a row
+               here would label him twice in the same corner. The `said` prose still
+               states it (bottom-center, no collision). "Crew · Briefed", not
+               "vectored": informing is what was agreed; "vectored" would imply the
+               AI directing a grab. */
+            status={[["Door lock", "Sealed"], ["Crew", "Briefed · 3 at door"], ["Souls", "174"], ["Playbook match", "None"]]}
             vignette="teal">
             <ReportCard
               t={t}
@@ -217,7 +223,14 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
             photo={held ? "r2-detected" : "r2-unlocked"}
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
-              ? [["Door lock", "Held sealed"], ["Attacker", "Still inside with the captain"], ["Captain", "Unaided"], ["Souls", "174"]]
+              // held reuses r2-detected, whose baked-in AI overlay already labels
+              // the co-pilot ("ACTIVE INTRUSION") in this same top-right corner —
+              // so no "Attacker" row here (same de-dup as d1_door). The held cost
+              // is carried by "Captain · Unaided": the door stayed sealed, crew
+              // never got in, nobody reached him.
+              ? [["Door lock", "Held sealed"], ["Captain", "Unaided"], ["Souls", "174"]]
+              // released shows r2-unlocked (latch + green LED), which has NO baked
+              // threat text, so this row is not a duplicate — it carries the outcome.
               : [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Human · 4.2 s"]]}
             vignette="teal">
             {/* One contrast line, released path only. The true difference between
