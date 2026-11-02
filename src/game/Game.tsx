@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Run1 from "./Run1";
 import Run2, { type Run2Choices } from "./Run2";
 import Dossier from "./Dossier";
-import { AltitudeTrace } from "./Visuals";
 import { usePlateActive } from "./SceneArt";
 import { useFrozen, toggleFrozen, setFrozen } from "./time";
 import { goBack, useCanBack, skipToRunEnd, useCanSkip } from "./nav";
@@ -194,9 +193,10 @@ function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="0" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
-                <AltitudeTrace mode="dive" progress={1} />
-              </div>
+              {/* Text only, like every other cold-open beat. The altitude graph
+                  that used to sit here was decoration the line doesn't need —
+                  and a schematic of a dive under a sentence about a DOOR mixed
+                  two unrelated ideas in one beat. */}
               <div className="g-beat">A door that only opens from one side.</div>
             </motion.div>
           )}
