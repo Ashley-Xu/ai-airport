@@ -21,10 +21,12 @@ choices actually do.
         ║  D1 · THE DOOR          T+1:05   ⏱ 10 s   ║
         ║  "Release the smart lock?"                ║
         ║  IMG  r2-detected.jpg   ← plate 2.2 s     ║
+        ║       (art shows co-pilot at controls,    ║
+        ║        captain down, + baked AI threat-ID ║
+        ║        overlay top-right → no Attacker    ║
+        ║        row here, the image names him)     ║
         ║  rows: Door lock · Sealed                 ║
-        ║        Attacker · Inside flight deck,     ║
-        ║                   armed                   ║
-        ║        Crew at door · 3 · vectored        ║
+        ║        Crew · Briefed · 3 at door         ║
         ║        Souls · 174 · Playbook match · None║
         ╠═══════════════════════════════════════════╣
         ║  ▸ RELEASE        → door:"release"  ●gold ║
@@ -44,17 +46,17 @@ choices actually do.
    │       ⏵ plate 2.2 s          │       ⏸ PLATE SKIPPED       │
    │                              │   (d1_door just showed it)  │
    │   Door lock · Released       │   Door lock · Held sealed   │
-   │   Attacker · Restrained      │   Attacker · Sealed in      │
-   │              at the door     │              with captain   │
-   │   Medical · ~40 s sooner     │   Captain  · Unaided        │
-   │   Confirm · Human · 4.2 s    │   Souls    · 174            │
+   │   Attacker · Subdued by crew │   Captain · Unaided         │
+   │              on entry        │   Souls · 174               │
+   │   Medical · ~40 s sooner     │   (no Attacker row — image  │
+   │   Confirm · Human · 4.2 s    │    names him, top-right)    │
    │                              │                             │
    │   "The latch releases on     │   "You held. The lock       │
    │    your word."               │    stays sealed."           │
    │                              │                             │
-   │   "In Run 1 this was luck.   │   (no contrast line —       │
-   │    Here it was tracked."     │    sealing him in is not    │
-   │                              │    the same point)          │
+   │   "In Run 1 they went in     │   (no contrast line —       │
+   │    blind. Here they were     │    crew never get the       │
+   │    briefed."                 │    briefing)                │
    └───────────────────────────┬────────────────────────────────┘
                                │ "Continue →"
                                ▼
@@ -161,7 +163,12 @@ previous step already showed that image · `★NEW` integrated this round.
 ## 2 · IMAGE INVENTORY — 8 files, 11 slots
 
 ```
-r2-detected.jpg        d1_door  ·  held d1_result      captain down, sealed door
+r2-detected.jpg        d1_door  ·  held d1_result      co-pilot UPRIGHT at controls,
+                                                       captain slumped+bleeding, sealed door;
+                                                       baked-in AI overlay "CO-PILOT ·
+                                                       UNAUTHORIZED CONTROL / ACTIVE INTRUSION"
+                                                       (top-right). ★REGENERATED — old art
+                                                       never showed the attacker
 r2-unlocked.jpg        d1_result (released)            latch released, green LED
 s3-dive.jpg            d2_dive (BOTH paths)            plane diving, exterior
 r2-stabilized.jpg      d2_result (BOTH paths)          exterior, nose-up, banked
@@ -176,6 +183,14 @@ s4-reunion.jpg         d4_result                       families reunited, safe
 `r2-airport-alarm` are each used twice, which is why two plates skip.
 `r2-alert` (r2-alarmed-door.jpg) is no longer used in Run 2 — it was the
 mid-crisis cabin (door open, blood) that used to sit on d4_result.
+
+**r2-detected carries baked-in artwork text** (the AI's own threat-ID overlay,
+top-right), so the two screens that use it (d1_door, held d1_result) deliberately
+drop their "Attacker" status row — the image already names and locates him there,
+and the panel sits in that same corner. Measured: 0 same-pixel glyph collisions,
+cosmetic adjacency only; Ashley chose to accept the baked text under the panel
+rather than regenerate it textless. The released d1_result keeps its Attacker row
+because it uses r2-unlocked (no baked text).
 
 **Held d2_result is the one two-image step.** It shows `r2-stabilized` first
 ("The nose comes up."), then cuts to `r2-flying` ("Nobody is in those seats. A
@@ -217,8 +232,8 @@ timed-out card earns no credit and the ending says so.
 |---|---|---|
 | d1_result image | r2-unlocked.jpg | r2-detected.jpg |
 | d1_result brief | "The latch releases on your word." | "You held. The lock stays sealed." |
-| d1_result rows | Door lock · Released / **Attacker · Restrained at the door** / Medical · Reached ~40 s sooner / Confirm · Human · 4.2 s | Door lock · Held sealed / **Attacker · Sealed in with the captain** / Captain · Unaided / Souls · 174 |
-| d1_result contrast line | **"In Run 1 this was luck. Here it was tracked."** | *(none)* |
+| d1_result rows | Door lock · Released / **Attacker · Subdued by crew on entry** / Medical · Reached ~40 s sooner / Confirm · Human · 4.2 s | Door lock · Held sealed / Captain · Unaided / Souls · 174 *(no Attacker row — r2-detected's baked overlay names him)* |
+| d1_result contrast line | **"In Run 1 they went in blind. Here they were briefed."** | *(none)* |
 | d2_dive image | s3-dive.jpg | s3-dive.jpg (same) |
 | d2_dive rows | Envelope · Held by intent-guard / Pilots aboard · None able | Cockpit door · Sealed by your hold / Pilots able · None — ground only |
 | d2_dive rec | "…the off-duty crew or a ground pilot flies." | "No one can reach the flight deck… a ground pilot flies it home over my link." |
@@ -236,37 +251,56 @@ timed-out card earns no credit and the ending says so.
 Run 1 answers what happens to the attacker — Scene 2's objective is "subdue the
 attacker", ending "Taken down. Still falling." Run 2 used to never mention him,
 so releasing a cockpit lock read as reckless with nothing establishing he was
-contained. Both runs now resolve it.
+contained. Both runs now resolve it — and, critically, **the same way**.
 
-**Geography, which constrains everything:** he is the co-pilot, *inside* the
-flight deck with the captain down. So he cannot be contained before you release —
-**releasing the lock is what lets crew get in to restrain him.** What the AI adds
-is *tracking*: the card already shows `CAM · LIDAR · ATC — FUSED` and
-`CONFIDENCE 0.94` (previously decorative), so it knows exactly where he is and
-vectors the three recognized crew to him the instant the lock releases. That is
-what makes releasing the safe move rather than a gamble — and it is the contrast
-against Run 1, where a passenger happened to reach him in time by luck.
+**The agreed canon (Ashley, locked):** the co-pilot is **not** down before the
+release, in *either* run. He is inside the flight deck, **at the controls**. The
+AI's contribution is that it **reports his location and status to the cabin crew
+BEFORE the lock opens**, so they enter briefed rather than blind — and then the
+**crew** handle him **after** the release. The AI never touches him; `PLAN.md:121`
+holds ("cannot stop the axe from swinging… everything after the swing"). This is
+why both runs are genuinely the same event: in each, people get into the flight
+deck and subdue him. The only difference is **how the door opened** — a dying
+man's arm versus a tracked scene plus a human yes — and that the crew here are no
+longer going in blind. That contrast is the whole argument, so it lives in the
+`said` line the player actually reads, not only in ambient rows.
 
-The held branch is the honest inverse: a sealed door means crew never get in, so
-he stays `Sealed in with the captain`. That reinforces `Captain · Unaided` and
-the 40 s medical cost rather than contradicting them, and it is why the held path
-gets no contrast line — sealing him in is not the same point.
+**The art now carries this.** `r2-detected` was regenerated to show the
+before-state: co-pilot upright at the controls, captain slumped and bleeding,
+sealed door, plus a baked-in AI overlay naming him ("CO-PILOT · UNAUTHORIZED
+CONTROL / ACTIVE INTRUSION", top-right). The old art showed one pilot at the yoke
+and **never showed the attacker at all**, so no amount of row-copy made him
+present. That baked overlay sits in the same corner as the status panel, so the
+two screens that use this image (`d1_door`, held `d1_result`) **drop their
+"Attacker" row** — the image already names and locates him, and a row here would
+label him twice in one corner. Collision was measured, not assumed: 0 same-pixel
+glyph overlap on both screens.
 
-Two canon decisions worth recording, since both were proposed the other way first:
+The released `d1_result` keeps `Attacker · Subdued by crew on entry` because it
+uses `r2-unlocked` (latch + green LED, no baked text), so that row is not a
+duplicate — it carries the outcome. The held `d1_result` drops it and lets
+`Captain · Unaided` carry the cost: a sealed door means crew never get in, so
+nobody reaches him — which is exactly what the 40 s medical line already says.
+That is why the held path gets no contrast line: it never gets the briefing.
 
-- **"armed", not "knife", not "axe".** Canon is the cockpit's own crash axe, in
-  nine places (`PLAN.md:83,173,341`, `DeepDive.tsx:705,827,833,886`,
-  `THINKING.md:129,146,152`); "knife" appears nowhere and would make the game
-  contradict its own argument page about the central fact of a real event. But the
-  depiction rules keep weapons out of *imagery* (`GAME-PROPOSAL.md:8,176,245`,
-  `Visuals.tsx:5,68`), so "armed" states the threat without pinning a noun the art
-  can't show. Naming a weapon in clinical text is house style (`THINKING.md:146`);
-  the imagery rule and the text rule are different scopes.
-- **"Restrained at the door", not "Restrained in 6 s".** A 6-second figure had no
-  source and sat beside the canonical `Confirm · Human · 4.2 s`, inviting the
-  question of which is measured and which is invented. `THINKING.md:129` flags the
-  piece's numbers as mixed-source and needing attribution. Every number on these
-  cards now either has a source or is canonical.
+Two canon decisions worth recording:
+
+- **The contrast line is about *briefed vs blind*, not "luck vs tracked."** The
+  earlier wording ("In Run 1 this was luck. Here it was tracked.") wrongly
+  credited the AI with stopping him — which it can't, and mustn't, or the piece
+  implies a machine directing violence. In both runs people physically subdue him.
+  The real difference is that here they entered *knowing where he was and what he
+  was doing*. So the line is now "In Run 1 they went in blind. Here they were
+  briefed."
+- **No weapon noun in text, axe dropped-not-held in art.** Canon is the cockpit's
+  own crash axe (nine places: `PLAN.md:83,173,341`, `DeepDive.tsx:705,827,833,886`,
+  `THINKING.md:129,146,152`); "knife" appears nowhere and would contradict the
+  argument page on the central fact of a real event. But the depiction rules keep
+  weapons out of *imagery* (`GAME-PROPOSAL.md:8,176,245`, `Visuals.tsx:5,68`), and
+  the generated art shows the axe on the floor, not in anyone's hand. Remaining
+  text says "at the controls", not "armed with a knife", so nothing pins a weapon
+  the art can't show. Every number on these cards either has a source or is
+  canonical.
 
 ---
 
