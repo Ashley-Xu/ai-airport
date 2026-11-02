@@ -72,7 +72,12 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
     const valid: Step[] = ["intro","d1_door","d1_result","d2_dive","d2_result","d3_airport","d3_result","d4_dial","d4_result","ending"];
     return (s && valid.includes(s as Step)) ? (s as Step) : "intro";
   });
-  const [choices, setChoices] = useState<Run2Choices>({});
+  const [choices, setChoices] = useState<Run2Choices>(() => {
+    // test hook: ?r2=<step>&hold=1 pre-seeds the HELD branch, so downstream
+    // held-only copy can be deep-linked. Inert in normal play.
+    return new URLSearchParams(window.location.search).get("hold") === "1"
+      ? { door: "hold" } : {};
+  });
   const [t, setT] = useState("T+0:00");
 
   // One clock, two places: the report card label AND the HUD (via clockRef,
@@ -176,7 +181,8 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {step === "d1_result" && (
           <Run2Scene key="d1r" demo={demo} holdBrief
             brief={held ? <>You held. The lock stays sealed.</> : <>The latch releases on your word.</>}
-            statusLabel="Flight deck · live" label="Scene 1 · In the air" photo="r2-unlocked"
+            statusLabel="Flight deck · live" label="Scene 1 · In the air"
+            photo={held ? "r2-detected" : "r2-unlocked"}
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
               ? [["Door lock", "Held sealed"], ["Captain", "Unaided"], ["Souls", "174"]]
@@ -191,11 +197,15 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           <Run2Scene key="d2" demo={demo} brief={<>Falling. Uncommanded. 14,000 ft in 30 s.</>}
             statusLabel="Aircraft state · live" label="Scene 2 · The dive" photo="r2-alert"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            status={[["Altitude", "−14,000 ft"], ["Rate", "500 ft / s"], ["Envelope", "Held by intent-guard"], ["Pilots aboard", "None able"]]}
+            status={held
+              ? [["Altitude", "−14,000 ft"], ["Rate", "500 ft / s"], ["Cockpit door", "Sealed by your hold"], ["Pilots able", "None — ground only"]]
+              : [["Altitude", "−14,000 ft"], ["Rate", "500 ft / s"], ["Envelope", "Held by intent-guard"], ["Pilots aboard", "None able"]]}
             vignette="teal">
             <ReportCard
               t={t}
-              rec={<>No one aboard can land this. I <b>stabilize and guide</b> — the off-duty crew or a ground pilot flies. Auto-land only where certified.</>}
+              rec={held
+                ? <>No one can reach the flight deck. I <b>stabilize and guard the envelope</b> — a ground pilot flies it home over my link. Auto-land only where certified.</>
+                : <>No one aboard can land this. I <b>stabilize and guide</b> — the off-duty crew or a ground pilot flies. Auto-land only where certified.</>}
               actions={[
                 { label: "Authorize", kind: "teal", onClick: () => go("d2_result", { dive: "guide" }) },
                 { label: "Keep searching", kind: "ghost", onClick: () => go("d2_result", { dive: "search" }) },
@@ -209,10 +219,14 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           <Run2Scene key="d2r" demo={demo} brief={<>The nose comes up.</>}
             statusLabel="Aircraft state · live" label="Scene 2 · The dive" photo="r2-stabilized"
             sub="You are the decision-maker" subClass="teal" clock={t}
-            status={[["Attitude", "Stabilized"], ["Dive", "Arrested"], ["Controls", "Off-duty crew"], ["Envelope", "Guarded"]]}
+            status={held
+              ? [["Attitude", "Stabilized"], ["Dive", "Arrested"], ["Controls", "Ground pilot"], ["Envelope", "Guarded"]]
+              : [["Attitude", "Stabilized"], ["Dive", "Arrested"], ["Controls", "Off-duty crew"], ["Envelope", "Guarded"]]}
             vignette="teal">
-            <Consequence good
-              goodText={<>Dive arrested. The off-duty pilots take the controls; I hold the envelope.</>}
+            <Consequence
+              goodText={held
+                ? <>Dive arrested. A ground pilot flies it home over my link; I hold the envelope.</>
+                : <>Dive arrested. The off-duty pilots take the controls; I hold the envelope.</>}
               onNext={() => go("d3_airport")} nextLabel="Continue →" />
           </Run2Scene>
         )}
@@ -250,11 +264,15 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {step === "d4_dial" && (
           <Run2Scene key="d4" demo={demo} statusLabel="Flight deck · live" label="Scene 4 · After"
             photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
-            status={[["Souls", "174 · all lived"], ["Captain", "Stable in surgery"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]}
+            status={held
+              ? [["Souls", "174 · all lived"], ["Captain", "In surgery — reached 40 s later"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]
+              : [["Souls", "174 · all lived"], ["Captain", "Stable in surgery"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]}
             vignette="teal">
             <ReportCard
               t={t}
-              said={<>Resolved. <span className="em">174 souls</span>. Captain stable in surgery. Audit trail attached.</>}
+              said={held
+                ? <>Resolved. <span className="em">174 souls</span>. Captain reached 40 s later — stable in surgery. Audit trail attached.</>
+                : <>Resolved. <span className="em">174 souls</span>. Captain stable in surgery. Audit trail attached.</>}
               rec={<>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. 2015 was the alternative: a rule that couldn't be broken.</>}
               actsLabel="Authority"
               actions={[
@@ -270,13 +288,13 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
             photo="r2-alert" sub="You are the decision-maker" subClass="teal" clock={t}
             status={[["Authority", "Recorded"], ["Trust record", "Building"], ["Revocable", "One tap"], ["Next divergence", "Logged"]]}
             vignette="teal">
-            <Consequence good
+            <Consequence
               goodText={<DialResult dial={choices.dial} />}
               onNext={() => go("ending")} nextLabel="See the outcome →" />
           </Run2Scene>
         )}
 
-        {step === "ending" && <Run2Ending key="e" decisions={humanDecisions(choices)} onNext={onComplete} />}
+        {step === "ending" && <Run2Ending key="e" decisions={humanDecisions(choices)} held={held} onNext={onComplete} />}
         {step === "done" && <motion.div key="done" exit={{ opacity: 0 }} />}
       </AnimatePresence>
     </div>
@@ -463,16 +481,22 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
   );
 }
 
-function Consequence({ good, goodText, badText, onNext, nextLabel }: {
-  good: boolean; goodText: React.ReactNode; badText?: React.ReactNode;
+function Consequence({ goodText, onNext, nextLabel }: {
+  goodText: React.ReactNode;
   onNext: () => void; nextLabel: string;
 }) {
+  /* One fixed cyan style. The coral/"Alternate outcome" branch was dead code
+     (every call site passed good truthy and nothing ever passed badText), and
+     Ashley asked for consistent colour rather than colour-coded outcomes.
+     Border now uses the game palette's --g-lav: this was the one component
+     still reaching into the deep-dive page's --ai-line/--today-line vars,
+     left behind during the Slidesgo reskin. */
   return (
     <motion.div className="g-report" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }} style={{ borderColor: good ? "var(--ai-line)" : "var(--today-line)" }}>
-      <div className="src"><span className="dot" style={{ background: good ? "var(--g-cyan)" : "var(--g-coral)" }} />
-        <span className="nm" style={{ color: good ? "var(--g-cyan)" : "var(--g-coral)" }}>{good ? "Outcome" : "Alternate outcome"}</span></div>
-      <div className="g-consequence" style={{ marginTop: 0 }}>{good ? goodText : badText}</div>
+      transition={{ duration: 0.5 }} style={{ borderColor: "var(--g-lav)" }}>
+      <div className="src"><span className="dot" style={{ background: "var(--g-cyan)" }} />
+        <span className="nm" style={{ color: "var(--g-cyan)" }}>Outcome</span></div>
+      <div className="g-consequence" style={{ marginTop: 0 }}>{goodText}</div>
       <div className="acts" style={{ marginTop: 20 }}>
         <button className="g-btn teal" onClick={onNext}>{nextLabel}</button>
       </div>
@@ -496,7 +520,7 @@ function DialResult({ dial }: { dial?: string }) {
   return <>Authority recorded.</>;
 }
 
-function Run2Ending({ decisions, onNext }: { decisions: number; onNext: () => void }) {
+function Run2Ending({ decisions, held, onNext }: { decisions: number; held?: boolean; onNext: () => void }) {
   // pausable: freezing must hold here too, so the presenter can talk over the
   // outcome screen without it walking itself into the dossier
   useEffect(() => startPausableTimeout(onNext, 8000), [onNext]);
@@ -511,7 +535,16 @@ function Run2Ending({ decisions, onNext }: { decisions: number; onNext: () => vo
         </div>
         <p className="g-prose" style={{ margin: "24px auto 0", textAlign: "center" }}>
           You made <b style={{ color: "var(--g-gold)" }}>{w} decision{decisions === 1 ? "" : "s"}</b>.
-          The machine did the rest: saw, guarded, opened, guided, informed.
+          {/* {" "} is load-bearing: splitting this sentence into a conditional
+              makes the JSX whitespace adjacent to an expression container, and
+              JSX drops that space (".The machine"). A literal space inside the
+              fragment would be trimmed as line-leading whitespace. */}
+          {" "}
+          {/* The held branch never opened the door, so it must not be credited
+              with "opened" — the run has to remember what you actually chose. */}
+          {held
+            ? <>The machine did the rest: saw, guarded, guided, informed.</>
+            : <>The machine did the rest: saw, guarded, opened, guided, informed.</>}
         </p>
         <div className="g-actions" style={{ marginTop: 34 }}>
           <button className="g-btn big gold" onClick={onNext}>See the outcome & the risks</button>
