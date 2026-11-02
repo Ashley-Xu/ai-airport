@@ -43,7 +43,11 @@ const STEP_SECONDS: Record<Step, number> = {
   intro: 0,
   d1_door: 65,       // T+1:05
   d1_result: 69,     // T+1:09
-  d2_dive: 30,       // T+0:30
+  d2_dive: 150,      // T+2:30 — the dive BEGINS here. 14,000 ft at 500 ft/s
+                     // ≈ 28 s, and PLAN.md resolves it at T+3:00, so this is
+                     // the only value consistent with both. It used to be 30
+                     // ("30 s into the dive"), which made the HUD clock run
+                     // BACKWARDS from T+1:09.
   d2_result: 180,    // T+3:00
   d3_airport: 540,   // T+9:00
   d3_result: 780,    // T+13:00
@@ -227,8 +231,12 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
                 ? <>No one can reach the flight deck. I <b>stabilize and guard the envelope</b> — a ground pilot flies it home over my link. Auto-land only where certified.</>
                 : <>No one aboard can land this. I <b>stabilize and guide</b> — the off-duty crew or a ground pilot flies. Auto-land only where certified.</>}
               actions={[
+                /* One action + the clock. "Keep searching" was removed because
+                   it wrote dive:"search", which nothing ever read — a fork that
+                   changed nothing downstream yet still counted toward "you made
+                   four decisions". Authorize-or-expire IS the thesis: the
+                   machine acts, the human confirms. */
                 { label: "Authorize", kind: "teal", onClick: () => go("d2_result", { dive: "guide" }) },
-                { label: "Keep searching", kind: "ghost", onClick: () => go("d2_result", { dive: "search" }) },
               ]}
               countdown
               onExpire={demo ? undefined : () => go("d2_result", { dive: "auto:guide" })}
@@ -301,7 +309,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
 
         {/* D4 — the authority dial. No clock: this decision waits for a human. */}
         {step === "d4_dial" && (
-          <Run2Scene key="d4" demo={demo} statusLabel="Flight deck · live" label="Scene 4 · After"
+          <Run2Scene key="d4" demo={demo} statusLabel="Aftermath · on stand" label="Scene 4 · After"
             photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
               ? [["Souls", "174 · all lived"], ["Captain", "In surgery — reached 40 s later"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]
@@ -589,7 +597,12 @@ function ResultBar({ onNext, label = "Continue →" }: { onNext: () => void; lab
 function DialResult({ dial }: { dial?: string }) {
   if (dial === "standing") return <>Granted. Irreversible acts proceed on scene judgment — logged, streamed to ATC, countermandable by any conscious crew member. Low confidence still escalates. <span className="dim">Revocable in one tap.</span></>;
   if (dial === "confirms") return <>Retained. Median confirm: 4.2 s. <span className="dim">Every confirm builds the trust record; it proposes standing authority once it has earned it. You decide — it never does.</span></>;
-  return <>Authority recorded.</>;
+  /* Fixed doctrine deserves a real answer, not a shrug. It is the option this
+     whole piece argues against, so it is exactly where the CEO's pick should
+     get the counter-argument — the doctrine trap from THINKING.md: the
+     post-2015 rule was SATISFIED during this event, because the attacker was
+     the second person in the cockpit. */
+  return <>Recorded — and already out of date. <span className="dim">Post-2015 rule: never leave a pilot alone. It was satisfied tonight. The attacker was the second person. Every rule is an autopsy turned into policy; the next scene won't be in it.</span></>;
 }
 
 function Run2Ending({ decisions, held, onNext }: { decisions: number; held?: boolean; onNext: () => void }) {
