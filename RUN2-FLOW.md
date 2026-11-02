@@ -95,7 +95,9 @@ choices actually do.
                             ▼
    ┌────────────────────────────────────────────────────────────┐
    │  D3 RESULT                      T+13:00          no choice │
-   │  IMG r2-airport-ready.jpg   ⏵ plate                       │
+   │  IMG r2-airport-alarm.jpg  (⏸ plate skipped — d3_airport   │
+   │      just showed it; the caption+rows are what change)     │
+   │  "Everything is in place before you're on approach."       │
    │  Fire · On stand   Medical · On stand                      │
    │  Counsellors · Briefed   Log · Court-ready                 │
    │  NO held variant — correct: ground response does not       │
@@ -106,8 +108,9 @@ choices actually do.
         ╔═══════════════════════════════════════════╗
         ║  D4 · AUTHORITY         T+38:00           ║
         ║  ★ NO CLOCK — waits for a human forever ★ ║
-        ║  IMG  r2-airport-ready.jpg                ║
-        ║       ⏸ PLATE SKIPPED (d3_result showed)  ║
+        ║  IMG  r2-airport-ready.jpg   ⏵ plate      ║
+        ║  (plate now FIRES — d3_result switched to  ║
+        ║   the control room, so this is a new pic) ║
         ╠═══════════════════════════════════════════╣
         ║  ▸ Standing authority → dial:"standing"   ║
         ║  ▸ Live confirms      → dial:"confirms"   ║
@@ -116,7 +119,8 @@ choices actually do.
                             ▼
    ┌────────────────────────────────────────────────────────────┐
    │  D4 RESULT                      T+38:04          no choice │
-   │  IMG r2-alert (r2-alarmed-door.jpg)   ⏵ plate              │
+   │  IMG s4-reunion.jpg (Run 1's art)   ⏵ plate                │
+   │      families reunited, safe — the payoff for the dial     │
    │  Authority · Recorded   Trust record · Building            │
    │  Revocable · One tap   Next divergence · Logged            │
    │  Outcome text = DialResult(choices.dial) ← the ONLY place  │
@@ -149,14 +153,16 @@ r2-unlocked.jpg        d1_result (released)            latch released, green LED
 s3-dive.jpg            d2_dive (BOTH paths)            plane diving, exterior
 r2-stabilized.jpg      d2_result (BOTH paths)          exterior, nose-up, banked
 r2-flying.jpg          d2_result (held) — 2nd image    empty flight deck, level
-r2-airport-alarm.jpg   d3_airport                      ops control room, red alert
-r2-airport-ready.jpg   d3_result  ·  d4_dial           parked on stand, door open
-r2-alert               d4_result                       cabin alert, door OPEN, blood
-   = r2-alarmed-door.jpg
+r2-airport-alarm.jpg   d3_airport  ·  d3_result        ops control room, red alert
+r2-airport-ready.jpg   d4_dial                         parked on stand, door open
+s4-reunion.jpg         d4_result                       families reunited, safe
+   (Run 1's art, reused deliberately)
 ```
 
-`s3-dive` is shared with Run 1 (its own Scene 3). `r2-detected` and
-`r2-airport-ready` are each used twice, which is why two plates skip.
+`s3-dive` and `s4-reunion` are shared with Run 1. `r2-detected` and
+`r2-airport-alarm` are each used twice, which is why two plates skip.
+`r2-alert` (r2-alarmed-door.jpg) is no longer used in Run 2 — it was the
+mid-crisis cabin (door open, blood) that used to sit on d4_result.
 
 **Held d2_result is the one two-image step.** It shows `r2-stabilized` first
 ("The nose comes up."), then cuts to `r2-flying` ("Nobody is in those seats. A

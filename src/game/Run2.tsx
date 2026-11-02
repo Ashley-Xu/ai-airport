@@ -323,7 +323,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           </Run2Scene>
         )}
         {step === "d4_result" && (
-          <Run2Scene key="d4r" demo={demo} statusLabel="Flight deck · live" label="Scene 4 · After"
+          <Run2Scene key="d4r" demo={demo} statusLabel="Governance · recorded" label="Scene 4 · After"
             /* Families on the ground, safe. This screen is the payoff for the
                authority decision, so it shows what the governance bought —
                not the mid-crisis cabin (door open, blood) it used to, which
