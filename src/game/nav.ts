@@ -39,3 +39,25 @@ export function goBack() {
 export function useCanBack(): boolean {
   return useSyncExternalStore(subscribe, () => handler !== null, () => false);
 }
+
+/* ── Skip to the end of the CURRENT run ──
+   Same registration pattern, for the same reason: only the run knows where its
+   own ending is. Run 1's is the reveal (the off-duty pilots, the closing
+   title); Run 2's is the outcome screen. A HUD that jumped straight to the
+   dossier instead would silently skip the other run entirely — one click from
+   "the humans" to the risk appendix, with the AI replay never shown. */
+let skipHandler: BackHandler = null;
+
+/** Register (or clear) the current run's skip-to-its-own-ending handler. */
+export function setSkipHandler(fn: BackHandler) {
+  skipHandler = fn;
+  emit();
+}
+/** Call the registered handler. No-op when no run is on screen. */
+export function skipToRunEnd() {
+  skipHandler?.();
+}
+/** Reactive: is there a run on screen with an ending to skip to? */
+export function useCanSkip(): boolean {
+  return useSyncExternalStore(subscribe, () => skipHandler !== null, () => false);
+}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FlightDeck, AltitudeTrace, Figure } from "./Visuals";
 import { ArtCross, preloadArt, PlateOverlay, plateActive, resetPlates } from "./SceneArt";
 import { timeFrozen, startPausableTimeout } from "./time";
-import { setBackHandler } from "./nav";
+import { setBackHandler, setSkipHandler } from "./nav";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -50,6 +50,16 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
     return () => setBackHandler(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, scene]);
+
+  // expose Skip-to-end: this run's ending is the REVEAL, which then plays out
+  // and hands off to Run 2 — it does NOT jump to the dossier, or the whole
+  // AI replay would be skipped by one click.
+  useEffect(() => {
+    const skip = () => { next("reveal"); resetPlates(); };
+    setSkipHandler(scene !== "reveal" && scene !== "done" ? skip : null);
+    return () => setSkipHandler(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene]);
 
   // A (re)started run plates every image again. Must happen during RENDER,
   // not in an effect: child effects (PlateOverlay setting lastPlatedArt) run

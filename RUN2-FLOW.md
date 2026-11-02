@@ -298,10 +298,18 @@ QA hooks, inert in normal play:
 - `?demo=1` — auto-play the whole piece on canonical choices
 
 HUD controls during either run: `❚❚ Freeze` (pauses game time; a banner above every
-layer resumes it) · `← Back` (one step; rolls choices back with it) · `⏭ End` (jump
-straight to the dossier — presenter shortcut, unfreezes first, choices left intact) ·
+layer resumes it) · `← Back` (one step; rolls choices back with it) · `⏭ End` (skip to
+the end of **that run only** — Run 1 → the reveal, Run 2 → the outcome screen) ·
 `⌂ Home` (title screen, clears choices). `⏭ End` appears only inside a run, not during
-the prologue, where `Skip →` already means "skip the prologue".
+the prologue, where `Skip →` already means "skip the prologue", and it disables itself
+once you are already at that run's ending.
+
+`End` deliberately does NOT jump to the dossier. Each run registers its own endpoint via
+`nav.ts`, the same pattern `Back` uses — so from Run 1 the AI replay still plays, and from
+Run 2 the outcome screen still shows before the risk appendix. A HUD that jumped straight
+to the dossier would have swallowed an entire run in one click. It also unfreezes first,
+since both endings are pausable screens and landing on one frozen would strand you on a
+timer that never runs.
 
 ### Decision-count outcomes
 

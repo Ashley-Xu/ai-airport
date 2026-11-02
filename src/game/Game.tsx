@@ -6,7 +6,7 @@ import Dossier from "./Dossier";
 import { AltitudeTrace } from "./Visuals";
 import { usePlateActive } from "./SceneArt";
 import { useFrozen, toggleFrozen, setFrozen } from "./time";
-import { goBack, useCanBack } from "./nav";
+import { goBack, useCanBack, skipToRunEnd, useCanSkip } from "./nav";
 import "./game.css";
 
 /* ══════════════════════════════════════════════════════════════
@@ -34,6 +34,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   const plateActiveFlag = usePlateActive(); // hide HUD while a clean plate is up
   const frozen = useFrozen();               // global time freeze
   const canBack = useCanBack();             // is there a previous step to return to
+  const canSkip = useCanSkip();             // does the active run still have an ending to skip to
 
   useEffect(() => {
     const id = setInterval(() => setClock(clockRef.current), 100);
@@ -49,15 +50,21 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   // A fresh playthrough starts live — don't carry a freeze from the last run.
   const restart = () => { clockRef.current = 0; setChoices({}); setFrozen(false); setPhase("title"); };
 
-  /* Jump straight to the outcome. A presenter tool: mid-walkthrough, reach the
-     conclusion without playing out every clock. Only offered inside a run —
-     during the prologue the existing "Skip →" already means something else
-     (skip the prologue), and two skips side by side would be ambiguous.
-     Unfreezes, because a paused state is meaningless on a static screen and
-     would otherwise leak into whatever is entered next. Choices are left
-     intact: the dossier ignores them today, and wiping them would discard
-     what the player actually did. */
-  const skipToEnd = () => { setFrozen(false); setPhase("dossier"); };
+  /* Skip to the END OF THE CURRENT RUN — not to the dossier. The active run
+     registers its own endpoint (Run 1 → the reveal, Run 2 → the outcome
+     screen) via nav.ts, same pattern as Back. The HUD stays dumb and cannot
+     skip the wrong thing: jumping straight to the dossier from Run 1 would
+     have silently swallowed the entire AI replay.
+     Still unfreezes, because both endings are pausable screens — landing on
+     one while frozen would strand the player on a timer that never runs. */
+  const skipToEnd = () => { setFrozen(false); skipToRunEnd(); };
+
+  // phase-aware tooltip: says which ending it actually goes to
+  const skipTitle = phase === "run1"
+    ? "Skip to the end of Run 1 — the reveal"
+    : phase === "run2"
+      ? "Skip to the end of Run 2 — the outcome"
+      : "Skip to the end of this run";
 
   return (
     <div className={`g-root${frozen ? " frozen" : ""}`}>
@@ -101,7 +108,8 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
               <button
                 className="skip ctl end"
                 onClick={skipToEnd}
-                title="Skip to the ending — jump straight to the outcome and the risks">
+                disabled={!canSkip}
+                title={canSkip ? skipTitle : "Already at the end of this run"}>
                 ⏭ <span className="ctl-word">End</span>
               </button>
             )}

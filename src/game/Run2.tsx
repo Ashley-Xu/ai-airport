@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArtCross, preloadArt, PlateOverlay, resetPlates } from "./SceneArt";
 import { useFrozen, timeFrozen, startPausableTimeout } from "./time";
-import { setBackHandler } from "./nav";
+import { setBackHandler, setSkipHandler } from "./nav";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -123,6 +123,15 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
     register();
     return () => setBackHandler(null);
     // re-register whenever the stack depth or step changes so canBack stays honest
+  }, [step, choices]);
+
+  // expose Skip-to-end: this run's ending is the OUTCOME screen, which then
+  // hands off to the dossier. Skipping here is the intended shortcut.
+  useEffect(() => {
+    const skip = () => go("ending");
+    setSkipHandler(step !== "ending" && step !== "done" ? skip : null);
+    return () => setSkipHandler(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, choices]);
 
   // demo mode: auto-advance intro/ending and auto-pick recommended actions
