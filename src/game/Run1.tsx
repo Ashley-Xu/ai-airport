@@ -30,7 +30,17 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
     return (s && valid.includes(s as Scene)) ? (s as Scene) : "intro";
   });
   const [history, setHistory] = useState<Scene[]>([]);
-  const next = (s: Scene) => { setHistory((h) => [...h, scene]); setScene(s); };
+  /* Which beat of the reveal to open on. Normally 0 — play all three images —
+     but Skip-to-end passes the LAST beat, because the reveal is a four-step
+     sequence whose conclusion ("Luck is not a safety system") is step 3.
+     Landing on step 0 made the skip button dump the player in the middle of
+     the run with three more images to sit through. Every transition INTO the
+     reveal states its own start step, so this can never go stale. */
+  const [revealStart, setRevealStart] = useState(0);
+  const next = (s: Scene, startStep = 0) => {
+    setRevealStart(startStep);
+    setHistory((h) => [...h, scene]); setScene(s);
+  };
   // Read from state (not an updater) — mutating scene inside a setHistory
   // updater would be a side effect that StrictMode double-invokes.
   const back = () => {
@@ -51,11 +61,13 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [history, scene]);
 
-  // expose Skip-to-end: this run's ending is the REVEAL, which then plays out
-  // and hands off to Run 2 — it does NOT jump to the dossier, or the whole
-  // AI replay would be skipped by one click.
+  // expose Skip-to-end: this run's conclusion is the LAST beat of the reveal
+  // ("Luck is not a safety system", step 3), which then hands off to Run 2.
+  // Jumping to reveal step 0 would dump the player mid-run with three more
+  // images to wait through — so pass the final step explicitly. It does NOT
+  // skip to the dossier, or the whole AI replay would be swallowed.
   useEffect(() => {
-    const skip = () => { next("reveal"); resetPlates(); };
+    const skip = () => { next("reveal", 3); resetPlates(); };
     setSkipHandler(scene !== "reveal" && scene !== "done" ? skip : null);
     return () => setSkipHandler(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +93,7 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
         {scene === "captain" && <CaptainScene key="cap" demo={demo} onDone={() => next("passengers")} clockRef={clockRef} />}
         {scene === "passengers" && <PassengerScene key="pax" demo={demo} onDone={() => next("controls")} />}
         {scene === "controls" && <ControlsScene key="ctl" demo={demo} onDone={() => next("reveal")} />}
-        {scene === "reveal" && <RevealScene key="rev" demo={demo} onDone={() => next("done")} />}
+        {scene === "reveal" && <RevealScene key="rev" demo={demo} startStep={revealStart} onDone={() => next("done")} />}
         {scene === "done" && <motion.div key="done" exit={{ opacity: 0 }} />}
       </AnimatePresence>
     </div>
@@ -547,8 +559,8 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
    only after the picture has had the screen to itself, and the next image
    waits for that beat to land before it cuts. No timer can collide with a
    plate because the sequence is driven by the reveal event. */
-function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
-  const [step, setStep] = useState(0);
+function RevealScene({ onDone, demo = false, startStep = 0 }: { onDone: () => void; demo?: boolean; startStep?: number }) {
+  const [step, setStep] = useState(startStep);
   const [revealed, setRevealed] = useState(false);
 
   const dwell = demo ? 900 : 2400;   // how long the beat text reads before the next picture

@@ -310,10 +310,10 @@ QA hooks, inert in normal play:
 
 HUD controls during either run: `❚❚ Freeze` (pauses game time; a banner above every
 layer resumes it) · `← Back` (one step; rolls choices back with it) · `⏭ End` (skip to
-the end of **that run only** — Run 1 → the reveal, Run 2 → the outcome screen) ·
-`⌂ Home` (title screen, clears choices). `⏭ End` appears only inside a run, not during
-the prologue, where `Skip →` already means "skip the prologue", and it disables itself
-once you are already at that run's ending.
+the **conclusion of that run only** — Run 1 → the final reveal beat, Run 2 → the outcome
+screen) · `⌂ Home` (title screen, clears choices). `⏭ End` appears only inside a run, not
+during the prologue, where `Skip →` already means "skip the prologue", and it disables
+itself once you are already at that run's ending.
 
 `End` deliberately does NOT jump to the dossier. Each run registers its own endpoint via
 `nav.ts`, the same pattern `Back` uses — so from Run 1 the AI replay still plays, and from
@@ -321,6 +321,12 @@ Run 2 the outcome screen still shows before the risk appendix. A HUD that jumped
 to the dossier would have swallowed an entire run in one click. It also unfreezes first,
 since both endings are pausable screens and landing on one frozen would strand you on a
 timer that never runs.
+
+Run 1's reveal is a **four-step sequence**, so "the end of Run 1" is its LAST beat, not its
+first: step 3, `s4-reunion.jpg`, "Luck is not a safety system." Skipping to step 0 dumped
+the player mid-run with three more images to sit through. `next()` therefore takes an
+explicit reveal start step — every transition into the reveal states its own, so it can
+never go stale. Normal playthrough is unchanged: all four beats still play from step 0.
 
 ### Decision-count outcomes
 
