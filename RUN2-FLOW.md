@@ -64,12 +64,15 @@ choices actually do.
    │  D2 RESULT                       T+3:00          no choice │
    │  "The nose comes up."  ← the payoff for authorizing        │
    │                                                            │
-   │   RELEASED lane              │      HELD lane              │
-   │   IMG r2-stabilized.jpg      │   IMG r2-flying.jpg  ★NEW   │
-   │       exterior, nose-up,     │       empty flight deck,    │
-   │       banked, "AI STAB-      │       level in the storm,   │
-   │       ILIZATION: ACTIVE"     │       no people, no door    │
-   │   ⏵ plate 2.2 s              │   ⏵ plate 2.2 s             │
+   │   RELEASED lane              │      HELD lane (2 images)   │
+   │   IMG r2-stabilized.jpg      │   1. r2-stabilized.jpg      │
+   │       exterior, nose-up,     │      "The nose comes up."   │
+   │       banked, "AI STAB-      │   2. r2-flying.jpg  ★NEW    │
+   │       ILIZATION: ACTIVE"     │      empty flight deck,     │
+   │   ⏵ plate 2.2 s              │      "Nobody is in those    │
+   │                              │       seats. A ground pilot │
+   │                              │       is flying it."        │
+   │                              │   ⏵ plate + beat EACH image │
    │                              │                             │
    │   Controls · Off-duty crew   │   Controls · Ground pilot   │
    │   "The off-duty pilots take  │   "A ground pilot flies it  │
@@ -143,9 +146,9 @@ previous step already showed that image · `★NEW` integrated this round.
 ```
 r2-detected.jpg        d1_door  ·  held d1_result      captain down, sealed door
 r2-unlocked.jpg        d1_result (released)            latch released, green LED
-s3-dive.jpg            d2_dive (BOTH paths)   ★moved   plane diving, exterior
-r2-stabilized.jpg      d2_result (released)            exterior, nose-up, banked
-r2-flying.jpg          d2_result (held)       ★NEW     empty flight deck, level
+s3-dive.jpg            d2_dive (BOTH paths)            plane diving, exterior
+r2-stabilized.jpg      d2_result (BOTH paths)          exterior, nose-up, banked
+r2-flying.jpg          d2_result (held) — 2nd image    empty flight deck, level
 r2-airport-alarm.jpg   d3_airport                      ops control room, red alert
 r2-airport-ready.jpg   d3_result  ·  d4_dial           parked on stand, door open
 r2-alert               d4_result                       cabin alert, door OPEN, blood
@@ -154,6 +157,14 @@ r2-alert               d4_result                       cabin alert, door OPEN, b
 
 `s3-dive` is shared with Run 1 (its own Scene 3). `r2-detected` and
 `r2-airport-ready` are each used twice, which is why two plates skip.
+
+**Held d2_result is the one two-image step.** It shows `r2-stabilized` first
+("The nose comes up."), then cuts to `r2-flying` ("Nobody is in those seats. A
+ground pilot is flying it — over my link.") — the empty flight deck is what
+actually proves `Controls · Ground pilot`. Each picture gets its own clean
+plate AND its own look beat; only the second carries the outcome card.
+Released d2_result stays a single image. Timing per image: plate 2.2 s + beat
+2.4 s, so the held screen runs ~9.5 s versus ~4.6 s released.
 
 Plate rule (`SceneArt.tsx`): a full-brightness 2.2 s plate fires whenever the
 image **differs from the previous one**. Deep-linking always shows a plate,
@@ -192,7 +203,7 @@ changing nothing on screen.
 | d2_dive image | s3-dive.jpg | s3-dive.jpg (same) |
 | d2_dive rows | Envelope · Held by intent-guard / Pilots aboard · None able | Cockpit door · Sealed by your hold / Pilots able · None — ground only |
 | d2_dive rec | "…the off-duty crew or a ground pilot flies." | "No one can reach the flight deck… a ground pilot flies it home over my link." |
-| d2_result image | r2-stabilized.jpg | **r2-flying.jpg** |
+| d2_result image | r2-stabilized.jpg | r2-stabilized.jpg **then** r2-flying.jpg |
 | d2_result rows | Controls · Off-duty crew | Controls · Ground pilot |
 | d2_result outcome | "The off-duty pilots take the controls" | "A ground pilot flies it home over my link" |
 | d4_dial rows | Captain · Stable in surgery | Captain · In surgery — reached 40 s later |

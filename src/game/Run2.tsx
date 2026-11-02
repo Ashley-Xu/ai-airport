@@ -235,11 +235,19 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {step === "d2_result" && (
           <Run2Scene key="d2r" demo={demo} brief={<>The nose comes up.</>}
             statusLabel="Aircraft state · live" label="Scene 2 · The dive"
-            /* held: the empty flight deck, level — nobody aboard is flying it,
-               a ground pilot is, over the link. That is exactly what "Controls ·
-               Ground pilot" claims. released keeps the exterior recovery shot,
-               where the off-duty crew are physically at the yoke. */
-            photo={held ? "r2-flying" : "r2-stabilized"}
+            /* Ashley: the stabilized plane on BOTH paths, and on the held path
+               BOTH images in sequence. So held shows the recovery shot first
+               ("the dive is arrested"), then cuts to the empty flight deck —
+               which is what actually proves "Controls · Ground pilot": nobody
+               aboard is flying it. Each picture gets its own clean plate and
+               its own look beat; only the last one carries the card.
+               Released keeps the single exterior recovery shot, where the
+               off-duty crew are physically at the yoke. */
+            photo={held ? undefined : "r2-stabilized"}
+            photoSeq={held ? [
+              { art: "r2-stabilized", brief: <>The nose comes up.</> },
+              { art: "r2-flying", brief: <>Nobody is in those seats. A ground pilot is flying it — over my link.</> },
+            ] : undefined}
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
               ? [["Attitude", "Stabilized"], ["Dive", "Arrested"], ["Controls", "Ground pilot"], ["Envelope", "Guarded"]]
@@ -347,12 +355,17 @@ function Run2Intro({ onNext }: { onNext: () => void }) {
   );
 }
 
-function Run2Scene({ label, sub, subClass, clock, status, children, vignette, photo, statusLabel, brief, settleMs, demo, holdBrief }: {
+function Run2Scene({ label, sub, subClass, clock, status, children, vignette, photo, photoSeq, statusLabel, brief, settleMs, demo, holdBrief }: {
   label: string; sub: string; subClass?: string; clock: string;
   /** plain-text situation readout, replacing the old schematic box */
   status?: [string, string][];
   children: React.ReactNode; vignette?: "teal" | "coral";
   photo?: ArtKey; statusLabel?: string;
+  /** several pictures for ONE step: each gets its own clean plate and its own
+   *  look beat, and only the LAST one carries the card. Used where a single
+   *  image cannot carry the claim — held d2 needs the recovery shot AND the
+   *  empty flight deck that proves who is actually flying it. */
+  photoSeq?: { art: ArtKey; brief?: React.ReactNode }[];
   /** orienting line shown during the "look" beat, before any decision is asked */
   brief?: React.ReactNode;
   /** keep the brief on screen after the beat (result steps with no card text) */
@@ -362,32 +375,54 @@ function Run2Scene({ label, sub, subClass, clock, status, children, vignette, ph
 }) {
   // clean plate first: the picture alone, full brightness, nothing on it.
   // The look beat only starts once the plate lifts.
-  const [revealed, setRevealed] = useState(!photo);
-  // Reset only when the photo actually CHANGES — not on mount. On mount a
-  // skipped plate (same image as the previous step) calls onReveal from the
-  // child, whose effects run before the parent's; resetting here would wipe
-  // that and leave the decision card permanently hidden.
-  const prevPhoto = useRef(photo);
-  useEffect(() => {
-    if (prevPhoto.current !== photo) { prevPhoto.current = photo; setRevealed(false); }
-  }, [photo]);
+  const seq = photoSeq && photoSeq.length > 0 ? photoSeq : null;
+  const [idx, setIdx] = useState(0);
+  const art: ArtKey | undefined = seq ? seq[idx].art : photo;
+  // per-image caption: a sequence can annotate each picture separately
+  const activeBrief = seq ? (seq[idx].brief ?? brief) : brief;
+  const isLast = !seq || idx >= seq.length - 1;
 
   // decision steps breathe longer; result steps just get a short beat
-  const base = settleMs ?? (brief ? (demo ? 750 : 2400) : (demo ? 450 : 1100));
+  const base = settleMs ?? (activeBrief ? (demo ? 750 : 2400) : (demo ? 450 : 1100));
+  const [revealed, setRevealed] = useState(!art);
   const [settled, setSettled] = useState(base <= 0);
+  // Reset during RENDER, not in an effect, when the picture actually changes
+  // (never on mount: a skipped plate calls onReveal from the child, whose
+  // effects run first, and an effect here would wipe that and hide the card
+  // forever). An effect would also leave one render where `revealed` is still
+  // true for the NEW art — enough for the beat timer below to start before
+  // the new plate, flashing the card over a picture that hasn't been shown.
+  const prevPhoto = useRef(art);
+  if (prevPhoto.current !== art) {
+    prevPhoto.current = art;
+    setRevealed(false);
+    setSettled(false);   // the new picture earns its own beat before any card
+  }
+
   useEffect(() => {
     if (!revealed) return;          // don't burn the beat while the plate is up
-    if (base <= 0) { setSettled(true); return; }
+    if (base <= 0) {
+      // mid-sequence still advances even with no beat to wait out
+      if (!isLast) { setIdx((i) => i + 1); return; }
+      setSettled(true); return;
+    }
     // pausable: a frozen clock must not silently swallow the look beat
-    return startPausableTimeout(() => setSettled(true), base);
-  }, [base, revealed]);
+    return startPausableTimeout(() => {
+      // mid-sequence: advance to the next picture instead of showing the card.
+      // The art change above re-runs the plate and this beat for that image,
+      // so every picture still gets the screen to itself first.
+      if (!isLast) { setIdx((i) => i + 1); return; }
+      setSettled(true);
+    }, base);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [base, revealed, isLast, art]);
 
   return (
     <motion.div className="g-stage" {...fade} style={{ justifyContent: "flex-start", paddingTop: 72 }}>
-      {photo
-        ? <ArtCross art={photo} dim={settled ? 0.46 : 0.3} fallback={<div className="g-vig-teal" />} />
+      {art
+        ? <ArtCross art={art} dim={settled ? 0.46 : 0.3} fallback={<div className="g-vig-teal" />} />
         : vignette === "teal" && <div className="g-vig-teal" />}
-      {!photo && vignette === "coral" && <div className="g-vig-coral" />}
+      {!art && vignette === "coral" && <div className="g-vig-coral" />}
       {revealed && <div className="g-scene-label">{label}<span className={`role ${subClass}`}>{sub}</span></div>}
 
       {/* the readout arrives WITH the decision — during the look beat it's just the photo.
@@ -406,7 +441,7 @@ function Run2Scene({ label, sub, subClass, clock, status, children, vignette, ph
         </motion.div>
       )}
 
-      <PlateOverlay art={photo} demo={demo} onReveal={() => setRevealed(true)} />
+      <PlateOverlay art={art} demo={demo} onReveal={() => setRevealed(true)} />
 
       {/* spacer: the readout is absolutely positioned, so this is what pushes
           the caption / decision card to the bottom of the stage */}
@@ -415,13 +450,13 @@ function Run2Scene({ label, sub, subClass, clock, status, children, vignette, ph
       {/* bottom: orienting caption during the look-beat, decision/outcome card once settled */}
       <div style={{ position: "relative", zIndex: 6, width: "100%", minHeight: 170 }}>
         <AnimatePresence>
-          {revealed && !settled && brief && (
-            <motion.div key="brief" className="g-brief"
+          {revealed && !settled && activeBrief && (
+            <motion.div key={`brief-${idx}`} className="g-brief"
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8, transition: { duration: 0.22 } }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
               <span className="g-brief-k">Reading the scene</span>
-              <div className="g-brief-t">{brief}</div>
+              <div className="g-brief-t">{activeBrief}</div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -429,9 +464,9 @@ function Run2Scene({ label, sub, subClass, clock, status, children, vignette, ph
             when the player is actually asked to decide */}
         {revealed && settled && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, paddingBottom: 20 }}>
-            {holdBrief && brief && (
+            {holdBrief && activeBrief && (
               <div className="g-brief static">
-                <div className="g-brief-t">{brief}</div>
+                <div className="g-brief-t">{activeBrief}</div>
               </div>
             )}
             {children}
