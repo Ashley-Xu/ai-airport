@@ -29,6 +29,7 @@ export type ArtKey =
   | "r2-alert"     // cabin alert broadcast: human intervention needed
   | "r2-detected"  // AI detects the captain stabbed (scene summary)
   | "r2-unlocked"  // AI terminal releases the door latch
+  | "r2-flying"    // empty flight deck, level in the storm — the AI is flying it
   | "r2-stabilized"// AI stabilizes the aircraft
   | "r2-airport-alarm" // the nearest airport gets the alarm
   | "r2-airport-ready"; // the airport fully pre-positioned
@@ -49,6 +50,7 @@ export const ART: Record<ArtKey, string> = {
   "r2-alert": "/assets/r2-alarmed-door.jpg",
   "r2-detected": "/assets/r2-detected.jpg",
   "r2-unlocked": "/assets/r2-unlocked.jpg",
+  "r2-flying": "/assets/r2-flying.jpg",
   "r2-stabilized": "/assets/r2-stabilized.jpg",
   "r2-airport-alarm": "/assets/r2-airport-alarm.jpg",
   "r2-airport-ready": "/assets/r2-airport-ready.jpg",
@@ -72,6 +74,7 @@ export const HAVE: Record<ArtKey, boolean> = {
   "r2-alert": true,
   "r2-detected": true,
   "r2-unlocked": true,
+  "r2-flying": true,
   "r2-stabilized": true,
   "r2-airport-alarm": true,
   "r2-airport-ready": true,

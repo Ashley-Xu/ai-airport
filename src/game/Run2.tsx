@@ -195,7 +195,14 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {/* D2 — the dive (softened: stabilize + guide) */}
         {step === "d2_dive" && (
           <Run2Scene key="d2" demo={demo} brief={<>Falling. Uncommanded. 14,000 ft in 30 s.</>}
-            statusLabel="Aircraft state · live" label="Scene 2 · The dive" photo="r2-alert"
+            statusLabel="Aircraft state · live" label="Scene 2 · The dive"
+            /* held: the empty flight deck — nobody can reach it, so the machine
+               (and the ground pilot on its link) is the only thing flying.
+               The cabin-alert art would show the cockpit door SWUNG OPEN plus
+               blood, contradicting "Cockpit door · Sealed by your hold".
+               released: keep the cabin alert — the door is open and crew are
+               coming forward, which is what that picture shows. */
+            photo={held ? "r2-flying" : "r2-alert"}
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
               ? [["Altitude", "−14,000 ft"], ["Rate", "500 ft / s"], ["Cockpit door", "Sealed by your hold"], ["Pilots able", "None — ground only"]]
