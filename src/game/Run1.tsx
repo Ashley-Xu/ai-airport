@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FlightDeck, AltitudeTrace, Figure } from "./Visuals";
 import { ArtCross, preloadArt, PlateOverlay, plateActive, resetPlates } from "./SceneArt";
+import { timeFrozen, startPausableTimeout } from "./time";
+import { setBackHandler } from "./nav";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -27,7 +29,27 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
     const valid: Scene[] = ["intro", "captain", "passengers", "controls", "reveal"];
     return (s && valid.includes(s as Scene)) ? (s as Scene) : "intro";
   });
-  const next = (s: Scene) => setScene(s);
+  const [history, setHistory] = useState<Scene[]>([]);
+  const next = (s: Scene) => { setHistory((h) => [...h, scene]); setScene(s); };
+  // Read from state (not an updater) — mutating scene inside a setHistory
+  // updater would be a side effect that StrictMode double-invokes.
+  const back = () => {
+    if (history.length === 0) return;
+    const prev = history[history.length - 1];
+    setHistory(history.slice(0, -1));
+    setScene(prev);
+    // the scene remounts with its own clean plate
+    resetPlates();
+    // reset the run clock so the HUD does not show a time ahead of the scene
+    clockRef.current = 0;
+  };
+
+  // expose Back to the HUD while this run owns the screen
+  useEffect(() => {
+    setBackHandler(history.length > 0 && scene !== "done" ? back : null);
+    return () => setBackHandler(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history, scene]);
 
   // A (re)started run plates every image again. Must happen during RENDER,
   // not in an effect: child effects (PlateOverlay setting lastPlatedArt) run
@@ -38,8 +60,7 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
 
   useEffect(() => {
     if (scene !== "done") return;
-    const t = setTimeout(onComplete, demo ? 400 : 900);
-    return () => clearTimeout(t);
+    return startPausableTimeout(onComplete, demo ? 400 : 900);
   }, [scene, onComplete, demo]);
 
   return (
@@ -130,8 +151,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
   const [armed, setArmed] = useState(false);
   useEffect(() => {
     if (!revealed) return;
-    const t = setTimeout(() => setArmed(true), demo ? 700 : 2600);
-    return () => clearTimeout(t);
+    return startPausableTimeout(() => setArmed(true), demo ? 700 : 2600);
   }, [demo, revealed]);
   const [strength, setStrength] = useState(100);
   const [ring, setRing] = useState(0);
@@ -147,6 +167,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
     if (!demo || !armed || !revealed) return;
     holdingRef.current = true; setHolding(true);
     const id = setInterval(() => {
+      if (timeFrozen()) return; // frozen: strength does not drain
       const dt = 0.2; elapsed.current += dt; clockRef.current = elapsed.current;
       strRef.current = Math.max(0, strRef.current - dt * (3.2 + elapsed.current * 0.22));
       setStrength(strRef.current);
@@ -155,7 +176,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       if ((ringRef.current >= 100 || elapsed.current > 12) && !done.current) {
         done.current = true; setRing(100); setPhase("beat"); clearInterval(id);
         setRevealed(false); setPlateArt("s1-door-open");   // new image -> clean plate
-        setTimeout(onDone, 1600 + 2850); // + door-open plate hold & fade
+        startPausableTimeout(onDone, 1600 + 2850); // + door-open plate hold & fade
       }
     }, 200);
     return () => clearInterval(id);
@@ -167,6 +188,10 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      // frozen: keep the RAF alive but advance nothing. `last` is already
+      // updated above, so unfreezing does not dump the whole frozen span
+      // into one dt — strength resumes draining from where it stopped.
+      if (timeFrozen()) { raf = requestAnimationFrame(loop); return; }
       elapsed.current += dt; clockRef.current = elapsed.current;
       strRef.current = Math.max(0, strRef.current - dt * (3.2 + elapsed.current * 0.22));
       setStrength(strRef.current);
@@ -176,7 +201,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
       if ((ringRef.current >= 100 || elapsed.current > 24) && !done.current) {
         done.current = true; ringRef.current = 100; setRing(100); setPhase("beat");
         setRevealed(false); setPlateArt("s1-door-open");   // new image -> clean plate
-        setTimeout(onDone, 3400 + 2850); return; // + door-open plate hold & fade
+        startPausableTimeout(onDone, 3400 + 2850); return; // + door-open plate hold & fade
       }
       raf = requestAnimationFrame(loop);
     };
@@ -262,8 +287,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
   const [armed, setArmed] = useState(false);
   useEffect(() => {
     if (!revealed) return;
-    const t = setTimeout(() => setArmed(true), demo ? 700 : 2600);
-    return () => clearTimeout(t);
+    return startPausableTimeout(() => setArmed(true), demo ? 700 : 2600);
   }, [demo, revealed]);
   const [pos, setPos] = useState(0);
   const [hits, setHits] = useState(0);
@@ -277,7 +301,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     if (!demo || !armed) return;
     let p = 0; let d = 1;
     const id = setInterval(() => {
-      if (plateActive()) return; // picture alone — the mechanic waits
+      if (plateActive() || timeFrozen()) return; // picture alone, or time frozen
       p += d * 6; if (p > 100) { p = 100; d = -1; } if (p < 0) { p = 0; d = 1; }
       posRef.current = p; setPos(p);
       if (p > 40 && p < 60 && !done.current) {
@@ -294,7 +318,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      if (!plateActive()) {
+      if (!plateActive() && !timeFrozen()) {
       elapsed.current += dt;
       posRef.current += dir.current * dt * 78;
       if (posRef.current > 100) { posRef.current = 100; dir.current = -1; }
@@ -311,7 +335,7 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
 
   function finish() {
     setPhase("beat"); setRevealed(false); setPlateArt("s2-subdued"); // new image -> clean plate
-    setTimeout(onDone, (demo ? 1400 : 3200) + 2850);
+    startPausableTimeout(onDone, (demo ? 1400 : 3200) + 2850);
   }
   function tryHit() {
     if (phase !== "struggle" || done.current || !armed) return;
@@ -321,10 +345,17 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
     } else setHits((v) => Math.max(0, v - 1));
   }
   useEffect(() => {
-    const k = (e: KeyboardEvent) => { if (e.code === "Space" || e.code === "Enter") { e.preventDefault(); tryHit(); } };
+    // `armed` MUST be in the deps: the handler closes over `tryHit`, which
+    // early-returns while `!armed`. Without it the effect registers once at
+    // mount (armed=false) and never re-registers when the scene arms — so
+    // every SPACE press was silently swallowed while mouse clicks worked
+    // (the onClick path always uses the fresh closure from the current render).
+    const k = (e: KeyboardEvent) => {
+      if (e.code === "Space" || e.code === "Enter") { e.preventDefault(); tryHit(); }
+    };
     window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hits, phase]);
+  }, [hits, phase, armed]);
 
   // the struggle art switch (passenger -> fight) gets its own clean plate
   useEffect(() => {
@@ -378,8 +409,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   const [armed, setArmed] = useState(false);
   useEffect(() => {
     if (!revealed) return;
-    const t = setTimeout(() => setArmed(true), demo ? 700 : 2600);
-    return () => clearTimeout(t);
+    return startPausableTimeout(() => setArmed(true), demo ? 700 : 2600);
   }, [demo, revealed]);
   const [pitch, setPitch] = useState(30);
   const [holding, setHolding] = useState(false);
@@ -393,7 +423,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   useEffect(() => {
     if (!demo || !armed) return;
     const id = setInterval(() => {
-      if (plateActive()) return; // picture alone — the mechanic waits
+      if (plateActive() || timeFrozen()) return; // picture alone, or time frozen
       const dt = 0.2; elapsed.current += dt;
       const target = (bandLo + bandHi) / 2;
       holdRef.current = pitchRef.current < target; setHolding(holdRef.current);
@@ -407,7 +437,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       if ((stableRef.current > 3.2 || elapsed.current > 12) && !done.current) {
         done.current = true; setPhase("beat"); clearInterval(id);
         setRevealed(false); setPlateArt("s3-controls"); // new image -> clean plate
-        setTimeout(onDone, 1600 + 2850);
+        startPausableTimeout(onDone, 1600 + 2850);
       }
     }, 200);
     return () => clearInterval(id);
@@ -418,7 +448,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
     let raf = 0; let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
-      if (!plateActive()) {
+      if (!plateActive() && !timeFrozen()) {
       elapsed.current += dt;
       const wob = Math.sin(elapsed.current * 7) * 6;
       pitchRef.current += ((holdRef.current ? 78 : -46) + wob * (holdRef.current ? 0.6 : 1)) * dt;
@@ -430,7 +460,7 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
       if ((stableRef.current > 3.2 || elapsed.current > 18) && !done.current) {
         done.current = true; setPhase("beat");
         setRevealed(false); setPlateArt("s3-controls"); // new image -> clean plate
-        setTimeout(onDone, 3400 + 2850); return;
+        startPausableTimeout(onDone, 3400 + 2850); return;
       }
       }
       raf = requestAnimationFrame(loop);
@@ -522,15 +552,13 @@ function RevealScene({ onDone, demo = false }: { onDone: () => void; demo?: bool
   // advance only after the current image has been revealed AND its beat has dwelled
   useEffect(() => {
     if (!revealed || last) return;
-    const t = setTimeout(() => setStep((s) => s + 1), dwell);
-    return () => clearTimeout(t);
+    return startPausableTimeout(() => setStep((s) => s + 1), dwell);
   }, [revealed, last, dwell]);
 
   // the closing title ("Luck is not a safety system") holds, then hands off
   useEffect(() => {
     if (!revealed || !last) return;
-    const t = setTimeout(onDone, demo ? 2600 : 4200);
-    return () => clearTimeout(t);
+    return startPausableTimeout(onDone, demo ? 2600 : 4200);
   }, [revealed, last, onDone, demo]);
 
   return (

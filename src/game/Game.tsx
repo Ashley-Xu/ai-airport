@@ -5,6 +5,8 @@ import Run2, { type Run2Choices } from "./Run2";
 import Dossier from "./Dossier";
 import { AltitudeTrace } from "./Visuals";
 import { usePlateActive } from "./SceneArt";
+import { useFrozen, toggleFrozen, setFrozen } from "./time";
+import { goBack, useCanBack } from "./nav";
 import "./game.css";
 
 /* ══════════════════════════════════════════════════════════════
@@ -30,17 +32,34 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   const clockRef = useRef(0); // seconds within a run
   const [clock, setClock] = useState(0);
   const plateActiveFlag = usePlateActive(); // hide HUD while a clean plate is up
+  const frozen = useFrozen();               // global time freeze
+  const canBack = useCanBack();             // is there a previous step to return to
 
   useEffect(() => {
     const id = setInterval(() => setClock(clockRef.current), 100);
     return () => clearInterval(id);
   }, []);
 
-  const restart = () => { clockRef.current = 0; setChoices({}); setPhase("title"); };
+  // `frozen` lives in module scope so any scene can read it cheaply, but that
+  // means it outlives this component: switching to ARGUMENT unmounts the game
+  // and switching back remounted it still frozen — every screen then sat
+  // motionless with no visible cause and no way out. Always start live.
+  useEffect(() => { setFrozen(false); }, []);
+
+  // A fresh playthrough starts live — don't carry a freeze from the last run.
+  const restart = () => { clockRef.current = 0; setChoices({}); setFrozen(false); setPhase("title"); };
 
   return (
-    <div className="g-root">
+    <div className={`g-root${frozen ? " frozen" : ""}`}>
       <ClipLayer phase={phase} />
+      {/* Frozen banner sits ABOVE every layer (z 60), including clean plates,
+          so there is never a screen where the game is paused with no visible
+          cause and no way out. Deadlock insurance for a live demo. */}
+      {frozen && phase !== "title" && phase !== "dossier" && (
+        <button className="g-frozen-banner" onClick={toggleFrozen} title="Resume — let time run again">
+          ❚❚ Time frozen · click to resume
+        </button>
+      )}
       {phase !== "title" && phase !== "dossier" && (
         <div className={`g-hud${plateActiveFlag ? " plated" : ""}`}>
           <span className={`run ${phase === "run1" ? "today" : "ai"}`}>
@@ -49,12 +68,26 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
           {phase === "coldopen" && <span className="run">Prologue</span>}
           <div className="hud-right">
             {(phase === "run1" || phase === "run2") && (
-              <span className="clock">{fmtClock(clock)}</span>
+              <span className={`clock${frozen ? " frozen" : ""}`}>{fmtClock(clock)}</span>
             )}
             {phase === "coldopen" && (
               <button className="skip" onClick={() => setPhase("run1")}>Skip →</button>
             )}
-            <button className="skip home" onClick={restart} title="Back to the title screen">⌂ Home</button>
+            <button
+              className={`skip ctl${frozen ? " on" : ""}`}
+              onClick={toggleFrozen}
+              title="Freeze time — nothing advances, the AI will not act"
+              aria-pressed={frozen}>
+              ❚❚ <span className="ctl-word">{frozen ? "Frozen" : "Freeze"}</span>
+            </button>
+            <button
+              className="skip ctl"
+              onClick={goBack}
+              disabled={!canBack}
+              title={canBack ? "Back one step" : "Nothing to go back to"}>
+              ← <span className="ctl-word">Back</span>
+            </button>
+            <button className="skip home" onClick={restart} title="Back to the title screen">⌂ <span className="ctl-word">Home</span></button>
           </div>
         </div>
       )}

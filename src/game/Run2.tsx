@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArtCross, preloadArt, PlateOverlay, resetPlates } from "./SceneArt";
+import { useFrozen, timeFrozen, startPausableTimeout } from "./time";
+import { setBackHandler } from "./nav";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -89,10 +91,34 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   const platesReset = useRef(false);
   if (!platesReset.current) { platesReset.current = true; resetPlates(); }
 
+  // Back navigation: remember each step we advance FROM, together with the
+  // choices that were live then, so returning is an honest rewind rather than
+  // a jump that leaves stale decisions behind.
+  const history = useRef<{ step: Step; choices: Run2Choices }[]>([]);
+
   const go = (s: Step, patch?: Partial<Run2Choices>) => {
+    history.current.push({ step, choices });
     if (patch) { const nc = { ...choices, ...patch }; setChoices(nc); onChoices(nc); }
     setStep(s);
   };
+
+  const back = () => {
+    const prev = history.current.pop();
+    if (!prev) return;
+    // never rewind past the point where the run handed off
+    if (step === "done") return;
+    setChoices(prev.choices);
+    onChoices(prev.choices);
+    setStep(prev.step);
+  };
+
+  // expose Back to the HUD while this run owns the screen
+  useEffect(() => {
+    const register = () => setBackHandler(history.current.length > 0 && step !== "done" ? back : null);
+    register();
+    return () => setBackHandler(null);
+    // re-register whenever the stack depth or step changes so canBack stays honest
+  }, [step, choices]);
 
   // demo mode: auto-advance intro/ending and auto-pick recommended actions
   useEffect(() => {
@@ -313,8 +339,8 @@ function Run2Scene({ label, sub, subClass, clock, status, children, vignette, ph
   useEffect(() => {
     if (!revealed) return;          // don't burn the beat while the plate is up
     if (base <= 0) { setSettled(true); return; }
-    const id = setTimeout(() => setSettled(true), base);
-    return () => clearTimeout(id);
+    // pausable: a frozen clock must not silently swallow the look beat
+    return startPausableTimeout(() => setSettled(true), base);
   }, [base, revealed]);
 
   return (
@@ -398,11 +424,15 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
   const [more, setMore] = useState(false);
   const expRef = useRef(onExpire); expRef.current = onExpire;
   const fired = useRef(false);
+  const frozen = useFrozen();
   useEffect(() => {
     // setInterval (not RAF) so the clock also advances under headless virtual-time
     if (!countdown) return;
-    const start = Date.now();
+    let start = Date.now();
     const id = setInterval(() => {
+      // While frozen the window does not burn: slide the start forward by the
+      // tick so the remaining time holds exactly where the player left it.
+      if (timeFrozen()) { start += 100; return; }
       const left = Math.max(0, CONFIRM_MS - (Date.now() - start)); setMs(left);
       if (left <= 0 && !fired.current) { fired.current = true; clearInterval(id); expRef.current?.(); }
     }, 100);
@@ -467,7 +497,9 @@ function DialResult({ dial }: { dial?: string }) {
 }
 
 function Run2Ending({ decisions, onNext }: { decisions: number; onNext: () => void }) {
-  useEffect(() => { const t = setTimeout(onNext, 8000); return () => clearTimeout(t); }, [onNext]);
+  // pausable: freezing must hold here too, so the presenter can talk over the
+  // outcome screen without it walking itself into the dossier
+  useEffect(() => startPausableTimeout(onNext, 8000), [onNext]);
   const w = ["no", "one", "two", "three", "four"][Math.max(0, Math.min(4, decisions))];
   return (
     <motion.div className="g-stage" {...fade}>

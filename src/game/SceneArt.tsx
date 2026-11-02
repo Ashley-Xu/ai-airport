@@ -70,18 +70,22 @@ export function ArtCross({
    mechanic loops pause while a plate is up, without prop-drilling.
    ══════════════════════════════════════════════════════════════ */
 
-let plateCount = 0;
+/* The plate store is a Set of ids, not a counter: a counter can leak if an
+   overlay unmounts mid-transition (or double-registers under StrictMode),
+   and a leaked count > 0 hides the HUD and pauses every mechanic FOREVER
+   with no way out. Adding the same id twice is a no-op, so this self-heals. */
+const platesUp = new Set<symbol>();
 const plateListeners = new Set<() => void>();
 function subscribePlate(cb: () => void) { plateListeners.add(cb); return () => { plateListeners.delete(cb); }; }
 function notifyPlate() { plateListeners.forEach((l) => l()); }
 
 /** true while any clean plate is on screen (HUD hides itself). */
 export function usePlateActive(): boolean {
-  return useSyncExternalStore(subscribePlate, () => plateCount > 0, () => false);
+  return useSyncExternalStore(subscribePlate, () => platesUp.size > 0, () => false);
 }
 
 /** Non-reactive read, for pausing mechanic loops while a plate is up. */
-export const plateActive = () => plateCount > 0;
+export const plateActive = () => platesUp.size > 0;
 
 /** Hold duration for a clean plate. Shorter in demo/auto-drive mode. */
 export const plateMs = (demo?: boolean, base = 2200) => (demo ? Math.round(base * 0.35) : base);
@@ -127,14 +131,23 @@ export function PlateOverlay({ art, demo, ms, onReveal }: {
 
   const [phase, setPhase] = useState<"up" | "fade" | "gone">(have && !repeat ? "up" : "gone");
   const revealRef = useRef(onReveal); revealRef.current = onReveal;
+  const [plateId] = useState(() => Symbol("plate"));
+  const skipRef = useRef<() => void>(() => {});
 
   // re-trigger on every art change: each newly-shown image gets its own plate
   useEffect(() => {
     if (!have || repeat) { setPhase("gone"); return; }
     setPhase("up");
-    const t1 = setTimeout(() => setPhase("fade"), hold);
-    const t2 = setTimeout(() => setPhase("gone"), hold + FADE_MS);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    // PLAIN timers, deliberately NOT startPausableTimeout: a plate is scene
+    // staging, not game time. Pausing it under freeze was a deadlock — the
+    // plate never lifts, the HUD stays hidden/unclickable underneath it, and
+    // the Freeze button is unreachable, so the only escape was a page reload.
+    const c1 = setTimeout(() => setPhase("fade"), hold);
+    const c2 = setTimeout(() => setPhase("gone"), hold + FADE_MS);
+    // CLICK-TO-SKIP: lift the plate immediately on click — presenters (and
+    // impatient players) never have to wait out the hold.
+    skipRef.current = () => { clearTimeout(c1); setPhase("fade"); };
+    return () => { clearTimeout(c1); clearTimeout(c2); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [have, repeat, hold, art]);
 
@@ -148,9 +161,9 @@ export function PlateOverlay({ art, demo, ms, onReveal }: {
   // register only while the plate actually covers the screen
   useEffect(() => {
     if (phase !== "up") return;
-    plateCount += 1; notifyPlate();
-    return () => { plateCount -= 1; notifyPlate(); };
-  }, [phase]);
+    platesUp.add(plateId); notifyPlate();
+    return () => { platesUp.delete(plateId); notifyPlate(); };
+  }, [phase, plateId]);
 
   if (!have || phase === "gone") return null;
   return (
@@ -159,6 +172,13 @@ export function PlateOverlay({ art, demo, ms, onReveal }: {
       animate={{ opacity: phase === "up" ? 1 : 0 }}
       transition={{ duration: phase === "up" ? 0.45 : FADE_MS / 1000, ease: [0.22, 1, 0.36, 1] }}>
       <img className="g-plate-img" src={ART[art!]} alt="" draggable={false} onError={() => setFailed(true)} />
+      {/* Only while the plate fully covers the screen. It unmounts on fade, so
+          it can never be the thing that swallows a click on the scene below. */}
+      {phase === "up" && (
+        <button className="g-plate-skip" onClick={() => skipRef.current?.()} aria-label="Continue">
+          <span className="g-plate-hint">click to continue</span>
+        </button>
+      )}
     </motion.div>
   );
 }
