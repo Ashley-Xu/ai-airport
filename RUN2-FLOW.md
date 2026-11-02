@@ -21,6 +21,11 @@ choices actually do.
         ║  D1 · THE DOOR          T+1:05   ⏱ 10 s   ║
         ║  "Release the smart lock?"                ║
         ║  IMG  r2-detected.jpg   ← plate 2.2 s     ║
+        ║  rows: Door lock · Sealed                 ║
+        ║        Attacker · Inside flight deck,     ║
+        ║                   armed                   ║
+        ║        Crew at door · 3 · vectored        ║
+        ║        Souls · 174 · Playbook match · None║
         ╠═══════════════════════════════════════════╣
         ║  ▸ RELEASE        → door:"release"  ●gold ║
         ║  ▸ HOLD           → door:"hold"           ║
@@ -39,11 +44,17 @@ choices actually do.
    │       ⏵ plate 2.2 s          │       ⏸ PLATE SKIPPED       │
    │                              │   (d1_door just showed it)  │
    │   Door lock · Released       │   Door lock · Held sealed   │
+   │   Attacker · Restrained      │   Attacker · Sealed in      │
+   │              at the door     │              with captain   │
    │   Medical · ~40 s sooner     │   Captain  · Unaided        │
    │   Confirm · Human · 4.2 s    │   Souls    · 174            │
    │                              │                             │
    │   "The latch releases on     │   "You held. The lock       │
    │    your word."               │    stays sealed."           │
+   │                              │                             │
+   │   "In Run 1 this was luck.   │   (no contrast line —       │
+   │    Here it was tracked."     │    sealing him in is not    │
+   │                              │    the same point)          │
    └───────────────────────────┬────────────────────────────────┘
                                │ "Continue →"
                                ▼
@@ -197,9 +208,8 @@ because a cold load resets the repeat tracker.
 | d4_dial | Live confirms | `dial:"confirms"` | **YES — d4_result text** |
 | d4_dial | Fixed doctrine | `dial:"doctrine"` | **YES — d4_result text** |
 
-`humanDecisions()` counts every recorded value **not** prefixed `auto:`. So
-"Keep searching" still earns a point toward "you made four decisions" despite
-changing nothing on screen.
+`humanDecisions()` counts every recorded value **not** prefixed `auto:`, so a
+timed-out card earns no credit and the ending says so.
 
 ### The `door` branch, screen by screen
 
@@ -207,7 +217,8 @@ changing nothing on screen.
 |---|---|---|
 | d1_result image | r2-unlocked.jpg | r2-detected.jpg |
 | d1_result brief | "The latch releases on your word." | "You held. The lock stays sealed." |
-| d1_result rows | Door lock · Released / Medical · Reached ~40 s sooner / Confirm · Human · 4.2 s | Door lock · Held sealed / Captain · Unaided / Souls · 174 |
+| d1_result rows | Door lock · Released / **Attacker · Restrained at the door** / Medical · Reached ~40 s sooner / Confirm · Human · 4.2 s | Door lock · Held sealed / **Attacker · Sealed in with the captain** / Captain · Unaided / Souls · 174 |
+| d1_result contrast line | **"In Run 1 this was luck. Here it was tracked."** | *(none)* |
 | d2_dive image | s3-dive.jpg | s3-dive.jpg (same) |
 | d2_dive rows | Envelope · Held by intent-guard / Pilots aboard · None able | Cockpit door · Sealed by your hold / Pilots able · None — ground only |
 | d2_dive rec | "…the off-duty crew or a ground pilot flies." | "No one can reach the flight deck… a ground pilot flies it home over my link." |
@@ -219,6 +230,43 @@ changing nothing on screen.
 | ending | "saw, guarded, **opened**, guided, informed" | "saw, guarded, guided, informed" |
 
 `Souls · 174 · all lived` is identical on both paths. Both end at the same dossier.
+
+### The attacker thread
+
+Run 1 answers what happens to the attacker — Scene 2's objective is "subdue the
+attacker", ending "Taken down. Still falling." Run 2 used to never mention him,
+so releasing a cockpit lock read as reckless with nothing establishing he was
+contained. Both runs now resolve it.
+
+**Geography, which constrains everything:** he is the co-pilot, *inside* the
+flight deck with the captain down. So he cannot be contained before you release —
+**releasing the lock is what lets crew get in to restrain him.** What the AI adds
+is *tracking*: the card already shows `CAM · LIDAR · ATC — FUSED` and
+`CONFIDENCE 0.94` (previously decorative), so it knows exactly where he is and
+vectors the three recognized crew to him the instant the lock releases. That is
+what makes releasing the safe move rather than a gamble — and it is the contrast
+against Run 1, where a passenger happened to reach him in time by luck.
+
+The held branch is the honest inverse: a sealed door means crew never get in, so
+he stays `Sealed in with the captain`. That reinforces `Captain · Unaided` and
+the 40 s medical cost rather than contradicting them, and it is why the held path
+gets no contrast line — sealing him in is not the same point.
+
+Two canon decisions worth recording, since both were proposed the other way first:
+
+- **"armed", not "knife", not "axe".** Canon is the cockpit's own crash axe, in
+  nine places (`PLAN.md:83,173,341`, `DeepDive.tsx:705,827,833,886`,
+  `THINKING.md:129,146,152`); "knife" appears nowhere and would make the game
+  contradict its own argument page about the central fact of a real event. But the
+  depiction rules keep weapons out of *imagery* (`GAME-PROPOSAL.md:8,176,245`,
+  `Visuals.tsx:5,68`), so "armed" states the threat without pinning a noun the art
+  can't show. Naming a weapon in clinical text is house style (`THINKING.md:146`);
+  the imagery rule and the text rule are different scopes.
+- **"Restrained at the door", not "Restrained in 6 s".** A 6-second figure had no
+  source and sat beside the canonical `Confirm · Human · 4.2 s`, inviting the
+  question of which is measured and which is invented. `THINKING.md:129` flags the
+  piece's numbers as mixed-source and needing attribution. Every number on these
+  cards now either has a source or is canonical.
 
 ---
 
