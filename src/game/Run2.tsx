@@ -196,13 +196,14 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         {step === "d2_dive" && (
           <Run2Scene key="d2" demo={demo} brief={<>Falling. Uncommanded. 14,000 ft in 30 s.</>}
             statusLabel="Aircraft state · live" label="Scene 2 · The dive"
-            /* held: the empty flight deck — nobody can reach it, so the machine
-               (and the ground pilot on its link) is the only thing flying.
-               The cabin-alert art would show the cockpit door SWUNG OPEN plus
-               blood, contradicting "Cockpit door · Sealed by your hold".
-               released: keep the cabin alert — the door is open and crew are
-               coming forward, which is what that picture shows. */
-            photo={held ? "r2-flying" : "r2-alert"}
+            /* The DECISION screen shows the PROBLEM: the aircraft falling. The
+               brief says "Falling. Uncommanded." so the picture must agree —
+               a level flight deck here reads as already-solved and robs the
+               choice of its stakes. The empty flight deck (r2-flying) now
+               lands on d2_result, as the payoff for authorizing.
+               Same image on both paths: the plane is falling either way; only
+               who can fly it differs (see the status rows below). */
+            photo="s3-dive"
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
               ? [["Altitude", "−14,000 ft"], ["Rate", "500 ft / s"], ["Cockpit door", "Sealed by your hold"], ["Pilots able", "None — ground only"]]
@@ -224,7 +225,12 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         )}
         {step === "d2_result" && (
           <Run2Scene key="d2r" demo={demo} brief={<>The nose comes up.</>}
-            statusLabel="Aircraft state · live" label="Scene 2 · The dive" photo="r2-stabilized"
+            statusLabel="Aircraft state · live" label="Scene 2 · The dive"
+            /* held: the empty flight deck, level — nobody aboard is flying it,
+               a ground pilot is, over the link. That is exactly what "Controls ·
+               Ground pilot" claims. released keeps the exterior recovery shot,
+               where the off-duty crew are physically at the yoke. */
+            photo={held ? "r2-flying" : "r2-stabilized"}
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
               ? [["Attitude", "Stabilized"], ["Dive", "Arrested"], ["Controls", "Ground pilot"], ["Envelope", "Guarded"]]
@@ -251,7 +257,6 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
               rec={<>They have it before you're on approach. <b>No phone tree.</b> Confirm services.</>}
               actions={[
                 { label: "Confirm", kind: "teal", onClick: () => go("d3_result", { airport: "confirm" }) },
-                { label: "Redirect farther", kind: "ghost", onClick: () => go("d3_result", { airport: "redirect" }) },
               ]}
               countdown
               onExpire={demo ? undefined : () => go("d3_result", { airport: "auto:confirm" })}
