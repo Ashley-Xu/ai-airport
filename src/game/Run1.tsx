@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FlightDeck, AltitudeTrace, Figure } from "./Visuals";
+import { FlightDeck, AltitudeTrace } from "./Visuals";
 import { ArtCross, preloadArt, PlateOverlay, plateActive, resetPlates } from "./SceneArt";
 import { timeFrozen, startPausableTimeout } from "./time";
 import { setBackHandler, setSkipHandler } from "./nav";
@@ -267,7 +267,7 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
         revealed ? (
           <motion.div className="g-center" style={{ zIndex: 6 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}>
             <div className="g-beat">He reached the lock.<br /><span className="coral">Barely.</span></div>
-            <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Ten seconds later — unconscious — this door is a wall.</div>
+            <div className="g-prose" style={{ margin: "16px auto 0", textAlign: "center" }}>Ten seconds later — unconscious </div>
           </motion.div>
         ) : null
       ) : !revealed ? null : !armed ? (
@@ -590,17 +590,6 @@ function RevealScene({ onDone, demo = false, startStep = 0 }: { onDone: () => vo
         <ArtCross art={art} dim={step >= 2 ? 0.62 : 0.56}
           fallback={<div style={{ display: "grid", placeItems: "center", height: "100%", opacity: 0.5 }}><FlightDeck doorOpen={1} threat={false} attackerDown paxAtDoor={4} /></div>} />
       </div>
-      {revealed && step === 0 && (
-        <svg className="g-deck" viewBox="0 0 520 300" style={{ position: "absolute", width: "min(600px,88vw)", pointerEvents: "none", opacity: 0.9, zIndex: 3 }}>
-          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
-            <Figure x={300} y={110} scale={1.1} color="var(--g-cyan)" />
-            <Figure x={352} y={200} scale={1.1} color="var(--g-cyan)" />
-            <circle className="node-ring ai" cx={300} cy={110} r="18" fill="none" stroke="var(--g-cyan)" strokeWidth="1.5" />
-            <circle className="node-ring ai" cx={352} cy={200} r="18" fill="none" stroke="var(--g-cyan)" strokeWidth="1.5" />
-          </motion.g>
-        </svg>
-      )}
-
       {revealed && <div className="g-scene-label">Scene <b style={{fontFamily:'var(--g-display)',fontSize:16,fontWeight:500,color:'var(--g-cyan)'}}>04</b> · The reveal</div>}
       <PlateOverlay art={art} demo={demo} onReveal={() => setRevealed(true)} />
       <motion.div className="g-center" style={{ zIndex: 6, marginTop: step >= 3 ? 120 : 0, transition: "margin 0.8s", opacity: revealed ? 1 : 0 }}

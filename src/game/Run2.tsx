@@ -274,14 +274,14 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
 
         {/* D3 — contact the airport */}
         {step === "d3_airport" && (
-          <Run2Scene key="d3" demo={demo} brief={<>Below: the nearest suitable airport. Trucks, lights, a cleared stand. Nobody phoned.</>}
+          <Run2Scene key="d3" demo={demo} brief={<>The nearest suitable airport — already contacted. Nobody phoned.</>}
             statusLabel="Ground response · live" label="Scene 3 · The ground" photo="r2-airport-alarm"
             sub="You are the decision-maker" subClass="teal" clock={t}
             status={[["Nearest suitable", "Contacted"], ["Fire · medical", "Rolling"], ["Stand", "Clearing"], ["Phone tree", "None"]]}
             vignette="teal">
             <ReportCard
               t={t}
-              said={<>Nearest suitable airport <span className="em">contacted</span>. Trucks, lights, a cleared stand. Fire and medical rolling, family assistance opening.</>}
+              said={<>Nearest suitable airport <span className="em">contacted</span>. Fire and medical rolling, stand clearing, family assistance opening.</>}
               rec={<>They have it before you're on approach. <b>No phone tree.</b> Confirm services.</>}
               actions={[
                 { label: "Confirm", kind: "teal", onClick: () => go("d3_result", { airport: "confirm" }) },

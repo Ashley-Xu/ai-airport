@@ -48,7 +48,7 @@ choices actually do.
                                │ "Continue →"
                                ▼
         ╔═══════════════════════════════════════════╗
-        ║  D2 · THE DIVE          T+0:30   ⏱ 10 s   ║
+        ║  D2 · THE DIVE          T+2:30   ⏱ 10 s   ║
         ║  "Falling. Uncommanded."                  ║
         ║  IMG  s3-dive.jpg  ← the plane falling,   ║
         ║       exterior. SAME image both paths.    ║
@@ -56,8 +56,9 @@ choices actually do.
         ║       PROBLEM, not the solution.          ║
         ╠═══════════════════════════════════════════╣
         ║  ▸ AUTHORIZE       → dive:"guide"   ●teal ║
-        ║  ▸ Keep searching  → dive:"search"        ║
         ║  ▸ clock expires   → dive:"auto:guide"    ║
+        ║  ✕ "Keep searching" REMOVED — wrote a     ║
+        ║    value nothing ever read                ║
         ╚═══════════════════╤═══════════════════════╝
                             ▼
    ┌────────────────────────────────────────────────────────────┐
@@ -109,8 +110,9 @@ choices actually do.
         ║  D4 · AUTHORITY         T+38:00           ║
         ║  ★ NO CLOCK — waits for a human forever ★ ║
         ║  IMG  r2-airport-ready.jpg   ⏵ plate      ║
-        ║  (plate now FIRES — d3_result switched to  ║
-        ║   the control room, so this is a new pic) ║
+        ║  LABEL "Aftermath · on stand"             ║
+        ║  (plate FIRES — d3_result switched to the ║
+        ║   control room, so this is a new picture) ║
         ╠═══════════════════════════════════════════╣
         ║  ▸ Standing authority → dial:"standing"   ║
         ║  ▸ Live confirms      → dial:"confirms"   ║
