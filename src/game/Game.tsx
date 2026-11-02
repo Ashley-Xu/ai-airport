@@ -47,12 +47,15 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
             {phase === "run1" ? <>Run 1 · <b>The humans</b></> : phase === "run2" ? <>Run 2 · <b>The AI Nervous System</b></> : <b>&nbsp;</b>}
           </span>
           {phase === "coldopen" && <span className="run">Prologue</span>}
-          {(phase === "run1" || phase === "run2") && (
-            <span className="clock">{fmtClock(clock)}</span>
-          )}
-          {phase === "coldopen" && (
-            <button className="skip" onClick={() => setPhase("run1")}>Skip →</button>
-          )}
+          <div className="hud-right">
+            {(phase === "run1" || phase === "run2") && (
+              <span className="clock">{fmtClock(clock)}</span>
+            )}
+            {phase === "coldopen" && (
+              <button className="skip" onClick={() => setPhase("run1")}>Skip →</button>
+            )}
+            <button className="skip home" onClick={restart} title="Back to the title screen">⌂ Home</button>
+          </div>
         </div>
       )}
 
