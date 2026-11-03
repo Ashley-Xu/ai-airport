@@ -82,26 +82,27 @@ scope · judgment over doctrine · one decision card (the authority card).
   and you: *'violent intrusion in flight deck; captain unresponsive; aircraft
   deviating.'* A human acknowledges. That's your human-in-the-loop — seconds, not
   hours."
-- **T+0:30** — "Left: the dive; on the ground a radar symbol falls. Right: envelope
-  protection escalates to an intent-guard — the uncommanded dive is rejected, the
-  aircraft holds its assigned altitude."
 - **T+1:05 → T+1:09** — "Here is the moment the whole idea turns on. Left: the rulebook
   has nothing for this — the binder says the door does not open. Right: the scene
   matches no playbook, so the system doesn't look one up. It *sees* — recognized faces
-  at the door, senior cabin crew among them, no weapon visible, both pilots down
-  inside, aircraft guarded. It summarizes, recommends release, and asks a live human
-  once. **A human at ATC ops says yes in 4.2 seconds.** The door opens forty seconds
-  sooner than a dying man's arm managed. Nobody consulted a rule. The machine saw; a
-  human decided."
+  at the door, senior cabin crew among them, no weapon visible, the captain down at the
+  lock inside and the co-pilot at the controls. It summarizes, recommends release, and
+  asks a live human once. **A human at ATC ops says yes in 4.2 seconds.** The door opens
+  forty seconds sooner than a dying man's arm managed. Nobody consulted a rule. The
+  machine saw; a human decided."
+- **T+2:30 → T+3:00** — "Left: the aircraft is falling — 14,000 feet in 30 seconds; on
+  the ground a radar symbol falls. Right: envelope protection escalates to an
+  intent-guard — the uncommanded dive is arrested. The AI stabilizes and guides; a
+  human keeps the controls."
 - **T+3:00 → T+38:00** — "Left: two off-duty pilots take the controls — luck; fire
   trucks still positioning on landing; the manifest on hold with the airline; the report
-  written from memory weeks later. Right: stabilised automation flies the aircraft with
-  a ground pilot monitoring; fire arrives before the aircraft stops rolling, because the
-  choreography was computed at T+0:45; the manifest reconciled against your own
-  bag-drop and border data; the stand cleared by autonomous apron vehicles; two
-  thousand passengers rerouted around the arrival pier; counsellors briefed **before the
-  first family calls**; and the incident report auto-assembled from the full sensor and
-  action log — second by second, court-ready."
+  written from memory weeks later. Right: stabilized and guided with the envelope held —
+  the off-duty crew or a ground pilot flies it; fire arrives before the aircraft stops
+  rolling, because the choreography was computed at T+0:45; the manifest reconciled
+  against your own bag-drop and border data; the stand cleared by autonomous apron
+  vehicles; two thousand passengers rerouted around the arrival pier; counsellors briefed
+  **before the first family calls**; and the incident report auto-assembled from the full
+  sensor and action log — second by second, court-ready."
 
 *(Pause. Deliver the honest boundary slowly — this line buys your credibility:)*
 

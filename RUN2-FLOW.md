@@ -111,7 +111,7 @@ choices actually do.
    │  D3 RESULT                      T+13:00          no choice │
    │  IMG r2-airport-alarm.jpg  (⏸ plate skipped — d3_airport   │
    │      just showed it; the caption+rows are what change)     │
-   │  "Everything is in place before you're on approach."       │
+   │  "Everything is in place before the chocks."               │
    │  Fire · On stand   Medical · On stand                      │
    │  Counsellors · Briefed   Log · Court-ready                 │
    │  NO held variant — correct: ground response does not       │

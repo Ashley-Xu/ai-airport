@@ -109,7 +109,7 @@ The three doomed branches — what physical AI closes:
 | # | The branch | Reality | The AI-native answer |
 |---|---|---|---|
 | 1 | **The door.** Captain cannot reach the lock → nobody gets in | He reached it. Barely | **A door that sees:** recognized faces outside, crew state inside, aircraft state — the scene judged in seconds and confirmed by a live human. No rule lookup, no luck required |
-| 2 | **The controls.** Nobody aboard can fly → aircraft dives | Off-duty pilots, by chance | Autopilot intent-guard: the uncommanded dive is rejected; stabilised automation flies to the nearest suitable airport with a ground pilot monitoring |
+| 2 | **The controls.** Nobody aboard can fly → aircraft dives | Off-duty pilots, by chance | Autopilot intent-guard arrests the uncommanded dive; the AI stabilizes, guards the envelope and guides — the off-duty crew or a ground pilot flies it, auto-land only where certified |
 | 3 | **The signal.** A ban existed in one regulator's file, invisible to the roster | Caught after, not before | Ecosystem data fusion: crew-risk signals cross jurisdictions before the roster is built |
 
 Branches 1–2 are the nervous system in flight. Branch 3 is honest context: the same
@@ -203,10 +203,10 @@ then **on the ground**.
 |---|---|---|
 | T+0:00 | **The attack begins.** The flight-deck door is locked from inside — by design, unopenable from outside. The only key is the captain's hand, and the captain is dying | **Sense** — smart cameras in cabin and flight deck flag violent contact and crew posture collapse in under 2 seconds. The movement of every person aboard — passengers surging forward, the captain at the lock — is a tracked, understood scene |
 | T+0:08 | *(nobody on the ground knows anything)* | **Summarize & escalate** — the AI compresses the video into plain language plus a 6-second clip, streamed live to ATC, airline ops, and your airport: "violent intrusion in flight deck; captain unresponsive; aircraft deviating." Human-in-the-loop acknowledges |
-| T+0:30 | **The dive.** 14,000 feet in under 30 seconds. On the ground, a radar symbol falls | **Guard** — envelope protection escalates to intent-guard: the uncommanded dive is rejected; autopilot holds assigned altitude until lawful control is re-established |
-| T+1:05 | *(the rulebook has nothing for this. The binder says: the door does not open)* | **Judge** — the scene matches no playbook, so the system doesn't look one up. It *sees*: recognized faces at the door — senior cabin crew among them; no weapon visible on them; the captain down at the lock inside and the co-pilot at the controls; aircraft guarded. It summarizes, reports the co-pilot's location and status to the crew before the lock opens, recommends release, and asks a live human once |
+| T+1:05 | *(the rulebook has nothing for this. The binder says: the door does not open)* | **Judge** — the scene matches no playbook, so the system doesn't look one up. It *sees*: recognized faces at the door — senior cabin crew among them; no weapon visible on them; the captain down at the lock inside and the co-pilot at the controls. It summarizes, reports the co-pilot's location and status to the crew before the lock opens, recommends release, and asks a live human once |
 | T+1:09 | *(a human would have needed to be told, convinced, and authorized — minutes, at best)* | **Confirmed in 4.2 seconds.** A human at ATC ops says yes. The door opens ~40 s sooner than a dying man's arm managed. Nobody consulted a rule; the machine saw, a human decided |
-| T+3:00 | **Luck.** Two off-duty pilots happen to be aboard and take the controls | **No luck required** — stabilised automation flies the aircraft; a ground pilot monitors and can take over; the nearest suitable airport — yours — is already choreographing |
+| T+2:30 | **The dive.** The attacker is down, but the aircraft is falling — 14,000 feet in under 30 seconds. On the ground, a radar symbol falls | **Guard** — envelope protection escalates to intent-guard: the uncommanded dive is arrested at T+3:00; the AI stabilizes and guides — a human keeps the controls |
+| T+3:00 | **Luck.** Two off-duty pilots happen to be aboard and take the controls | **No luck required** — stabilized and guided: the off-duty crew or a ground pilot flies it with the envelope held; the nearest suitable airport — yours — is already choreographing |
 | T+9:00 | **Wheels down.** The aerodrome learns the severity by radio, mid-approach | **Wheels down.** The airport has known for 8 minutes 52 seconds. The response is already in motion |
 
 **Phase 2 — on the ground (T+9 → T+2:00:00):** *(approved v3 rows, re-clocked)*
@@ -260,9 +260,9 @@ system decides; authority is what you grant. The dial is yours.
 > **Flight-deck event · T+0:00 — resolved. 174 souls. Captain in surgery, stable.
 > 0 further injuries.** Full second-by-second audit trail attached. One decision
 > needs you.
-*The detail card:* audit list (T+0:08 scene summary streamed → T+0:30 dive rejected →
+*The detail card:* audit list (T+0:08 scene summary streamed →
 T+1:05 no matching playbook, scene judgment invoked → T+1:09 door released on live
-human confirm, 4.2 s → T+9:00 fire at the door → T+17:00 on stand → T+38:00 last pax
+human confirm, 4.2 s → T+2:30 dive arrested → T+9:00 fire at the door → T+17:00 on stand → T+38:00 last pax
 off → holding statement drafted), then:
 > **Needs you — how much judgment do we give the nervous system?**
 > At T+1:05 the system met a scene no playbook covered. It saw, summarized, recommended
@@ -364,14 +364,13 @@ doesn't run on rules. **Eyes:** smart cameras in the cabin and flight deck under
 the scene in under two seconds — violent contact, crew posture collapse, every person's
 movement tracked. **Brain:** at T+0:08 the AI compresses the video into plain language
 — 'violent intrusion in flight deck, captain unresponsive, aircraft deviating' —
-streamed with a six-second clip to ATC, airline ops, and you. The autopilot rejects the
-uncommanded dive. At T+1:05 the door decision: no playbook matches, so the system
+streamed with a six-second clip to ATC, airline ops, and you. At T+1:05 the door decision: no playbook matches, so the system
 doesn't look one up — it *sees*. Recognized crew faces at the door, no weapon visible on
-them, the captain down at the lock inside and the co-pilot at the controls, aircraft
-guarded. It summarizes, reports the co-pilot's location and status to the crew so they
+them, the captain down at the lock inside and the co-pilot at the controls.
+It summarizes, reports the co-pilot's location and status to the crew so they
 enter briefed, recommends, and a human at
 ATC ops says yes in 4.2 seconds. The door opens forty seconds sooner than a dying man's
-arm managed. **Hands:** stabilised automation flies the aircraft to *your* airport —
+arm managed. When the dive comes at T+2:30, the autopilot's intent-guard arrests it. **Hands:** the AI stabilizes and guides the aircraft to *your* airport — humans fly it —
 where autonomous vehicles have already cleared the stand, counsellors are briefed
 before the first family calls, and the fire trucks arrive before the aircraft stops
 rolling. And one level up: the barred-from-flying signal never lets the roster be

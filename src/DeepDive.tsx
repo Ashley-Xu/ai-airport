@@ -41,20 +41,6 @@ const AIR_ROWS: Row[] = [
     },
   },
   {
-    clock: "T+0:30",
-    today: {
-      tag: "Falling",
-      title: "The dive",
-      body: "14,000 ft in 30 s. On the ground, a radar symbol falls.",
-    },
-    ai: {
-      tag: "Guard",
-      title: "The dive is rejected",
-      body: "Envelope protection holds altitude until lawful control returns.",
-      hero: true,
-    },
-  },
-  {
     clock: "T+1:05",
     today: {
       tag: "Nothing",
@@ -82,6 +68,20 @@ const AIR_ROWS: Row[] = [
     jump: true,
   },
   {
+    clock: "T+2:30",
+    today: {
+      tag: "Falling",
+      title: "The dive",
+      body: "14,000 ft in 30 s. On the ground, a radar symbol falls.",
+    },
+    ai: {
+      tag: "Guard",
+      title: "The dive is arrested",
+      body: "Intent-guard holds the envelope; a human flies it level.",
+      hero: true,
+    },
+  },
+  {
     clock: "T+3:00",
     today: {
       tag: "Luck",
@@ -90,8 +90,8 @@ const AIR_ROWS: Row[] = [
     },
     ai: {
       tag: "No luck",
-      title: "Automation flies",
-      body: "A ground pilot monitors. Your airport is already choreographing.",
+      title: "Stabilized and guided — humans fly",
+      body: "Off-duty crew or a ground pilot at the controls; the envelope held. Your airport is already choreographing.",
     },
   },
   {
@@ -478,8 +478,8 @@ function JudgmentBeat() {
   const confirmed = phase === 3 && ms === 0;
   const lines = [
     { st: "SEES", txt: <>Door: <b>3 recognized cabin crew</b>. No weapon.</> },
-    { st: "SEES", txt: <>Inside: <b>captain down</b> at the lock. <b>Co-pilot flying.</b></> },
-    { st: "SEES", txt: <>Aircraft: <b>envelope guarded</b>. 40 min fuel.</> },
+    { st: "SEES", txt: <>Inside: <b>captain down</b> at the lock. <b>Co-pilot at the controls.</b></> },
+    { st: "SEES", txt: <>Aboard: <b>174 souls</b>. Crew briefed — his location and status.</> },
     { st: "NO MATCH", txt: <><b>412 playbook branches</b> searched. None fit.</> },
   ];
 
@@ -507,7 +507,7 @@ function JudgmentBeat() {
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="lab">Recommendation · T+1:05</div>
-          <p>Release the flight-deck lock. Recognized crew at the door · co-pilot at the controls · aircraft guarded · captain needs medical. Confidence: high.</p>
+          <p>Release the flight-deck lock. Recognized crew at the door · captain needs medical · crew briefed on the co-pilot's position and status. Confidence: high.</p>
         </motion.div>
 
         <motion.div
@@ -605,10 +605,10 @@ function AuthorityInbox() {
               <ul className="audit">
                 <li><span className="st">T+0:02 ✓</span><span><b>Scene understood</b> — violent contact flagged in &lt;2 s</span></li>
                 <li><span className="st">T+0:08 ✓</span><span><b>Summary streamed</b> — sentence + clip; human acknowledged</span></li>
-                <li><span className="st">T+0:30 ✓</span><span><b>Dive rejected</b> — altitude held</span></li>
                 <li><span className="st">T+0:45 ✓</span><span><b>Choreography computed</b> — runway, stand, apparatus</span></li>
                 <li><span className="st">T+1:05 ✓</span><span><b>No playbook matched</b> — scene judgment invoked</span></li>
                 <li><span className="st">T+1:09 ✓</span><span><b>Door released</b> — human confirm, 4.2 s</span></li>
+                <li><span className="st">T+2:30 ✓</span><span><b>Dive arrested</b> — envelope held, humans fly</span></li>
                 <li><span className="st">T+9:00 ✓</span><span><b>Fire at the door</b> — before the aircraft stopped</span></li>
                 <li><span className="st">T+13:00 ✓</span><span><b>Counsellors briefed</b> — before the first family called</span></li>
                 <li><span className="st">T+17:00 ✓</span><span><b>Statement drafted</b> — against your crisis policy</span></li>
@@ -995,7 +995,7 @@ export default function DeepDive() {
                 <h3>The plan moves things</h3>
                 <p>Smart door lock, guarded autopilot, autonomous apron vehicles, medical robots, dynamic signage, green-wave access.</p>
                 <ul>
-                  <li>Air: lock releases · dive rejected · automation flies</li>
+                  <li>Air: lock releases · dive arrested · humans fly, envelope held</li>
                   <li>Ground: stand cleared before the aircraft parks</li>
                   <li>No phone call per action</li>
                 </ul>
@@ -1005,7 +1005,9 @@ export default function DeepDive() {
           <Reveal delay={0.06}>
             <div className="loop">
               <b>sense → summarize → judge → act → inform</b><br />
-              irreversible actions pass a live human confirm, or standing authority the CEO has granted.
+              irreversible actions pass a live human confirm — a 10-second window; if it
+              expires, the recommended action proceeds, logged as the machine's own, never
+              credited to a human — or standing authority the CEO has granted.
               <span className="gold"> Judgment is how the system decides; authority is what you grant.</span>
             </div>
           </Reveal>
