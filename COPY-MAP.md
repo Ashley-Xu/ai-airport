@@ -185,6 +185,15 @@ R2 S1
   cut: "The latch releases on your word."
   why: The photo shows help moving.
 
+[R2 S1 · result brief — AUTO variant]  (added later; 11w)
+  copy: "The latch released by the Nervous System due to no response from you."
+  when: choices.door === "auto:release" — the 10 s confirm window expired and
+        the AI acted on its own logged recommendation.
+  why: "on your word" credits the player for a release they never made. The
+       auto path must never read as a human decision — same invariant as
+       humanDecisions() excluding "auto:*" and the ending's decision count.
+       Ashley's sentence, verbatim. Test hook: ?r2=d1_result&auto=1.
+
 
 ==========================================================================
 R2 S2

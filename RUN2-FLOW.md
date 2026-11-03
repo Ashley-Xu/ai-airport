@@ -49,10 +49,18 @@ choices actually do.
    │   Attacker · Subdued by crew │   Captain · Unaided         │
    │              on entry        │   Souls · 174               │
    │   Medical · ~40 s sooner     │   (no Attacker row — image  │
-   │   Confirm · Human · 4.2 s    │    names him, top-right)    │
+   │   Confirm · Human · 4.2 s    │   names him, top-right)     │
+   │     └ AUTO (10 s window      │                             │
+   │       expired, no human):    │                             │
+   │       Confirm · Auto ·       │                             │
+   │       window expired         │                             │
    │                              │                             │
-   │   "The latch releases on     │   "You held. The lock       │
-   │    your word."               │    stays sealed."           │
+   │   human: "The latch          │   "You held. The lock       │
+   │    releases on your word."   │    stays sealed."           │
+   │   auto: "The latch released  │                             │
+   │    by the Nervous System     │                             │
+   │    due to no response        │                             │
+   │    from you."                │                             │
    │                              │                             │
    │   "In Run 1 they went in     │   (no contrast line —       │
    │    blind. Here they were     │    crew never get the       │

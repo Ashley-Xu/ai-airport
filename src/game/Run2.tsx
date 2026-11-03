@@ -82,9 +82,13 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   });
   const [choices, setChoices] = useState<Run2Choices>(() => {
     // test hook: ?r2=<step>&hold=1 pre-seeds the HELD branch, so downstream
-    // held-only copy can be deep-linked. Inert in normal play.
-    return new URLSearchParams(window.location.search).get("hold") === "1"
-      ? { door: "hold" } : {};
+    // held-only copy can be deep-linked. &auto=1 pre-seeds the AUTO-RELEASE
+    // branch (confirm window expired, AI acted on its own recommendation).
+    // Both inert in normal play.
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("hold") === "1") return { door: "hold" };
+    if (q.get("auto") === "1") return { door: "auto:release" };
+    return {};
   });
   const [t, setT] = useState("T+0:00");
 
@@ -165,6 +169,10 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   }, [demo, step]);
 
   const held = choices.door === "hold";
+  /* The confirm window expired and the AI released on its own recommendation
+     (recorded "auto:release"). Downstream copy must never credit a human for
+     it — same invariant as humanDecisions() and the ending's decision count. */
+  const autoDoor = choices.door === "auto:release";
 
   /* Run 2's beds, owned entirely here (Game.tsx only scores the phases where
      no run is mounted — see the ownership note there). Palette notes are in
@@ -240,7 +248,15 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         )}
         {step === "d1_result" && (
           <Run2Scene key="d1r" demo={demo} holdBrief
-            brief={held ? <>You held. The lock stays sealed.</> : <>The latch releases on your word.</>}
+            /* The auto variant (window expired) must not credit the player:
+               "on your word" is a lie when the AI acted on its own logged
+               recommendation. Ashley's exact sentence, minus the period inside
+               the quote. */
+            brief={held
+              ? <>You held. The lock stays sealed.</>
+              : autoDoor
+                ? <>The latch released by the Nervous System due to no response from you.</>
+                : <>The latch releases on your word.</>}
             statusLabel="Flight deck · live" label="Scene 1 · In the air"
             photo={held ? "r2-detected" : "r2-unlocked"}
             sub="You are the decision-maker" subClass="teal" clock={t}
@@ -253,6 +269,10 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
               ? [["Door lock", "Held sealed"], ["Captain", "Unaided"], ["Souls", "174"]]
               // released shows r2-unlocked (latch + green LED), which has NO baked
               // threat text, so this row is not a duplicate — it carries the outcome.
+              // The Confirm row names WHO released: a human, or the machine on its
+              // own logged recommendation when the window expired. Never both.
+              : autoDoor
+              ? [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Auto · window expired"]]
               : [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Human · 4.2 s"]]}
             vignette="teal">
             {/* One contrast line, released path only. The true difference between
@@ -383,7 +403,9 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
               said={held
                 ? <>Resolved. <span className="em">174 souls</span>. Captain reached 40 s later — stable in surgery. Audit trail attached.</>
                 : <>Resolved. <span className="em">174 souls</span>. Captain stable in surgery. Audit trail attached.</>}
-              rec={<>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. 2015 was the alternative: a rule that couldn't be broken.</>}
+              rec={autoDoor
+                ? <>At T+1:05 no playbook fit. I saw, summarized, recommended — and got <b>no response</b>, so I acted on my own logged recommendation. 2015 was the alternative: a rule that couldn't be broken.</>
+                : <>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. 2015 was the alternative: a rule that couldn't be broken.</>}
               actsLabel="Authority"
               actions={[
                 { label: "Standing authority", kind: "gold", onClick: () => go("d4_result", { dial: "standing" }) },
