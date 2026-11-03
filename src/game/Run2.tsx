@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArtCross, preloadArt, PlateOverlay, resetPlates } from "./SceneArt";
 import { useFrozen, timeFrozen, startPausableTimeout } from "./time";
 import { setBackHandler, setSkipHandler } from "./nav";
+import { sound } from "./audio";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -164,6 +165,27 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   }, [demo, step]);
 
   const held = choices.door === "hold";
+
+  /* Run 2's beds, owned entirely here (Game.tsx only scores the phases where
+     no run is mounted — see the ownership note there). Palette notes are in
+     audio.ts — the same D-minor event as Run 1, rendered in pure sines and
+     precision ticks because the difference between the runs is who is doing
+     the work, and that should be audible. */
+  useEffect(() => {
+    const bed: Record<Step, Parameters<typeof sound.setScene>[0]> = {
+      intro: "r2_base",
+      d1_door: "r2_deck", d1_result: "r2_deck",
+      d2_dive: "r2_dive", d2_result: "r2_dive",
+      d3_airport: "r2_ground", d3_result: "r2_ground",
+      d4_dial: "r2_after", d4_result: "r2_after",
+      ending: "r2_resolve", done: "r2_resolve",
+    };
+    sound.setScene(bed[step]);
+    /* The dive step is the one place Run 2 lets the wind blow — the same
+       storm as Run 1 scene 3, but at machine-steady level (see r2_dive's
+       near-zero gust LFO). It eases the moment the nose comes up. */
+    sound.setIntensity({ wind: step === "d2_dive" ? 0.8 : 0, heart: 0, tension: 0 });
+  }, [step]);
 
   return (
     <div className="g-stage">
@@ -564,6 +586,13 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
   const expRef = useRef(onExpire); expRef.current = onExpire;
   const fired = useRef(false);
   const frozen = useFrozen();
+
+  /* The card arriving IS the machine speaking: one quiet data-blip when it
+     mounts. Decision buttons get a single ack tone on click (wired in the
+     acts map below), so every confirm is audible — which is the thesis:
+     the machine acts, the human confirms. */
+  useEffect(() => { sound.sfx("data"); }, []);
+
   useEffect(() => {
     // setInterval (not RAF) so the clock also advances under headless virtual-time
     if (!countdown) return;
@@ -577,6 +606,17 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
     }, 100);
     return () => clearInterval(id);
   }, [countdown]);
+
+  /* Last 4 seconds of the confirm window: a soft metronome, 2 ticks/s. The
+     player should HEAR that the AI is about to act without reading the ring.
+     Fires on the second boundary so a freeze between ticks just extends the
+     silence — same pausable discipline as the countdown itself. */
+  const lastTick = useRef(-1);
+  useEffect(() => {
+    if (!countdown || ms > 4000) return;
+    const slot = Math.ceil(ms / 500);          // 8 slots over 4 s
+    if (slot !== lastTick.current) { lastTick.current = slot; sound.sfx("tick"); }
+  }, [ms, countdown]);
 
   return (
     <motion.div className="g-report" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -595,7 +635,8 @@ function ReportCard({ t, said, rec, question, actions, actsLabel, tele, countdow
       {actsLabel && <div className="acts-label">{actsLabel}</div>}
       <div className="acts">
         {actions.map((a, i) => (
-          <button key={i} className={`g-btn ${a.kind}`} onClick={a.more ? () => setMore((v) => !v) : a.onClick}>{a.label}</button>
+          <button key={i} className={`g-btn ${a.kind}`}
+            onClick={a.more ? () => setMore((v) => !v) : () => { sound.sfx("ack"); a.onClick?.(); }}>{a.label}</button>
         ))}
       </div>
     </motion.div>
@@ -619,7 +660,7 @@ function Consequence({ goodText, onNext, nextLabel }: {
         <span className="nm" style={{ color: "var(--g-cyan)" }}>Outcome</span></div>
       <div className="g-consequence" style={{ marginTop: 0 }}>{goodText}</div>
       <div className="acts" style={{ marginTop: 20 }}>
-        <button className="g-btn teal" onClick={onNext}>{nextLabel}</button>
+        <button className="g-btn teal" onClick={() => { sound.sfx("ack"); onNext(); }}>{nextLabel}</button>
       </div>
     </motion.div>
   );
@@ -630,7 +671,7 @@ function ResultBar({ onNext, label = "Continue →" }: { onNext: () => void; lab
   return (
     <motion.div className="g-resultbar" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}>
-      <button className="g-btn teal" onClick={onNext}>{label}</button>
+      <button className="g-btn teal" onClick={() => { sound.sfx("ack"); onNext(); }}>{label}</button>
     </motion.div>
   );
 }
@@ -650,6 +691,9 @@ function Run2Ending({ decisions, held, onNext }: { decisions: number; held?: boo
   // pausable: freezing must hold here too, so the presenter can talk over the
   // outcome screen without it walking itself into the dossier
   useEffect(() => startPausableTimeout(onNext, 8000), [onNext]);
+  /* "Same 174. No luck needed." — the resolve swell lands as the screen
+     does. This is the last sound the game makes; it should feel like one. */
+  useEffect(() => { sound.sfx("resolve"); }, []);
   const w = ["no", "one", "two", "three", "four"][Math.max(0, Math.min(4, decisions))];
   return (
     <motion.div className="g-stage" {...fade}>

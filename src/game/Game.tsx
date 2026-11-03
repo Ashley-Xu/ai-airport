@@ -6,6 +6,7 @@ import Dossier from "./Dossier";
 import { usePlateActive } from "./SceneArt";
 import { useFrozen, toggleFrozen, setFrozen } from "./time";
 import { goBack, useCanBack, skipToRunEnd, useCanSkip } from "./nav";
+import { sound, useAudioOn } from "./audio";
 import "./game.css";
 
 /* ══════════════════════════════════════════════════════════════
@@ -34,6 +35,19 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   const frozen = useFrozen();               // global time freeze
   const canBack = useCanBack();             // is there a previous step to return to
   const canSkip = useCanSkip();             // does the active run still have an ending to skip to
+  const audioOn = useAudioOn();             // HUD mute toggle state
+
+  /* Soundscape ownership: Game drives only the phases where NO run is mounted
+     (title, cold open, dossier). Run1 and Run2 own their own per-scene/per-step
+     beds — and because React runs child effects AFTER parent effects, a phase
+     map here would clobber the bed the run set on mount (this bug showed up as
+     ?r1=controls playing r1_intro). So run1/run2 are deliberately absent: on
+     the phase change into a run, the run's own mount effect sets the bed. */
+  useEffect(() => {
+    if (phase === "title") { sound.setScene("title"); sound.setIntensity({ heart: 0, wind: 0, tension: 0 }); }
+    else if (phase === "coldopen") sound.setScene("coldopen");
+    else if (phase === "dossier") { sound.setScene("off"); sound.setIntensity({ heart: 0, wind: 0, tension: 0 }); }
+  }, [phase]);
 
   useEffect(() => {
     const id = setInterval(() => setClock(clockRef.current), 100);
@@ -73,7 +87,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
           cause and no way out. Deadlock insurance for a live demo. */}
       {frozen && phase !== "title" && phase !== "dossier" && (
         <button className="g-frozen-banner" onClick={toggleFrozen} title="Resume — let time run again">
-          ❚❚ Time frozen · click to resume
+          ▶ Time frozen · click to resume
         </button>
       )}
       {phase !== "title" && phase !== "dossier" && (
@@ -89,12 +103,17 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
             {phase === "coldopen" && (
               <button className="skip" onClick={() => setPhase("run1")}>Skip →</button>
             )}
+            {/* Standard media convention: the icon shows what CLICKING will do.
+                Frozen → ▶ (click to play/resume); running → ❚❚ (click to freeze).
+                It first shipped ❚❚ in both states, which read as "still frozen,
+                click to freeze again" — a button that never tells you it will
+                resume is a button nobody dares press mid-demo. */}
             <button
               className={`skip ctl${frozen ? " on" : ""}`}
               onClick={toggleFrozen}
-              title="Freeze time — nothing advances, the AI will not act"
+              title={frozen ? "Resume — let time run again" : "Freeze time — nothing advances, the AI will not act"}
               aria-pressed={frozen}>
-              ❚❚ <span className="ctl-word">{frozen ? "Frozen" : "Freeze"}</span>
+              {frozen ? "▶" : "❚❚"} <span className="ctl-word">{frozen ? "Resume" : "Freeze"}</span>
             </button>
             <button
               className="skip ctl"
@@ -113,6 +132,13 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
               </button>
             )}
             <button className="skip home" onClick={restart} title="Back to the title screen">⌂ <span className="ctl-word">Home</span></button>
+            <button
+              className={`skip ctl${audioOn ? "" : " muted"}`}
+              onClick={sound.toggle}
+              title={audioOn ? "Mute sound" : "Unmute sound"}
+              aria-pressed={!audioOn}>
+              {audioOn ? "🔊" : "🔇"} <span className="ctl-word">{audioOn ? "Sound" : "Muted"}</span>
+            </button>
           </div>
         </div>
       )}
@@ -162,10 +188,13 @@ function Title({ onBegin, onDeepDive }: { onBegin: () => void; onDeepDive: () =>
           
         </motion.div>
         <motion.div className="actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95, duration: 0.8 }}>
-          <button className="g-btn-hud" onClick={onBegin}><span>Begin</span></button>
+          {/* Begin is the first user gesture — the moment a browser allows an
+              AudioContext, so the soundscape is born here, not on load. */}
+          <button className="g-btn-hud" onClick={() => { sound.init(); onBegin(); }}><span>Begin</span></button>
           <div style={{ marginTop: 14 }}>
             <button className="g-btn ghost" style={{ fontSize: 12, padding: "9px 16px" }} onClick={onDeepDive}>or read the argument</button>
           </div>
+          <TitleSoundHint />
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3, duration: 1 }}
           style={{ marginTop: 40, fontFamily: "var(--g-body)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--g-faint)" }}>
@@ -173,6 +202,19 @@ function Title({ onBegin, onDeepDive }: { onBegin: () => void; onDeepDive: () =>
         </motion.div>
       </div>
     </motion.div>
+  );
+}
+
+/* Small sound-state hint under the title actions: the piece has a score, so
+   say so before Begin — and surface a muted state (persisted from a previous
+   visit) where the player can fix it without hunting through the HUD. */
+function TitleSoundHint() {
+  const audioOn = useAudioOn();
+  return (
+    <button className="g-sound-hint" onClick={sound.toggle}
+      title={audioOn ? "Mute sound" : "Unmute sound"}>
+      {audioOn ? "🔊" : "🔇"} <span>{audioOn ? "with sound" : "muted — click to unmute"}</span>
+    </button>
   );
 }
 
@@ -185,6 +227,16 @@ function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean
       setTimeout(() => setStep(3), 9500 * f), setTimeout(onDone, 13000 * f)];
     return () => t.forEach(clearTimeout);
   }, [onDone, demo]);
+
+  /* One sound per number, on the beat it lands: a hollow minor third under
+     "150 dead", an open fifth under "174 lived", the resolve chime under
+     "Luck is not a safety system." The cold open is silence and typography;
+     these are the only three notes it gets. */
+  useEffect(() => {
+    if (step === 1) sound.sfx("hollow");
+    if (step === 2) sound.sfx("warm");
+    if (step === 3) sound.sfx("chime");
+  }, [step]);
 
   return (
     <motion.div className="g-stage" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>

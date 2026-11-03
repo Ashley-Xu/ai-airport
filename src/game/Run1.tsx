@@ -4,6 +4,8 @@ import { FlightDeck, AltitudeTrace } from "./Visuals";
 import { ArtCross, preloadArt, PlateOverlay, plateActive, resetPlates } from "./SceneArt";
 import { timeFrozen, startPausableTimeout } from "./time";
 import { setBackHandler, setSkipHandler } from "./nav";
+import { sound } from "./audio";
+import { isSpaceDown, isImeSwallowed, isAutoRepeat, isImeSpace } from "./keys";
 import type { ArtKey } from "./art";
 
 preloadArt([
@@ -84,6 +86,19 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
     if (scene !== "done") return;
     return startPausableTimeout(onComplete, demo ? 400 : 900);
   }, [scene, onComplete, demo]);
+
+  /* Run 1's own soundscape map, owned entirely here (Game.tsx only scores the
+     phases where no run is mounted). Every intensity knob this run drives
+     (heartbeat, wind, tension) belongs to the scene that owns it, so each
+     entry resets them — scene 3's scream must not bleed into the reveal. */
+  useEffect(() => {
+    const bed: Record<Scene, Parameters<typeof sound.setScene>[0]> = {
+      intro: "r1_intro", captain: "r1_captain", passengers: "r1_passengers",
+      controls: "r1_controls", reveal: "r1_reveal", done: "r1_reveal",
+    };
+    sound.setScene(bed[scene]);
+    sound.setIntensity({ heart: 0, wind: 0, tension: 0 });
+  }, [scene]);
 
   return (
     <div className="g-stage">
@@ -232,7 +247,14 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
   }, [onDone, clockRef, armed, revealed]);
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => { if (e.code === "Space") { e.preventDefault(); holdingRef.current = true; setHolding(true); } };
+    /* HOLD scenes can accept an IME-swallowed keydown (keyCode 229) as Space:
+       `up` releases unconditionally, so a wrong guess lasts only as long as the
+       key is down. `repeat` is ignored so a long hold is one continuous press,
+       not a storm of re-arms. See keys.ts for why 229 is a guess at all. */
+    const down = (e: KeyboardEvent) => {
+      if (isAutoRepeat(e)) return;
+      if (isSpaceDown(e) || isImeSwallowed(e)) { e.preventDefault(); holdingRef.current = true; setHolding(true); }
+    };
     const up = () => { holdingRef.current = false; setHolding(false); };
     window.addEventListener("keydown", down); window.addEventListener("keyup", up);
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
@@ -241,6 +263,20 @@ function CaptainScene({ onDone, clockRef, demo = false }: { onDone: () => void; 
   const shake = strength < 40 ? (40 - strength) / 40 : 0;
   const vignette = 1 - strength / 100;
   const art: ArtKey = phase === "beat" ? "s1-door-open" : ring > 35 ? "s1-hand" : "s1-captain";
+
+  /* The score hears the drain: heartbeat rate and the drone's growl ride
+     straight off `strength`, so the sound and the meter can never disagree.
+     The engine's 50 ms scheduler reads these; no timers here. */
+  useEffect(() => {
+    sound.setIntensity({ heart: 1 - strength / 100, tension: 1 - strength / 100 });
+  }, [strength]);
+  /* The door opens: one thunk, heartbeat stops — covers both the live RAF
+     path and the demo interval path, because both land on phase "beat". */
+  useEffect(() => {
+    if (phase !== "beat") return;
+    sound.sfx("thunk");
+    sound.setIntensity({ heart: 0, tension: 0 });
+  }, [phase]);
   const hold = () => { holdingRef.current = true; setHolding(true); };
   const release = () => { holdingRef.current = false; setHolding(false); };
 
@@ -357,25 +393,47 @@ function PassengerScene({ onDone, demo = false }: { onDone: () => void; demo?: b
 
   function finish() {
     setPhase("beat"); setRevealed(false); setPlateArt("s2-subdued"); // new image -> clean plate
+    sound.sfx("thunk");                       // he goes down
+    sound.setIntensity({ heart: 0, tension: 0 });
     startPausableTimeout(onDone, (demo ? 1400 : 3200) + 2850);
   }
   function tryHit() {
     if (phase !== "struggle" || done.current || !armed) return;
     if (posRef.current > 38 && posRef.current < 62) {
+      sound.sfx("hit");
       const h = hits + 1; setHits(h);
+      // each clean move ratchets the struggle's tension up a notch
+      sound.setIntensity({ heart: h / HITS_NEEDED, tension: h / HITS_NEEDED });
       if (h >= HITS_NEEDED) { done.current = true; finish(); }
-    } else setHits((v) => Math.max(0, v - 1));
+    } else { sound.sfx("miss"); setHits((v) => Math.max(0, v - 1)); }
   }
+  /* One press = one move. Three things this has to get right:
+     · `armed` MUST be in the deps: the handler closes over `tryHit`, which
+       early-returns while `!armed`. Without it the effect registers once at
+       mount (armed=false) and never re-registers when the scene arms — so
+       every SPACE press was silently swallowed while mouse clicks worked
+       (the onClick path always uses the fresh closure from the current render).
+     · `repeat` is ignored, or holding SPACE down racks up free moves.
+     · IME: with a Chinese input method active Chrome reports the Space keydown
+       as keyCode 229 / key "Process" / code "" — which is why SPACE did nothing
+       here while clicking the bar worked. 229 does not say WHICH key was
+       swallowed, so a tap may not score on it alone: unlike the hold scenes, a
+       wrong guess permanently credits a move. isImeSpace defers the decision to
+       the end of the task and checks whether a composition opened in the
+       meantime (pinyin typing → stand down). `cancelled` guards the deferral
+       against outliving this effect, so it can never score against a stale
+       scene or a scene the player has already left. */
   useEffect(() => {
-    // `armed` MUST be in the deps: the handler closes over `tryHit`, which
-    // early-returns while `!armed`. Without it the effect registers once at
-    // mount (armed=false) and never re-registers when the scene arms — so
-    // every SPACE press was silently swallowed while mouse clicks worked
-    // (the onClick path always uses the fresh closure from the current render).
+    let cancelled = false;
     const k = (e: KeyboardEvent) => {
-      if (e.code === "Space" || e.code === "Enter") { e.preventDefault(); tryHit(); }
+      if (isAutoRepeat(e)) return;
+      if (isSpaceDown(e) || e.code === "Enter") { e.preventDefault(); tryHit(); return; }
+      if (isImeSwallowed(e)) {
+        isImeSpace((wasSpace) => { if (!cancelled && wasSpace) tryHit(); });
+      }
     };
-    window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
+    window.addEventListener("keydown", k);
+    return () => { cancelled = true; window.removeEventListener("keydown", k); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hits, phase, armed]);
 
@@ -492,7 +550,11 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   }, [onDone, armed]);
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => { if (e.code === "Space") { e.preventDefault(); holdRef.current = true; setHolding(true); } };
+    // Same HOLD treatment as the captain scene — see keys.ts and the note there.
+    const down = (e: KeyboardEvent) => {
+      if (isAutoRepeat(e)) return;
+      if (isSpaceDown(e) || isImeSwallowed(e)) { e.preventDefault(); holdRef.current = true; setHolding(true); }
+    };
     const up = () => { holdRef.current = false; setHolding(false); };
     window.addEventListener("keydown", down); window.addEventListener("keyup", up);
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
@@ -502,6 +564,25 @@ function ControlsScene({ onDone, demo = false }: { onDone: () => void; demo?: bo
   const release = () => { holdRef.current = false; setHolding(false); };
   // marker position in the horizontal bar: dive(left) .. climb(right); band mapped to 52..74 → 38%..62%
   const markPct = Math.max(0, Math.min(100, pitch));
+
+  /* The dive is audible: wind rises with distance from the LEVEL band, and an
+     abstract sink-rate chirp runs while outside it. Both derive from the same
+     `pitch` the meter renders, so sound and visuals cannot disagree. Arresting
+     the dive = wind easing and the chirp stopping: relief you hear before you
+     read "Stabilized." */
+  useEffect(() => {
+    if (phase !== "struggle") return;
+    const inBand = pitch > bandLo && pitch < bandHi;
+    const dist = inBand ? 0 : Math.min(1, Math.abs(pitch - (bandLo + bandHi) / 2) / 42);
+    sound.setIntensity({ wind: 0.3 + 0.7 * dist, tension: dist });
+    sound.setBeep(!inBand);
+    return () => sound.setBeep(false);
+  }, [pitch, phase]);
+  useEffect(() => {
+    if (phase !== "beat") return;
+    sound.setBeep(false);
+    sound.setIntensity({ wind: 0, tension: 0 });
+  }, [phase]);
 
   // the dive -> interior art switch gets its own clean plate
   useEffect(() => {
@@ -570,6 +651,17 @@ function RevealScene({ onDone, demo = false, startStep = 0 }: { onDone: () => vo
   // a new PICTURE needs a new plate; step 3 reuses the reunion image, so it
   // must not wait for a reveal that will never come
   useEffect(() => { setRevealed(false); }, [art]);
+
+  /* The reveal is Run 1's only consonance: one soft D-major chime as each
+     image is revealed (the first harmony the run gets), then the fuller
+     "resolve" swell under the closing title. Fired on `revealed`, not on
+     `step`, so the sound lands when the picture has had its moment, and a
+     skipped plate still plays its chime. */
+  useEffect(() => {
+    if (!revealed) return;
+    if (step < 3) sound.sfx("chime");
+    else sound.sfx("resolve");
+  }, [revealed, step]);
 
   // advance only after the current image has been revealed AND its beat has dwelled
   useEffect(() => {

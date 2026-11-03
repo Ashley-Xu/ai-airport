@@ -539,6 +539,23 @@
   letter-spacing: 0.3em; text-transform: uppercase; color: var(--g-faint); }
 .g-title-screen .actions { margin-top: 40px; }
 
+/* sound hint under the title actions — quiet by design; it's a promise of a
+   score, not a control you must touch. Muted state gets the gold so a
+   persisted mute is visible at a glance. */
+.g-sound-hint {
+  margin-top: 22px; background: none; border: none; cursor: pointer;
+  font-family: var(--g-body); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--g-faint);
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: color 0.25s ease;
+}
+.g-sound-hint:hover { color: var(--g-cyan); }
+
+/* HUD mute control: same chrome as the other .ctl buttons; muted reads gold
+   like the Freeze "on" state so both toggles share one visual language. */
+.g-hud .skip.ctl.muted { color: var(--g-gold); border-color: rgba(230,192,122,0.55); }
+.g-hud .skip.ctl.muted:hover { color: var(--g-gold); border-color: rgba(230,192,122,0.8); }
+
 /* ── HUD button (IMAGE #3 team-panel language): chamfered corners,
    navy fill, bright cyan frame, translucent highlight strip, neon glow.
    Layering: button bg = the cyan frame; ::before = navy fill inset 2px
