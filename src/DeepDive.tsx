@@ -191,6 +191,23 @@ const GROUND_ROWS: Row[] = [
   },
 ];
 
+/* The seven risks & mitigations. Moved here from the game's dossier
+   (src/game/Dossier.tsx) at Ashley's direction: they belong to the ARGUMENT, not
+   to the end of a playthrough. Copy carried over unchanged — including the
+   "boldest claim" concession on flight control, which is the piece's honest
+   boundary and must not be softened in transit. Coral tags read as the risk,
+   cyan inside the mitigation as the answer, matching this page's palette rule
+   (coral and cyan never share an element). */
+const RISKS: { tag: string; risk: string; mit: React.ReactNode }[] = [
+  { tag: "Perception", risk: "It misreads — opens a door it shouldn't, or won't.", mit: <>Never acts on its own read: summary + 6-s clip to a human. Conjunctive triggers. Any conscious crew member countermands. Low confidence always escalates. Every divergence logged.</> },
+  { tag: "Flight control", risk: "The boldest claim here: an AI touching flight controls. It is not certified to land an airliner.", mit: <><b>Scoped down:</b> it stabilizes, guards the envelope, guides. Humans fly. Auto-land only where certified. Grounded in DARPA ALIAS (737-sim landing, 2016) and standard envelope protection.</> },
+  { tag: "Cyber", risk: "Hands on locks and controls means the door lock is now addressable.", mit: <>Isolated, signed channels. Authenticated commands. Hardware fail-safe reverts to manual. Aviation-grade security, not IT-grade.</> },
+  { tag: "Spoofing", risk: "Fooling the cameras with a 'safe-looking' scene.", mit: <>Sensor fusion: cameras + LiDAR + ATC link + aircraft state. Disagreement is itself an alarm. No single sensor authorizes an irreversible act.</> },
+  { tag: "Privacy", risk: "Crews and regulators restrict flight-deck recording (post-2015 rules; IATA Jan-2026).", mit: <>Event-triggered summaries, never continuous recording. Human authority on every irreversible act. Crews co-design the governance. A doctrine earned, not a bypass.</> },
+  { tag: "Complacency", risk: "Humans stop watching because the machine is good.", mit: <>Humans keep real, weighted decisions. The trust record is earned and revocable. Manual drills stay on the calendar.</> },
+  { tag: "Ownership", risk: "The airport doesn't own the aircraft. Cabin sensing is an airline/OEM capability.", mit: <>Federation: the airport is where the aircraft's nervous system meets the ground's. Data-sharing agreements. You govern the authority dial, not the airframe.</> },
+];
+
 /* ───────────────────────── primitives ───────────────────────── */
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -722,7 +739,7 @@ export default function DeepDive() {
             <a href="#timeline">Same event twice</a>
             <a href="#physical">Physical AI</a>
             <a href="#inbox">Your inbox</a>
-            <a href="#thinking">Thinking</a>
+            <a href="#risks">Risks</a>
           </nav>
         </div>
       </div>
@@ -1026,68 +1043,36 @@ export default function DeepDive() {
         </div>
       </section>
 
-      {/* ── BEAT 7 · THINKING ── */}
-      <section className="free" id="thinking">
+      {/* ── BEAT 7 · RISKS ──
+          MOVED here from the game's dossier at Ashley's direction: the risks
+          belong to the ARGUMENT, not to the end of a playthrough. They read as
+          the section that used to sit here — "How this was thought through" —
+          which was cut, so the slot and the number 08 are unchanged. The
+          dossier keeps the outcome and the close; the Argument now owns the
+          concessions, which is where a CEO actually looks for them.
+          Styling is this page's own (.risks), not the game's .g-risks: Teko
+          headings and --g-* vars would have mixed two design systems on one
+          page. Coral names the risk, cyan answers it — same palette discipline
+          as the rest of the page. */}
+      <section className="free" id="risks">
         <div className="wrap">
           <Reveal>
-            <div className="kicker">08 · How this was thought through</div>
-            <h2 className="head">The thinking behind the story</h2>
-            <p className="lede">The choices, the rejected alternatives, and the contested assumptions.</p>
+            <div className="kicker">08 · The fine print</div>
+            <h2 className="head">Seven ways this is wrong, <span className="accent-coral">and what we do about each.</span></h2>
+            <p className="lede">
+              No honest pitch for a system that touches a door lock can skip this page — including the
+              one about flight control, which concedes the boldest claim in the concept.
+            </p>
           </Reveal>
-          <div className="think">
-            <Reveal delay={0.05}>
-              <div className="card teal">
-                <h3><span className="idx">A</span>Why this moment, and only this moment</h3>
-                <ul>
-                  <li><b>Rejected: a weather diversion</b> — predictable events invite "analytics could do that."</li>
-                  <li><b>Rejected: starting at the squawk</b> — skips the two minutes that decided it.</li>
-                  <li><b>Chosen: T+0:00, zero warning</b> — the hardest case makes the shortest argument.</li>
-                  <li><b>Cost: it's rare</b> — so the 90-day roadmap starts on an ordinary transfer queue.</li>
-                </ul>
-              </div>
-            </Reveal>
-            {/* CUT FOR TIME — card B, "Why Germanwings is evidence." Gated, not
-                deleted (JSX comments cannot nest, and this card has none of its own,
-                so `false &&` is the safe reversible gate). Flip to `true` to restore.
-                The argument survives as Ashley's reserve ANSWER — see WALKTHROUGH.md.
-                Because this card is gone, the two below are re-lettered C→B and D→C
-                so the reader never sees an A→C→D gap. On restore, re-letter them
-                back and flip this gate. */}
-            {false && (
-            <Reveal delay={0.11}>
-              <div className="card teal">
-                <h3><span className="idx">B</span>Why Germanwings is evidence, not a counter-case</h3>
-                <ul>
-                  <li><b>One door, two opposite failures:</b> kept a suicidal co-pilot in (2015); kept help out (last month).</li>
-                  <li><b>The post-2015 rule was satisfied</b> — the attacker was the second person. Doctrine lags one disaster.</li>
-                  <li><b>So: no rule lookup at all.</b> See the scene, recommend, human confirms.</li>
-                  <li><b>Conceded out loud, not buried</b> — the boundary buys the rest of the story.</li>
-                </ul>
-              </div>
-            </Reveal>
-            )}
-            <Reveal delay={0.17}>
-              <div className="card teal">
-                <h3><span className="idx">B</span>Assumptions, made explicit</h3>
-                <ul>
-                  <li><b>Sensing largely exists</b> — outward door cameras already fly; inward is the contested part.</li>
-                  <li><b>Flight-deck cameras are the hardest sell</b> — the pitch is governance, not a technical bypass.</li>
-                  <li><b>Judgment ≠ autonomy</b> — authority is a dial: live confirms by default, standing authority granted and revocable, low confidence always escalates.</li>
-                  <li><b>The airport doesn't own the aircraft</b> — it's the federation point where two nervous systems meet.</li>
-                  <li><b>Numbers are mixed-source</b> — event facts from reporting; detection times and clocks illustrative.</li>
-                </ul>
-              </div>
-            </Reveal>
-            <Reveal delay={0.23}>
-              <div className="card teal">
-                <h3><span className="idx">C</span>Why physical AI is the hero, not "AI"</h3>
-                <ul>
-                  <li><b>An airport is a physical machine</b> — prediction-only AI just moves the latency to coordination.</li>
-                  <li><b>Closing the loop</b> — a judgment that opens a lock, rejects a dive, clears a stand — makes "resolved before you knew" literally true.</li>
-                  <li><b>Grounded, not hand-waved:</b> DARPA's ALIAS landed a 737 sim in 2016; envelope protection is standard. Intent-guard is a stated extrapolation.</li>
-                </ul>
-              </div>
-            </Reveal>
+          <div className="risks">
+            {RISKS.map((r, i) => (
+              <Reveal key={r.tag} delay={Math.min(0.04 + i * 0.05, 0.3)}>
+                <div className="risk">
+                  <div className="rh"><span className="rtag">{r.tag}</span><span className="rq">{r.risk}</span></div>
+                  <div className="rm">{r.mit}</div>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

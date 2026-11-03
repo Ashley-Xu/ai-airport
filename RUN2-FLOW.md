@@ -149,16 +149,17 @@ choices actually do.
    │  Outcome text = DialResult(choices.dial) ← the ONLY place  │
    │  the dial choice is read anywhere                          │
    └───────────────────────────┬────────────────────────────────┘
-                               │ "See the outcome →"
+                               │ "See how it resolved →"
                                ▼
                         ┌─────────────┐
                         │   ENDING    │  T+2:00:00 · no image
                         │ auto-adv. 8s│  (Freeze holds it)
                         └──────┬──────┘
-                               │ "See the outcome & the risks"
+                               │ "See the outcome →"
                                ▼
                         ┌─────────────┐
-                        │   DOSSIER   │  leaves Run 2
+                        │   DOSSIER   │  leaves Run 2 · outcome + close only
+                        │             │  (risks moved to the Argument page)
                         └─────────────┘
 ```
 

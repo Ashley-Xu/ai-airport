@@ -34,7 +34,10 @@
    (SVG + CSS + framer-motion + canvas), and reserve 3–4 slots (§6) for clips Ashley
    generates. The game works with or without them; I show it before integrating any clip.
 2. **Structure: two runs, character-switching replay** as detailed in §2.
-3. **Risks: in-game "fine print" dossier (unlocked after the run) + written into docs.**
+3. **Risks: the Argument page's "fine print" section (`#risks`) + written into docs.**
+   *(Moved out of the in-game dossier at Ashley's direction — the concessions belong
+   to the written argument, not to the end of a playthrough. The dossier keeps the
+   outcome and the close.)*
 4. **Current page: keep both.** The game is the primary experience; the scroll-page becomes
    the "deep-dive / the argument in full," sharing story, palette, type, and SVGs.
 5. **Ground phase: cut from gameplay.** The airport's ground response survives only as a
@@ -79,8 +82,10 @@ for learner apps.)
    again — with a nervous system."* No violence depicted. *(clip slot #2.)*
 3. **Run 1 — four scenes** (§2.1).
 4. **Run 2 — cinematic replay + four authorizations** (§2.2).
-5. **Result / dossier** — the honest metrics, then the **Risks & mitigations "fine print"**
-   (§4), then the close.
+5. **Result / dossier** — the honest outcome line, then the close. The **Risks &
+   mitigations "fine print"** (§4) moved to the Argument page as section `#risks`,
+   so the dossier no longer carries them and Run 2's ending button reads
+   *"See the outcome →"* rather than promising risks it no longer has.
 
 ### 2.1 · Run 1 — "The humans" (first-person, character-switching)
 
@@ -191,9 +196,9 @@ experience the emotion and difficulty"* — because difficulty is a mechanic, no
 
 ---
 
-## 4 · Risks & mitigations (in-game dossier + docs)
+## 4 · Risks & mitigations (Argument page `#risks` + docs)
 
-### 4a · Risks of the solution (shown in-game as the "fine print" after the run)
+### 4a · Risks of the solution (the "fine print" section of the Argument page)
 
 | Risk | Why it's real | Mitigation built in |
 |---|---|---|

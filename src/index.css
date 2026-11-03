@@ -590,14 +590,32 @@ h2.head .accent-gold { color: var(--gold); font-style: italic; }
   color: var(--ink-dim); text-transform: uppercase; line-height: 1.8;
 }
 
-/* ---- thinking ---- */
-.think { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 46px; }
-.think .card h3 { font-size: 15.5px; margin-top: 0; }
-.think .card h3 .idx { font-family: var(--mono); font-size: 11px; color: var(--gold); margin-right: 9px; letter-spacing: 0.1em; }
-.think ul { list-style: none; }
-.think li { font-size: 13.5px; color: var(--ink-dim); line-height: 1.68; padding: 7px 0 7px 17px; position: relative; }
-.think li::before { content: "—"; position: absolute; left: 0; color: var(--ink-faint); }
-.think li b { color: var(--ink); font-weight: 600; }
+/* ---- risks & mitigations ----
+   Moved from the game's dossier (.g-risks in game.css). Restyled in THIS page's
+   language rather than carried over: the game's version uses Teko display type
+   and the --g-* palette, which would have mixed two design systems on one page.
+   Palette discipline follows the page's own rule — coral names the risk, cyan
+   answers it, and the two never share an element. */
+.risks { margin-top: 44px; max-width: 960px; }
+.risk { border-top: 1px solid var(--line); padding: 18px 0; }
+.risk:last-child { border-bottom: 1px solid var(--line); }
+.risk .rh { display: flex; gap: 13px; align-items: baseline; line-height: 1.62; }
+.risk .rtag {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--today); background: var(--today-soft); border: 1px solid var(--today-line);
+  border-radius: 999px; padding: 4px 11px; white-space: nowrap; flex: none;
+}
+.risk .rq { font-size: 14.5px; font-weight: 600; color: var(--ink); }
+.risk .rm {
+  margin-top: 10px; padding-left: 0; font-size: 13.5px; color: var(--ink-dim); line-height: 1.78;
+}
+.risk .rm b { color: var(--ai); font-weight: 600; }
+/* Narrow screens: let the tag sit above the risk line instead of squeezing it.
+   The tag is flex:none, so without this the text column shrinks to nothing. */
+@media (max-width: 560px) {
+  .risk .rh { flex-direction: column; gap: 8px; align-items: flex-start; }
+  .risk .rtag { align-self: flex-start; }
+}
 
 /* ---- path + close ---- */
 .path { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 50px; }
@@ -623,7 +641,7 @@ footer .inner .sp { margin-left: auto; }
 
 /* ---- responsive ---- */
 @media (max-width: 1000px) {
-  .tri, .organs, .path, .doors, .think { grid-template-columns: 1fr; }
+  .tri, .organs, .path, .doors { grid-template-columns: 1fr; }
   .inbox-stage { grid-template-columns: 1fr; }
   .phone { position: static; max-width: 380px; margin: 0 auto; }
   .judgment-stage { grid-template-columns: 1fr; gap: 30px; }

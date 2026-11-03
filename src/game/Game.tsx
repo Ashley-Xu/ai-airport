@@ -66,7 +66,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   /* Phase changes are progression too, and they bypass both runs' transition
      functions (the cold open's Skip, Run 1 → Run 2, Run 2 → dossier). Route
      them through the same rule so a presenter who freezes, talks, then clicks
-     "See the outcome & the risks" arrives at the dossier live. Without this the
+     "See the outcome" arrives at the dossier live. Without this the
      module-level flag would stay true across the handoff — invisible there,
      because the banner is deliberately suppressed on title and dossier, so the
      next run would open paused with no obvious cause. */

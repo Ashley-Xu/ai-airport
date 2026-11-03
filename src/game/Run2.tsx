@@ -439,7 +439,13 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
             vignette="teal">
             <Consequence
               goodText={<DialResult dial={choices.dial} />}
-              onNext={() => go("ending")} nextLabel="See the outcome →" />
+              /* Relabelled from "See the outcome →", which collided with the ending
+                 screen's button two steps later — identical labels on consecutive
+                 screens pointing at different destinations. This one leads to the
+                 "Resolved" screen, so it names that; the ending's "See the outcome"
+                 keeps its label because the dossier it opens is titled "Outcome ·
+                 Run 2". Ashley chose that one explicitly when the risks moved out. */
+              onNext={() => go("ending")} nextLabel="See how it resolved →" />
           </Run2Scene>
         )}
 
@@ -750,7 +756,11 @@ function Run2Ending({ decisions, held, onNext }: { decisions: number; held?: boo
             : <>The machine did the rest: saw, guarded, opened, guided, informed.</>}
         </p>
         <div className="g-actions" style={{ marginTop: 34 }}>
-          <button className="g-btn big gold" onClick={onNext}>See the outcome & the risks</button>
+          {/* Label no longer promises the risks: the seven risks & mitigations moved
+              to the Argument page (DeepDive.tsx #risks) at Ashley's direction, so
+              this screen leads to the outcome and the close only. Naming risks here
+              would have sent the player to a dossier that no longer has them. */}
+          <button className="g-btn big gold" onClick={onNext}>See the outcome →</button>
         </div>
       </motion.div>
     </motion.div>
