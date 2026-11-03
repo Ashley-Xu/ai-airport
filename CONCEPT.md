@@ -49,15 +49,15 @@ thirty seconds. Passengers forced their way into the flight deck and subdued him
   be opened from outside; and two off-duty pilots *happened* to be sitting in the
   cabin. Ten seconds earlier into unconsciousness and the door is a wall. Without
   those two licences, nobody left alive could fly the aircraft.
-  **A dying man's arm and two strangers' licences. Luck is not a safety system.**
+  **A dying man's arm and two off-duty pilots. Luck is not a safety system.**
 - **Run 2 — the nervous system.** Same event, same clock. Cabin and flight-deck
   sensing flags violent contact and crew-posture collapse in under two seconds.
   The scene is compressed into plain language plus a six-second clip and streamed
   to ATC, airline ops and the CEO. No playbook fits, so the system does not look
   one up — it *sees*: faces at the door, senior crew among them, no weapon
   visible, the captain down at the lock. It summarizes, recommends release, and
-  asks a live human once. **A human says yes in 4.2 seconds** and the door opens
-  forty seconds sooner than a dying man's arm managed. Envelope protection
+  asks a live human once. **A human says yes ** and the door opens
+  minutes sooner than a dying man's arm managed. Envelope protection
   escalates to an intent-guard and the dive is arrested. On the ground the
   choreography was computed at T+0:45: fire arrives before the aircraft stops
   rolling, the stand is cleared by autonomous apron vehicles, two thousand

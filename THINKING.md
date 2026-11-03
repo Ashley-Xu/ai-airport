@@ -133,7 +133,8 @@ interactive, scroll-driven split-screen narrative.**
 - **Numbers are mixed-source and flagged.** From reporting: the crash-axe attack, the
   ~14,000-ft dive in under 30 s, 174 souls, the off-duty pilots, the captain unlocking
   the door, the barred-from-flying finding, the Tabuk diversion. Illustrative:
-  detection-under-2 s, T+0:08 summary, ~40 s saved, all ground-phase T-clocks,
+  detection-under-2 s, T+0:08 summary, the medical minutes-sooner margin (deliberately
+  un-precise — a fake exact figure invites "how do you know?"), all ground-phase T-clocks,
   2,000 pax rerouted.
 - **The emergency plan exists but is paper-and-drill today.** True at most airports:
   full exercises are annual, manifests arrive by email, coordination is by phone and

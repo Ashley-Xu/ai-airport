@@ -61,8 +61,8 @@ const AIR_ROWS: Row[] = [
     ghostToday: "— minutes to tell, convince, authorize —",
     ai: {
       tag: "Confirmed",
-      title: "A human says yes in 4.2 s",
-      body: "Door opens ~40 s sooner. The machine saw; a human decided.",
+      title: "A human says yes",
+      body: "Door opens minutes sooner. The machine saw; a human decided.",
       hero: true,
     },
     jump: true,
@@ -221,12 +221,10 @@ function EventCard({ ev, side }: { ev: Ev; side: "today" | "ai" }) {
 function TimelineRows({
   rows,
   lit,
-  onJump,
   idPrefix,
 }: {
   rows: Row[];
   lit: number;
-  onJump?: () => void;
   idPrefix: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -272,11 +270,6 @@ function TimelineRows({
           </div>
           <div className="cell">
             {row.ai ? <EventCard ev={row.ai} side="ai" /> : <div className="ev ghost ai"><span>{row.ghostAi}</span></div>}
-            {row.jump && shown > i && onJump && (
-              <button className="jump" onClick={onJump}>
-                ↳ see the judgment moment
-              </button>
-            )}
           </div>
         </div>
       ))}
@@ -520,7 +513,7 @@ function JudgmentBeat() {
           <div className="counter">{(ms / 1000).toFixed(1)}s</div>
           <div className="who-said">
             {confirmed ? (
-              <><b>A human at ATC ops said yes.</b> Door open ~40 s sooner. Nobody consulted a rule.</>
+              <><b>A human at ATC ops said yes.</b> Door open minutes sooner. Nobody consulted a rule.</>
             ) : (
               <>One live human, asked once. The only part that waits.</>
             )}
@@ -618,7 +611,11 @@ function AuthorityInbox() {
               <div className="decision">
                 <span className="pill action">Needs you</span>
                 <div className="dq">How much judgment do we give the nervous system?</div>
-                <p className="dc">At T+1:05 it met a scene no playbook covered. It saw, recommended — and waited <strong>4.2 s</strong> for a human yes. The alternative was 2015: a rule that could not be broken. <strong>Rules fail quietly in scenes nobody enumerated.</strong> Judgment must be granted, logged, revocable.</p>
+                {/* CUT FOR TIME: the sentence "The alternative was 2015: a rule
+                    that could not be broken." was removed here. The claim it
+                    supported survives without the case citation — that is the point
+                    of keeping the sentence that follows it. */}
+                <p className="dc">At T+1:05 it met a scene no playbook covered. It saw, recommended — and waited <strong>4.2 s</strong> for a human yes. <strong>Rules fail quietly in scenes nobody enumerated.</strong> Judgment must be granted, logged, revocable.</p>
                 <div className="btns">
                   <button className="btn gold" onClick={() => setChoice("standing")}>Grant standing authority</button>
                   <button className="btn" onClick={() => setChoice("confirms")}>Keep live confirms (4.2 s)</button>
@@ -646,7 +643,7 @@ function AuthorityInbox() {
 
 /* ─────────── split timeline (continuous scroll region) ─────────── */
 
-function SplitTimeline({ onJump }: { onJump: () => void }) {
+function SplitTimeline() {
   const [airLit, setAirLit] = useState(0);
   const [gndLit, setGndLit] = useState(0);
   const [playing, setPlaying] = useState<"air" | "gnd" | null>(null);
@@ -677,7 +674,7 @@ function SplitTimeline({ onJump }: { onJump: () => void }) {
       </div>
 
       <div className="phase-label">Phase 1 · in the air — T+0:00 → T+9:00</div>
-      <TimelineRows rows={AIR_ROWS} lit={airLit} onJump={onJump} idPrefix="tl-air" />
+      <TimelineRows rows={AIR_ROWS} lit={airLit} idPrefix="tl-air" />
       <div className="demo-controls">
         <button className="btn" onClick={() => run("air")} disabled={playing !== null}>
           {playing === "air" ? "▶ Running T+0…" : "▶ Run the four minutes in the air"}
@@ -686,7 +683,7 @@ function SplitTimeline({ onJump }: { onJump: () => void }) {
       </div>
 
       <div className="phase-label">Phase 2 · on the ground — T+9:00 → T+2:00:00</div>
-      <TimelineRows rows={GROUND_ROWS} lit={gndLit} onJump={onJump} idPrefix="tl-ground" />
+      <TimelineRows rows={GROUND_ROWS} lit={gndLit} idPrefix="tl-ground" />
       <div className="demo-controls">
         <button className="btn" onClick={() => run("gnd")} disabled={playing !== null}>
           {playing === "gnd" ? "▶ Running ground phase…" : "▶ Run the ground response"}
@@ -719,9 +716,10 @@ export default function DeepDive() {
           <nav>
             <a href="#complaint">The complaint</a>
             <a href="#event">T+0:00</a>
-            <a href="#doors">Two doors</a>
+            {/* CUT FOR TIME — linked to the "Two doors, one rule" section below,
+                which is commented out. Restore together. */}
+            {/* <a href="#doors">Two doors</a> */}
             <a href="#timeline">Same event twice</a>
-            <a href="#judgment">The judgment</a>
             <a href="#physical">Physical AI</a>
             <a href="#inbox">Your inbox</a>
             <a href="#thinking">Thinking</a>
@@ -767,7 +765,7 @@ export default function DeepDive() {
           </Reveal>
           <Reveal delay={0.06}>
             <div className="pullquote">
-              The dashboard is a report about the airport, written forty minutes ago. The playbook is a
+              The airport receives status of the aircraft as a phone call and a timestamp, which is why you find out late. The playbook is a
               report about the <em>last</em> crisis. Neither can see the next one.
               <span className="who">— the core insight of this concept</span>
             </div>
@@ -816,8 +814,8 @@ export default function DeepDive() {
             <div className="ground-card">
               <p>
                 Last month, Dubai–Tel Aviv: a co-pilot attacked the captain with the cockpit's own crash axe
-                and drove the aircraft into a dive — <strong>14,000 ft in 30 seconds</strong>. Passengers broke
-                into the flight deck and subdued him; <strong>two off-duty pilots who happened to be
+                and drove the aircraft into a dive — <strong>14,000 ft in 30 seconds</strong>. Captain managed to open the door to let passengers into
+                the flight deck and subdued him; <strong>two off-duty pilots who happened to be
                 aboard</strong> flew it down. 174 lived.
               </p>
               <p>Two details decide everything:</p>
@@ -825,11 +823,11 @@ export default function DeepDive() {
                 <div className="branch">
                   <h4>Hinge 1 · The door</h4>
                   <p>Opened only because the stabbed captain unlocked it from inside, with his last
-                  strength. Ten seconds later: a wall, and everyone doomed.</p>
+                  strength. </p>
                 </div>
                 <div className="branch">
                   <h4>Hinge 2 · The controls</h4>
-                  <p>Flyable only by two strangers' licences, aboard by chance. Without them, nobody left
+                  <p>Flyable only by two off-duty pilots, aboard by chance. Without them, nobody left
                   alive could fly.</p>
                 </div>
               </div>
@@ -839,7 +837,7 @@ export default function DeepDive() {
                 reached no one.
               </p>
               <div className="punch">
-                174 lived on a dying man's arm and two strangers' licences.{" "}
+                174 lived on a dying man's arm and two off-duty pilots.{" "}
                 <span className="accent">Luck is not a safety system.</span>
               </div>
             </div>
@@ -855,7 +853,17 @@ export default function DeepDive() {
         </div>
       </section>
 
-      {/* ── BEAT 2 · TWO DOORS, ONE RULE ── */}
+      {/* ── BEAT 2 · TWO DOORS, ONE RULE ──
+          CUT FOR TIME (Ashley: not enough room in the 5 minutes to tell the 2015
+          story). Gated behind `false` rather than deleted, and deliberately NOT
+          wrapped in a JSX comment: this section contains JSX comments of its own,
+          and those cannot nest. Flip `false` to `true` to restore — the code still
+          type-checks while gated, so it cannot rot.
+          It stays Ashley's reserve ANSWER to "why not just write a better rule?"
+          (see WALKTHROUGH.md Q&A); it is simply no longer narrated or shown.
+          NOTE the numbering: the sections below still read 04..09 because this is
+          03. Renumber only if the cut becomes permanent. */}
+      {false && (
       <section className="reel" id="doors">
         <div className="wrap">
           <Reveal>
@@ -897,6 +905,7 @@ export default function DeepDive() {
           </Reveal>
         </div>
       </section>
+      ) /* end CUT FOR TIME gate — flip `false` above to restore */}
 
       {/* ── BEAT 3 · THE SPLIT TIMELINE ── */}
       <section className="free" id="timeline">
@@ -919,31 +928,7 @@ export default function DeepDive() {
           </Reveal>
           <Reveal delay={0.06}>
             <div style={{ marginTop: 40 }}>
-              <SplitTimeline onJump={() => go("judgment")} />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ── BEAT 4 · THE JUDGMENT MOMENT ── */}
-      <section className="reel" id="judgment">
-        <div className="glow gold" style={{ top: "-20%", right: "-14%" }} />
-        <div className="wrap">
-          <Reveal>
-            <div className="kicker">05 · T+1:05 — the moment the idea turns on</div>
-            <h2 className="head">The scene matches no playbook. <span className="accent-gold">So it doesn't look one up.</span></h2>
-            <p className="lede">
-              The whole concept in one screen: it sees a scene with no rule, says so, recommends — and waits
-              for a human. Everything else counts up. Only this counts down.
-            </p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <JudgmentBeat />
-          </Reveal>
-          <Reveal delay={0.06}>
-            <div className="judgment-foot">
-              Nobody consulted a rule. The machine <span className="accent">saw</span>; a human{" "}
-              <span className="accent">decided</span>.
+              <SplitTimeline />
             </div>
           </Reveal>
         </div>
@@ -1061,6 +1046,14 @@ export default function DeepDive() {
                 </ul>
               </div>
             </Reveal>
+            {/* CUT FOR TIME — card B, "Why Germanwings is evidence." Gated, not
+                deleted (JSX comments cannot nest, and this card has none of its own,
+                so `false &&` is the safe reversible gate). Flip to `true` to restore.
+                The argument survives as Ashley's reserve ANSWER — see WALKTHROUGH.md.
+                Because this card is gone, the two below are re-lettered C→B and D→C
+                so the reader never sees an A→C→D gap. On restore, re-letter them
+                back and flip this gate. */}
+            {false && (
             <Reveal delay={0.11}>
               <div className="card teal">
                 <h3><span className="idx">B</span>Why Germanwings is evidence, not a counter-case</h3>
@@ -1072,9 +1065,10 @@ export default function DeepDive() {
                 </ul>
               </div>
             </Reveal>
+            )}
             <Reveal delay={0.17}>
               <div className="card teal">
-                <h3><span className="idx">C</span>Assumptions, made explicit</h3>
+                <h3><span className="idx">B</span>Assumptions, made explicit</h3>
                 <ul>
                   <li><b>Sensing largely exists</b> — outward door cameras already fly; inward is the contested part.</li>
                   <li><b>Flight-deck cameras are the hardest sell</b> — the pitch is governance, not a technical bypass.</li>
@@ -1086,7 +1080,7 @@ export default function DeepDive() {
             </Reveal>
             <Reveal delay={0.23}>
               <div className="card teal">
-                <h3><span className="idx">D</span>Why physical AI is the hero, not "AI"</h3>
+                <h3><span className="idx">C</span>Why physical AI is the hero, not "AI"</h3>
                 <ul>
                   <li><b>An airport is a physical machine</b> — prediction-only AI just moves the latency to coordination.</li>
                   <li><b>Closing the loop</b> — a judgment that opens a lock, rejects a dive, clears a stand — makes "resolved before you knew" literally true.</li>

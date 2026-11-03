@@ -275,8 +275,8 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
               // The Confirm row names WHO released: a human, or the machine on its
               // own logged recommendation when the window expired. Never both.
               : autoDoor
-              ? [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Auto · window expired"]]
-              : [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached ~40 s sooner"], ["Confirm", "Human · 4.2 s"]]}
+              ? [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached minutes sooner"], ["Confirm", "Auto · window expired"]]
+              : [["Door lock", "Released"], ["Attacker", "Subdued by crew on entry"], ["Medical", "Reached minutes sooner"], ["Confirm", "Human · 4.2 s"]]}
             vignette="teal">
             {/* One contrast line, released path only. The true difference between
                 the two runs is NOT that the AI stopped him (it can't) — in both
@@ -398,17 +398,25 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
           <Run2Scene key="d4" demo={demo} statusLabel="Aftermath · on stand" label="Scene 4 · After"
             photo="r2-airport-ready" sub="You are the decision-maker" subClass="teal" clock={t}
             status={held
-              ? [["Souls", "174 · all lived"], ["Captain", "In surgery — reached 40 s later"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]
+              ? [["Souls", "174 · all lived"], ["Captain", "In surgery — reached minutes later"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]
               : [["Souls", "174 · all lived"], ["Captain", "Stable in surgery"], ["Further injuries", "Zero"], ["Audit trail", "Attached"]]}
             vignette="teal">
             <ReportCard
               t={t}
               said={held
-                ? <>Resolved. <span className="em">174 souls</span>. Captain reached 40 s later — stable in surgery. Audit trail attached.</>
+                ? <>Resolved. <span className="em">174 souls</span>. Captain reached minutes later — stable in surgery. Audit trail attached.</>
                 : <>Resolved. <span className="em">174 souls</span>. Captain stable in surgery. Audit trail attached.</>}
+              /* CUT FOR TIME: both branches ended with "2015 was the alternative: a
+                 rule that couldn't be broken." — the Germanwings reference. Removed
+                 from the card the CEO actually reads; the argument survives as the
+                 reserve ANSWER to "why not just write a better rule?" and still
+                 fires if they press Fixed doctrine (see DialResult below).
+                 ORIGINAL:
+                   ? <>At T+1:05 no playbook fit. I saw, summarized, recommended — and got <b>no response</b>, so I acted on my own logged recommendation. 2015 was the alternative: a rule that couldn't be broken.</>
+                   : <>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. 2015 was the alternative: a rule that couldn't be broken.</> */
               rec={autoDoor
-                ? <>At T+1:05 no playbook fit. I saw, summarized, recommended — and got <b>no response</b>, so I acted on my own logged recommendation. 2015 was the alternative: a rule that couldn't be broken.</>
-                : <>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human. 2015 was the alternative: a rule that couldn't be broken.</>}
+                ? <>At T+1:05 no playbook fit. I saw, summarized, recommended — and got <b>no response</b>, so I acted on my own logged recommendation.</>
+                : <>At T+1:05 no playbook fit. I saw, summarized, recommended — and waited <b>4.2 s</b> for a human.</>}
               actsLabel="Authority"
               actions={[
                 { label: "Standing authority", kind: "gold", onClick: () => go("d4_result", { dial: "standing" }) },

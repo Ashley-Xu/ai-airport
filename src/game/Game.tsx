@@ -227,24 +227,31 @@ function TitleSoundHint() {
   );
 }
 
-/* ── Cold-open: abstract, no violence. Two numbers, an altitude trace, a door. ── */
+/* ── Cold-open: abstract, no violence. One number, a door, a thesis. ── */
 function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean }) {
   const [step, setStep] = useState(0);
+  /* THREE beats now, not four. The 2015 beat was cut for interview time — see the
+     commented block below for what it said and where its timing used to sit.
+     Re-timed so the remaining beats keep their original dwell (2.6 s / 3.5 s /
+     3.5 s) instead of leaving a 3.4 s hole where the cut beat was.
+     ORIGINAL (4 beats): setStep(1)@2600 · setStep(2)@6000 · setStep(3)@9500 · onDone@13000 */
   useEffect(() => {
     const f = demo ? 0.55 : 1; // faster in demo mode
-    const t = [setTimeout(() => setStep(1), 2600 * f), setTimeout(() => setStep(2), 6000 * f),
-      setTimeout(() => setStep(3), 9500 * f), setTimeout(onDone, 13000 * f)];
+    const t = [setTimeout(() => setStep(1), 2600 * f), setTimeout(() => setStep(2), 6100 * f),
+      setTimeout(onDone, 9600 * f)];
     return () => t.forEach(clearTimeout);
   }, [onDone, demo]);
 
-  /* One sound per number, on the beat it lands: a hollow minor third under
-     "150 dead", an open fifth under "174 lived", the resolve chime under
-     "Luck is not a safety system." The cold open is silence and typography;
-     these are the only three notes it gets. */
+  /* One sound per beat, on the beat it lands: an open fifth under "174 lived",
+     the resolve chime under "Luck is not a safety system." The cold open is
+     silence and typography; these are the only two notes it gets.
+     NOTE the re-keying: these used to sit on steps 2 and 3, because step 1 was
+     the 2015 beat that carried the hollow minor third. Cutting a beat shifts
+     every index below it — without this change the "174 lived" tone would have
+     landed on the closing title and the chime would never have fired. */
   useEffect(() => {
-    if (step === 1) sound.sfx("hollow");
-    if (step === 2) sound.sfx("warm");
-    if (step === 3) sound.sfx("chime");
+    if (step === 1) sound.sfx("warm");
+    if (step === 2) sound.sfx("chime");
   }, [step]);
 
   return (
@@ -261,18 +268,21 @@ function ColdOpen({ onDone, demo = false }: { onDone: () => void; demo?: boolean
               <div className="g-beat">A door that only opens from one side.</div>
             </motion.div>
           )}
+          {/* CUT FOR TIME — the 2015 / Germanwings beat. Restore by re-adding this
+              block as `step === 1` and shifting the two beats below back to 2 and 3,
+              then restoring the 4-beat timing and the `hollow` tone in the two
+              effects above. It reads:
+                <div className="g-beat">2015: it kept the wrong man<br />at the
+                controls. <span className="coral">150 dead.</span></div>
+              It is still Ashley's reserve ANSWER to "why not write a better rule?"
+              — see WALKTHROUGH.md's Q&A — it is simply no longer narrated. */}
           {step === 1 && (
             <motion.div key="1" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <div className="g-beat">2015: it kept the wrong man<br />at the controls. <span className="coral">150 dead.</span></div>
-            </motion.div>
-          )}
-          {step === 2 && (
-            <motion.div key="2" exit={{ opacity: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
               <div className="g-beat">Last month: it kept help outside.<br /><span className="teal">174 lived — by inches.</span></div>
             </motion.div>
           )}
-          {step >= 3 && (
-            <motion.div key="3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+          {step >= 2 && (
+            <motion.div key="2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
               <div className="g-title" style={{ fontSize: "clamp(30px,4.4vw,50px)", color: "var(--g-gold)" }}>
                 Luck is not a safety system.
               </div>

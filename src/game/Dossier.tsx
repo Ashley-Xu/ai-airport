@@ -30,7 +30,7 @@ export default function Dossier({ onRestart, onDeepDive }: {
             By the time you hear the alarm,<br />the urgent steps are <span style={{ color: "var(--g-gold)" }}>already taken care of.</span>
           </h2>
           <p className="g-prose" style={{ marginTop: 22, maxWidth: 760 }}>
-            Run 1: 174 lived on luck — a dying man's arm, two strangers' licences. Run 2: the
+            Run 1: 174 lived on luck — a dying man's arm, two off-duty pilots. Run 2: the
             same 174, because a nervous system <b>saw, judged, acted</b> — and stopped only for what's
             yours. That's the whole pitch.
           </p>

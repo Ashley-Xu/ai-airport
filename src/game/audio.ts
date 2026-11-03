@@ -346,6 +346,9 @@ function playSfx(name: SfxName) {
     case "miss":  tone(120, 70, t, 0.07, 0.15); break;
     case "thunk": tone(90, 45, t, 0.16, 0.28); noiseHit(t, 0.10, 0.16, 220); break;
     /* cold-open beats: a minor third for "150 dead", an open fifth for "174 lived" */
+    /* "hollow" is currently UNCALLED: its beat (the 2015 cold-open card) is
+       commented out for interview time. Kept because restoring that beat needs
+       exactly this tone — see the CUT FOR TIME block in Game.tsx's ColdOpen. */
     case "hollow": tone(146.83, 146.83, t, 0.05, 1.8, "sine"); tone(174.61, 174.61, t + 0.05, 0.032, 1.6, "sine"); break;
     case "warm":   tone(293.66, 293.66, t, 0.05, 1.6, "triangle"); tone(440, 440, t + 0.12, 0.038, 1.8, "triangle"); break;
     case "data":  tone(1567.98, 1567.98, t, 0.035, 0.045); tone(2093, 2093, t + 0.065, 0.03, 0.05); break;

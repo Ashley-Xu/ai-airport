@@ -296,8 +296,8 @@ DOSSIER
 
 
 [Dossier · comparison]  48w → 37w
-  now: "In Run 1, 174 people lived on luck — a dying man's arm and two strangers' licences. In Run 2, the same 174 lived because a nervous system saw, judged, and acted, and stopped only for the calls that are genuinely yours. That difference is the entire pitch."
-  cut: "Run 1: 174 lived on luck — a dying man's arm, two strangers' licences. Run 2: the same 174, because a nervous system saw, judged, acted — and stopped only for what's yours. That's the whole pitch."
+  now: "In Run 1, 174 people lived on luck — a dying man's arm and two off-duty pilots. In Run 2, the same 174 lived because a nervous system saw, judged, and acted, and stopped only for the calls that are genuinely yours. That difference is the entire pitch."
+  cut: "Run 1: 174 lived on luck — a dying man's arm, two off-duty pilots. Run 2: the same 174, because a nervous system saw, judged, acted — and stopped only for what's yours. That's the whole pitch."
 
 [Dossier · fineprint header]  10w → 7w
   now: "The fine print · risks & how we mitigate them"

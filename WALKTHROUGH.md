@@ -40,11 +40,19 @@ scope · judgment over doctrine · one decision card (the authority card).
 > sitting in the cabin. Had they not been aboard, nobody left alive could fly the
 > aircraft, and everyone aboard is doomed.
 >
-> **A dying man's arm and two strangers' licences. Luck is not a safety system.**
+> **A dying man's arm and two off-duty pilots. Luck is not a safety system.**
 >
 > And one detail from before the flight: investigators found the attacker had been
 > barred from flying in his home country over extremism concerns. The airline that
 > rostered him that morning never knew. The signal existed — and reached no one."
+
+<!-- CUT FOR TIME (Ashley: not enough room in the 5 minutes to tell the 2015 story).
+     This was the narrated "intellectual core" segment. It is preserved intact here
+     because it remains the RESERVE ANSWER — see the Q&A entry "2015 proves locked
+     doors save lives" below, which stays live. If the interview runs long, or the
+     CEO asks "why not just write a better rule?", deliver this verbatim.
+     Restoring it: uncomment, and put back ~45 s — see the retimed schedule note
+     under "Timing safety notes".
 
 ## 1:20 – 2:05 · Two doors, one rule (the intellectual core)
 
@@ -68,8 +76,9 @@ scope · judgment over doctrine · one decision card (the authority card).
 > Every rule is a scar from a scenario that already happened. What's left are the
 > scenarios nobody has enumerated yet. **You cannot enumerate the future. The door
 > needs to see — not to obey.**"
+-->
 
-## 2:05 – 3:15 · The split timeline (the core scene)
+## 1:20 – 3:15 · The split timeline (the core scene)
 
 *(Run the split timeline — in the air, then on the ground. Narrate five beats, ~15s each:)*
 
@@ -88,8 +97,8 @@ scope · judgment over doctrine · one decision card (the authority card).
   matches no playbook, so the system doesn't look one up. It *sees* — recognized faces
   at the door, senior cabin crew among them, no weapon visible, the captain down at the
   lock inside and the co-pilot at the controls. It summarizes, recommends release, and
-  asks a live human once. **A human at ATC ops says yes in 4.2 seconds.** The door opens
-  forty seconds sooner than a dying man's arm managed. Nobody consulted a rule. The
+  asks a live human once. **A human at ATC ops says yes.** The door opens
+  minutes sooner than a dying man's arm managed. Nobody consulted a rule. The
   machine saw; a human decided."
 - **T+2:30 → T+3:00** — "Left: the aircraft is falling — 14,000 feet in 30 seconds; on
   the ground a radar symbol falls. Right: envelope protection escalates to an
@@ -143,8 +152,12 @@ scope · judgment over doctrine · one decision card (the authority card).
 >
 > **How much judgment do we give the nervous system?** At T+1:05 the system met a scene
 > no playbook covered. It saw, summarized, recommended — and waited 4.2 seconds for a
-> human yes. The door opened. The alternative was not safer. The alternative was 2015:
-> a rule that could not be broken, a captain knocking on a door that would not open.
+> human yes. The door opened. <!-- CUT FOR TIME: the next two sentences named 2015
+> ("The alternative was not safer. The alternative was 2015: a rule that could not be
+> broken, a captain knocking on a door that would not open."). Replaced by the shorter
+> line below, which keeps the point — a rule that cannot break — without the case. -->
+> The alternative was not safer: a rule that cannot break, and nobody able to see
+> through the door.
 >
 > Three buttons: grant standing adaptive authority; keep live human confirms; or keep
 > fixed doctrine — and if you keep the rulebook, the system will log every scene that
@@ -162,12 +175,18 @@ scope · judgment over doctrine · one decision card (the authority card).
 
 > "Two honest caveats. The numbers are illustrative where flagged — sized to be
 > plausible, not measured at your airport. And the hardest part isn't technical:
-> flight-deck cameras are the most contested surveillance question in aviation. After
-> 2015, cockpit recordings are restricted to accident investigation, and crews resist
+> flight-deck cameras are the most contested surveillance question in aviation.
+> <!-- CUT FOR TIME: "After 2015," prefaced this — it assumed the listener knows the
+> Germanwings case. The restriction is current law and needs no date to be true. -->
+> Cockpit recordings are restricted to accident investigation, and crews resist
 > live monitoring. I'm not pretending that debate is settled — I'm proposing what could
 > win it: no continuous recording, event-triggered summaries, human authority on every
-> irreversible act, crews co-designing the governance. Your 2015 captain knocked on a
-> door that could not open. That is the argument.
+> irreversible act, crews co-designing the governance. <!-- CUT FOR TIME: this close
+> used to land on the 2015 captain — "Your 2015 captain knocked on a door that could
+> not open. That is the argument." That beat is retired with the segment above; the
+> replacement keeps the same conclusion on this month's event alone. -->
+> Last month, a dying captain had to reach a lock from the inside because nothing
+> outside could see him. That is the argument.
 >
 > The path isn't 'build the AI-native airport.' It's: teach it **one reflex**. Ninety
 > days, one closed loop on an ordinary problem — transfer queues — one number that
@@ -184,10 +203,19 @@ scope · judgment over doctrine · one decision card (the authority card).
 
 ## Timing safety notes
 
+- **SCHEDULE CHANGE (2015 cut).** The "Two doors, one rule" segment is commented out
+  for time, freeing ~45 s. The split timeline above now starts at 1:20 instead of 2:05
+  and is labelled `1:20 – 3:15`, which gives the core scene **115 s instead of 70 s**.
+  That is deliberate: the timeline is the core scene, and it now absorbs the freed time
+  as room to breathe rather than the whole talk ending 45 s early. The segments after it
+  (3:15 onwards) keep their original marks, so nothing downstream shifts.
+  *If you would rather finish early:* label the timeline `1:20 – 2:30` and shift every
+  following segment back by 45 s (2:30–3:05, 3:05–3:50, 3:50–4:15) for a 4:15 close.
 - If running short: compress the timeline to three beats (T+0:00, T+1:05/1:09, T+9:00)
-  and shorten Move 3 to one sentence per organ. **Never cut the "two doors, one rule"
-  segment or the honest boundary** — the first is the intellectual core, the second is
-  the credibility move.
+  and shorten Move 3 to one sentence per organ. **Never cut the honest boundary** — it is
+  the credibility move. The "two doors" argument is no longer narrated, but it is still
+  the reserve answer below; if the CEO asks "why not just write a better rule?", deliver
+  the commented-out segment verbatim.
 - If the CEO engages at the authority card, let it run; that interaction IS the
   deliverable.
 - Q&A — "so the AI opens cockpit doors whenever it wants?" → "No. The default is a live

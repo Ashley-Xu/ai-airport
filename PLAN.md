@@ -101,7 +101,7 @@ anonymised per locked decision — no airline, no names, no imagery):
 > attacker **had been barred from flying by his home country's regulator over
 > extremism concerns**. The airline that rostered him that morning did not know.
 >
-> **174 people lived because of a dying man's arm and two strangers' licences.
+> **174 people lived because of a dying man's arm and two off-duty pilots.
 > Luck is not a safety system.**
 
 The three doomed branches — what physical AI closes:
@@ -204,7 +204,7 @@ then **on the ground**.
 | T+0:00 | **The attack begins.** The flight-deck door is locked from inside — by design, unopenable from outside. The only key is the captain's hand, and the captain is dying | **Sense** — smart cameras in cabin and flight deck flag violent contact and crew posture collapse in under 2 seconds. The movement of every person aboard — passengers surging forward, the captain at the lock — is a tracked, understood scene |
 | T+0:08 | *(nobody on the ground knows anything)* | **Summarize & escalate** — the AI compresses the video into plain language plus a 6-second clip, streamed live to ATC, airline ops, and your airport: "violent intrusion in flight deck; captain unresponsive; aircraft deviating." Human-in-the-loop acknowledges |
 | T+1:05 | *(the rulebook has nothing for this. The binder says: the door does not open)* | **Judge** — the scene matches no playbook, so the system doesn't look one up. It *sees*: recognized faces at the door — senior cabin crew among them; no weapon visible on them; the captain down at the lock inside and the co-pilot at the controls. It summarizes, reports the co-pilot's location and status to the crew before the lock opens, recommends release, and asks a live human once |
-| T+1:09 | *(a human would have needed to be told, convinced, and authorized — minutes, at best)* | **Confirmed in 4.2 seconds.** A human at ATC ops says yes. The door opens ~40 s sooner than a dying man's arm managed. Nobody consulted a rule; the machine saw, a human decided |
+| T+1:09 | *(a human would have needed to be told, convinced, and authorized — minutes, at best)* | **Confirmed in 4.2 seconds.** A human at ATC ops says yes. The door opens minutes sooner than a dying man's arm managed. Nobody consulted a rule; the machine saw, a human decided |
 | T+2:30 | **The dive.** The attacker is down, but the aircraft is falling — 14,000 feet in under 30 seconds. On the ground, a radar symbol falls | **Guard** — envelope protection escalates to intent-guard: the uncommanded dive is arrested at T+3:00; the AI stabilizes and guides — a human keeps the controls |
 | T+3:00 | **Luck.** Two off-duty pilots happen to be aboard and take the controls | **No luck required** — stabilized and guided: the off-duty crew or a ground pilot flies it with the envelope held; the nearest suitable airport — yours — is already choreographing |
 | T+9:00 | **Wheels down.** The aerodrome learns the severity by radio, mid-approach | **Wheels down.** The airport has known for 8 minutes 52 seconds. The response is already in motion |
@@ -223,7 +223,7 @@ then **on the ground**.
 *Honest-boundary callout (set apart visually), directly under the timeline:*
 > The airport could not stop the axe from swinging. It did not happen in your sky. What
 > changed is the four minutes in the air and the eight minutes to the chocks — today a
-> dying man's arm, two strangers' licences, and a rule that fails quietly; then a
+> dying man's arm, two off-duty pilots, and a rule that fails quietly; then a
 > nervous system that sees, and hands that act.
 
 ### BEAT 4 — Why this is *physical* AI
@@ -343,7 +343,7 @@ people landed safely. I want you to notice *why* they landed safely. One: the st
 captain spent his remaining strength unlocking a door that cannot be opened from
 outside — ten seconds earlier into unconsciousness, and the door is a wall. Two: the
 aircraft was flown by two off-duty pilots who happened to be sitting in the cabin. A
-dying man's arm and two strangers' licences. **Luck is not a safety system.** And a
+dying man's arm and two off-duty pilots. **Luck is not a safety system.** And a
 third detail: investigators found the attacker had been barred from flying in his home
 country over extremism concerns. The airline that rostered him never knew."
 
@@ -369,7 +369,7 @@ doesn't look one up — it *sees*. Recognized crew faces at the door, no weapon 
 them, the captain down at the lock inside and the co-pilot at the controls.
 It summarizes, reports the co-pilot's location and status to the crew so they
 enter briefed, recommends, and a human at
-ATC ops says yes in 4.2 seconds. The door opens forty seconds sooner than a dying man's
+ATC ops says yes in 4.2 seconds. The door opens minutes sooner than a dying man's
 arm managed. When the dive comes at T+2:30, the autopilot's intent-guard arrests it. **Hands:** the AI stabilizes and guides the aircraft to *your* airport — humans fly it —
 where autonomous vehicles have already cleared the stand, counsellors are briefed
 before the first family calls, and the fire trucks arrive before the aircraft stops

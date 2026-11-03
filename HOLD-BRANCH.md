@@ -52,7 +52,7 @@ existing repeat-detection, not a bug.
 Brief and status here are **already correct** and stay untouched:
 - held brief: "You held. The lock stays sealed."
 - held status: `Door lock · Held sealed` / `Captain · Unaided` / `Souls · 174`
-- released status keeps `Medical · Reached ~40 s sooner` — this is the line the held
+- released status keeps `Medical · Reached minutes sooner` — this is the line the held
   branch loses, per your "same ending minus the medical-sooner line".
 
 ### 2. `d2_dive` — the AI states who can actually fly it
@@ -87,13 +87,13 @@ held variant:
 
 status, `Captain` row:
 - released: `Stable in surgery` (unchanged)
-- held: `In surgery — reached 40 s later`
+- held: `In surgery — reached minutes later`
 
 `said` — current:
 > Resolved. **174 souls**. Captain stable in surgery. Audit trail attached.
 
 held variant:
-> Resolved. **174 souls**. Captain reached 40 s later — stable in surgery. Audit trail
+> Resolved. **174 souls**. Captain reached minutes later — stable in surgery. Audit trail
 > attached.
 
 `Souls · 174 · all lived` stays identical in both branches. Same survivors either way.
@@ -122,7 +122,10 @@ counts as a human decision in "You made N decisions". Correct as-is.
 
 ## Decisions — LOCKED (Ashley, via clarify)
 
-- **Cost scale:** `~40 s later`. He still reaches the lock himself; the held branch
+- **Cost scale:** `minutes later` *(was `~40 s later`; softened Nov-03 because the 40 s
+  was an invented precise figure — THINKING.md flags it illustrative, and a CEO asking
+  "how do you know it's 40?" would dent trust in every real number on the page)*. He
+  still reaches the lock himself; the held branch
   mirrors the canonical `PLAN.md` / `DeepDive` claim exactly. `Captain · Stable in
   surgery` stays TRUE on both paths.
 - **Colour:** no colour-coding for the held outcome. All colour stays consistent —
@@ -165,7 +168,7 @@ coral branch already touches it). Flagging rather than bundling silently.
    `r2-unlocked`), and that no element's text contains "off-duty" or "opened" anywhere
    downstream.
 3. Full held playthrough → dossier, asserting per step: `Controls · Ground pilot`,
-   `Captain · In surgery — reached 40 s later`, ending line has no "opened", and the
+   `Captain · In surgery — reached minutes later`, ending line has no "opened", and the
    decision count still includes the Hold.
 4. Full released playthrough → dossier, asserting every string above is UNCHANGED from
    today (regression: the canonical path must not drift).

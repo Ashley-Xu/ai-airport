@@ -132,7 +132,7 @@ rest. The AI's reports are one line + a small scene, never paragraphs.
   You: `[ Authorize release ]  [ Hold ]  [ Show me more ]`. A **4.2s confirm ring counts
   down** (the only thing that counts down in the piece). → animation: the door swings open
   on its own; medical/passenger markers reach the captain immediately. Consequence: *"Help
-  reaches him ~40 s sooner. He never had to reach the lock."*
+  reaches him minutes sooner. He never had to reach the lock."*
 - **D2 · The dive.** The AI's intent-guard rejects the dive automatically (you watch the
   altitude trace snap flat), then escalates: *"Envelope held. Attitude stabilized. No one
   aboard can land this — recommend I hold the aircraft stable and guide a ground pilot /

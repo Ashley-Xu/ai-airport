@@ -48,7 +48,7 @@ choices actually do.
    │   Door lock · Released       │   Door lock · Held sealed   │
    │   Attacker · Subdued by crew │   Captain · Unaided         │
    │              on entry        │   Souls · 174               │
-   │   Medical · ~40 s sooner     │   (no Attacker row — image  │
+   │   Medical · minutes sooner   │   (no Attacker row — image  │
    │   Confirm · Human · 4.2 s    │   names him, top-right)     │
    │     └ AUTO (10 s window      │                             │
    │       expired, no human):    │                             │
@@ -240,7 +240,7 @@ timed-out card earns no credit and the ending says so.
 |---|---|---|
 | d1_result image | r2-unlocked.jpg | r2-detected.jpg |
 | d1_result brief | "The latch releases on your word." | "You held. The lock stays sealed." |
-| d1_result rows | Door lock · Released / **Attacker · Subdued by crew on entry** / Medical · Reached ~40 s sooner / Confirm · Human · 4.2 s | Door lock · Held sealed / Captain · Unaided / Souls · 174 *(no Attacker row — r2-detected's baked overlay names him)* |
+| d1_result rows | Door lock · Released / **Attacker · Subdued by crew on entry** / Medical · Reached minutes sooner / Confirm · Human · 4.2 s | Door lock · Held sealed / Captain · Unaided / Souls · 174 *(no Attacker row — r2-detected's baked overlay names him)* |
 | d1_result contrast line | **"In Run 1 they went in blind. Here they were briefed."** | *(none)* |
 | d2_dive image | s3-dive.jpg | s3-dive.jpg (same) |
 | d2_dive rows | Envelope · Held by intent-guard / Pilots aboard · None able | Cockpit door · Sealed by your hold / Pilots able · None — ground only |
@@ -248,8 +248,8 @@ timed-out card earns no credit and the ending says so.
 | d2_result image | r2-stabilized.jpg | r2-stabilized.jpg **then** r2-flying.jpg |
 | d2_result rows | Controls · Off-duty crew | Controls · Ground pilot |
 | d2_result outcome | "The off-duty pilots take the controls" | "A ground pilot flies it home over my link" |
-| d4_dial rows | Captain · Stable in surgery | Captain · In surgery — reached 40 s later |
-| d4_dial said | "Captain stable in surgery." | "Captain reached 40 s later — stable in surgery." |
+| d4_dial rows | Captain · Stable in surgery | Captain · In surgery — reached minutes later |
+| d4_dial said | "Captain stable in surgery." | "Captain reached minutes later — stable in surgery." |
 | ending | "saw, guarded, **opened**, guided, informed" | "saw, guarded, guided, informed" |
 
 `Souls · 174 · all lived` is identical on both paths. Both end at the same dossier.
@@ -288,7 +288,7 @@ The released `d1_result` keeps `Attacker · Subdued by crew on entry` because it
 uses `r2-unlocked` (latch + green LED, no baked text), so that row is not a
 duplicate — it carries the outcome. The held `d1_result` drops it and lets
 `Captain · Unaided` carry the cost: a sealed door means crew never get in, so
-nobody reaches him — which is exactly what the 40 s medical line already says.
+nobody reaches him — which is exactly what the medical-sooner line already says.
 That is why the held path gets no contrast line: it never gets the briefing.
 
 Two canon decisions worth recording:
