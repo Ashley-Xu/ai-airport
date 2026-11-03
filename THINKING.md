@@ -102,7 +102,11 @@ interactive, scroll-driven split-screen narrative.**
   framing: the airport is the *federation point* — where the aircraft's nervous system
   meets the ground's, and where the CEO governs the doctrine. The brief asked to
   imagine an AI-native airport, not to prove feasibility; but the walkthrough script
-  pre-answers this question because a CEO will ask it.
+  pre-answers this question because a CEO will ask it. **Full treatment, with today's
+  actual data flows, the ATC/ANSP boundary and who signs the cheque: `OWNERSHIP.md`.**
+  One finding there is worth leading with in person: in Israel the Airports Authority
+  is simultaneously the airport operator and the ANSP, so in the very event this concept
+  is built from, there is no airport-versus-ATC ownership problem to solve.
 - **Bounded autonomy — as an authority dial, not a trigger table (v5).** The AI
   perceives, summarizes, and recommends; irreversible acts require a live human confirm
   (4.2 s median) or standing authority the CEO has granted, earned via a trust record

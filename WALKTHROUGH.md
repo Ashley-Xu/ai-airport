@@ -1,8 +1,9 @@
 # 5-Minute Walkthrough — Script, v5.2 "The Nervous System" (content APPROVED · Deliverable 3)
 
 **Audience:** the airport CEO, in person.
-**Props:** the interactive experience (form TBD — page or deck), driven live. The CEO
-presses the button; you narrate.
+**Props:** the interactive experience, driven live. Form is locked — the playable
+prototype (`npm run dev`, or https://ai-airport.vercel.app). The CEO presses the
+button; you narrate.
 **Tone:** peer-to-peer. You are not selling software; you are showing them their T+0.
 **Locked decisions:** anonymised real events · one moment · aircraft-side physical AI in
 scope · judgment over doctrine · one decision card (the authority card).
@@ -209,11 +210,39 @@ scope · judgment over doctrine · one decision card (the authority card).
   help outside. Neither failure was visible in advance — which is precisely why
   enumerated rules are the wrong instrument, and scene judgment with human authority is
   the right one."
-- Q&A — "the airport doesn't own the aircraft" → "Correct — cabin sensing is an
-  airline/OEM capability. The airport is the federation point where the aircraft's
-  nervous system meets the ground's, and where you govern the authority dial. The brief
-  asked to imagine the AI-native airport; its reflexes reach past the fence because its
-  crises do."
+- Q&A — "the airport doesn't own the aircraft" → **Concede precisely, then invert.**
+  "Correct, and I'm not proposing you buy it. Cabin sensing is airline and OEM
+  territory, certified to the airframe — anyone who tells you an airport can procure
+  flight-deck cameras is selling you a lawsuit. But notice where that leaves you: your
+  picture of an inbound aircraft is a list of timestamps. ACARS health data goes to the
+  airline's operations centre, not yours. Your AODB knows a door closed; nothing tells
+  you what's happening behind it. **The fence is the latency.** And here's what you do
+  own — the apron is the non-movement area, outside ATC control, with overall
+  responsibility for vehicles and stands resting with you as airport operator. Every
+  hand in this concept that acts on the ground acts on your sovereign ground. You also
+  already own the room: the APOC, where your team, ATC, the airlines, your handlers,
+  fire and police already sit around one picture. So the aircraft's nervous system
+  doesn't become your property — it becomes a party to a federation you govern, and
+  governing it is the product. That's why the last thing I show you is a dial in your
+  hand, not a dashboard: an airline CTO can't set risk appetite for 174 people on your
+  stand. Full treatment in `OWNERSHIP.md`."
+- Q&A — "who actually signs the cheque?" → "The airport operator, first. They already
+  buy this category — DFW's runway twin with Willow and Parsons, Vienna with Nemetschek,
+  Denver with Autodesk Tandem, Munich and Narita buying autonomous apron operations.
+  Ground handlers are the faster channel: dnata and Swissport buy the tugs and are
+  labour-constrained. The airline is the **data** partner, not the buyer — and you have
+  leverage: you own stands, slots and apron access, and A-CDM already proves airlines
+  share data because the network requires it and faster turnaround helps them. Widening
+  that existing clause by one line — event summaries alongside timestamps — is the whole
+  commercial insight."
+- Q&A — "but ATC isn't the airport" → "Usually true, and it doesn't block this: the
+  ANSP owns the airspace, you own the ground, and A-CDM already federates between parties
+  who can't command each other. But in *your* case the fence is thinner — the Airports
+  Authority is both the airport operator and the air navigation service provider, so the
+  tower, the approach and the apron answer to one organisation. The data-link picture and
+  the ground nervous system are already under one roof. What's missing isn't authority;
+  it's the layer that turns both into understanding." *(Only if the audience is Israeli /
+  Ben Gurion — do NOT generalise the IAA's dual role to other airports.)*
 - Q&A — "who owns this? IT or ops?" → "Neither — a new function. The nervous system sits
   above your systems, governed by playbooks ops and crews sign off on."
 - Q&A — "why is this not just A-CDM / an APOC upgrade?" → "A-CDM shares data between
