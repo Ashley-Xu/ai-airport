@@ -4,7 +4,7 @@ import Run1 from "./Run1";
 import Run2, { type Run2Choices } from "./Run2";
 import Dossier from "./Dossier";
 import { usePlateActive } from "./SceneArt";
-import { useFrozen, toggleFrozen, setFrozen } from "./time";
+import { useFrozen, toggleFrozen, setFrozen, unfreezeForAdvance } from "./time";
 import { goBack, useCanBack, skipToRunEnd, useCanSkip } from "./nav";
 import { sound, useAudioOn } from "./audio";
 import "./game.css";
@@ -63,6 +63,15 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
   // A fresh playthrough starts live — don't carry a freeze from the last run.
   const restart = () => { clockRef.current = 0; setChoices({}); setFrozen(false); setPhase("title"); };
 
+  /* Phase changes are progression too, and they bypass both runs' transition
+     functions (the cold open's Skip, Run 1 → Run 2, Run 2 → dossier). Route
+     them through the same rule so a presenter who freezes, talks, then clicks
+     "See the outcome & the risks" arrives at the dossier live. Without this the
+     module-level flag would stay true across the handoff — invisible there,
+     because the banner is deliberately suppressed on title and dossier, so the
+     next run would open paused with no obvious cause. */
+  const goPhase = (p: Phase) => { unfreezeForAdvance(); setPhase(p); };
+
   /* Skip to the END OF THE CURRENT RUN — not to the dossier. The active run
      registers its own endpoint (Run 1 → the reveal, Run 2 → the outcome
      screen) via nav.ts, same pattern as Back. The HUD stays dumb and cannot
@@ -101,7 +110,7 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
               <span className={`clock${frozen ? " frozen" : ""}`}>{fmtClock(clock)}</span>
             )}
             {phase === "coldopen" && (
-              <button className="skip" onClick={() => setPhase("run1")}>Skip →</button>
+              <button className="skip" onClick={() => goPhase("run1")}>Skip →</button>
             )}
             {/* Standard media convention: the icon shows what CLICKING will do.
                 Frozen → ▶ (click to play/resume); running → ❚❚ (click to freeze).
@@ -144,16 +153,16 @@ export default function Game({ onDeepDive, demo = false }: { onDeepDive: () => v
       )}
 
       <AnimatePresence mode={demo ? "sync" : "wait"}>
-        {phase === "title" && <Title key="t" onBegin={() => setPhase("coldopen")} onDeepDive={onDeepDive} />}
-        {phase === "coldopen" && <ColdOpen key="c" demo={demo} onDone={() => setPhase("run1")} />}
+        {phase === "title" && <Title key="t" onBegin={() => goPhase("coldopen")} onDeepDive={onDeepDive} />}
+        {phase === "coldopen" && <ColdOpen key="c" demo={demo} onDone={() => goPhase("run1")} />}
         {phase === "run1" && (
           <motion.div key="r1" style={{ position: "absolute", inset: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <Run1 demo={demo} clockRef={clockRef} onComplete={() => { clockRef.current = 0; setPhase("run2"); }} />
+            <Run1 demo={demo} clockRef={clockRef} onComplete={() => { clockRef.current = 0; goPhase("run2"); }} />
           </motion.div>
         )}
         {phase === "run2" && (
           <motion.div key="r2" style={{ position: "absolute", inset: 0 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <Run2 demo={demo} clockRef={clockRef} onChoices={setChoices} onComplete={() => setPhase("dossier")} />
+            <Run2 demo={demo} clockRef={clockRef} onChoices={setChoices} onComplete={() => goPhase("dossier")} />
           </motion.div>
         )}
         {phase === "dossier" && (

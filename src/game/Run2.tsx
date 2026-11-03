@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArtCross, preloadArt, PlateOverlay, resetPlates } from "./SceneArt";
-import { useFrozen, timeFrozen, startPausableTimeout } from "./time";
+import { useFrozen, timeFrozen, startPausableTimeout, unfreezeForAdvance } from "./time";
 import { setBackHandler, setSkipHandler } from "./nav";
 import { sound } from "./audio";
 import type { ArtKey } from "./art";
@@ -114,6 +114,9 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
   const history = useRef<{ step: Step; choices: Run2Choices }[]>([]);
 
   const go = (s: Step, patch?: Partial<Run2Choices>) => {
+    // Advancing means the presenter is done with this screen: arrive live, not
+    // frozen. See unfreezeForAdvance in time.ts for why this is one helper.
+    unfreezeForAdvance();
     history.current.push({ step, choices });
     if (patch) { const nc = { ...choices, ...patch }; setChoices(nc); onChoices(nc); }
     setStep(s);

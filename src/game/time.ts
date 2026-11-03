@@ -38,6 +38,28 @@ export function setFrozen(v: boolean) {
 
 export const toggleFrozen = () => setFrozen(!frozen);
 
+/**
+ * Progression releases the freeze.
+ *
+ * Freeze exists so a presenter can talk over a screen without it walking itself
+ * forward. That intent ENDS the moment they choose to move on — so every
+ * forward transition calls this, and the next scene arrives live instead of
+ * requiring a second click on Resume before anything happens. Without it a
+ * presenter driving the whole piece has to press Freeze and then Resume at every
+ * beat, which is exactly the fumble you cannot afford in front of a CEO.
+ *
+ * One helper rather than a `setFrozen(false)` at each call site so the rule is
+ * stated once and greppable; both runs' transition functions route through it.
+ *
+ * Deliberately NOT called by `back()`: rewinding is a presenter move that often
+ * happens mid-explanation, and the frozen banner stays visible above every layer,
+ * so a frozen previous screen is recoverable without trapping anyone.
+ *
+ * No audio bookkeeping needed — the scheduler reads timeFrozen() live on every
+ * tick, so releasing here lifts the duck and the 260 Hz lowpass by itself.
+ */
+export const unfreezeForAdvance = () => setFrozen(false);
+
 const TICK = 50;
 
 /**

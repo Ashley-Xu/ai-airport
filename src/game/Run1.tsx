@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FlightDeck, AltitudeTrace } from "./Visuals";
 import { ArtCross, preloadArt, PlateOverlay, plateActive, resetPlates } from "./SceneArt";
-import { timeFrozen, startPausableTimeout } from "./time";
+import { timeFrozen, startPausableTimeout, unfreezeForAdvance } from "./time";
 import { setBackHandler, setSkipHandler } from "./nav";
 import { sound } from "./audio";
 import { isSpaceDown, isImeSwallowed, isAutoRepeat, isImeSpace } from "./keys";
@@ -40,6 +40,9 @@ export default function Run1({ onComplete, clockRef, demo = false }: { onComplet
      reveal states its own start step, so this can never go stale. */
   const [revealStart, setRevealStart] = useState(0);
   const next = (s: Scene, startStep = 0) => {
+    // Advancing means the presenter is done with this screen: arrive live, not
+    // frozen. See unfreezeForAdvance in time.ts for why this is one helper.
+    unfreezeForAdvance();
     setRevealStart(startStep);
     setHistory((h) => [...h, scene]); setScene(s);
   };
