@@ -12,7 +12,7 @@ import { motion, useInView } from "framer-motion";
 /* ───────────────────────── timeline data ───────────────────────── */
 
 type Ev = { tag: string; title: string; body: string; hero?: boolean } | null;
-type Row = { clock: string; today: Ev; ai: Ev; ghostToday?: string; ghostAi?: string; jump?: boolean };
+type Row = { clock: string; today: Ev; ai: Ev; ghostToday?: string; ghostAi?: string };
 
 const AIR_ROWS: Row[] = [
   {
@@ -53,7 +53,6 @@ const AIR_ROWS: Row[] = [
       body: "Faces, crew state, aircraft state. Summarize. Recommend. Ask one human.",
       hero: true,
     },
-    jump: true,
   },
   {
     clock: "T+1:09",
@@ -65,7 +64,6 @@ const AIR_ROWS: Row[] = [
       body: "Door opens minutes sooner. The machine saw; a human decided.",
       hero: true,
     },
-    jump: true,
   },
   {
     clock: "T+2:30",
