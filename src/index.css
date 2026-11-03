@@ -221,6 +221,13 @@ h2.head .accent-gold { color: var(--gold); font-style: italic; }
   font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--today); margin-bottom: 9px;
 }
+/* the two hinges sit side by side — the eye compares, it doesn't read */
+.ground-card .hinges { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ground-card .hinges .branch {
+  margin-top: 20px; border-top: none; padding: 18px 20px; border-radius: 12px;
+  background: rgba(255, 122, 102, 0.05); border: 1px solid var(--today-line);
+}
+@media (max-width: 720px) { .ground-card .hinges { grid-template-columns: 1fr; } }
 .ground-card .punch {
   margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line-soft);
   font-family: var(--serif); font-size: clamp(20px, 2.3vw, 28px); line-height: 1.34; color: var(--ink);

@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion";
    Option D: cinematic spine (snapped beats) + operations texture
    Palette discipline: coral = Today, teal = AI-native,
    gold = humans deciding (never data). Coral & teal never mix.
+   COPY RULE: one line per card; the graphics carry the argument.
    ══════════════════════════════════════════════════════════════ */
 
 /* ───────────────────────── timeline data ───────────────────────── */
@@ -19,23 +20,23 @@ const AIR_ROWS: Row[] = [
     today: {
       tag: "Locked",
       title: "The attack begins",
-      body: "The flight-deck door is locked from inside — by design, unopenable from outside. The only key is the captain's hand, and the captain is dying.",
+      body: "Door locked from inside. The only key: the dying captain's hand.",
     },
     ai: {
       tag: "Sense",
-      title: "The scene is understood in under 2 seconds",
-      body: "Smart cameras in cabin and flight deck flag violent contact and crew posture collapse. Every person's movement — passengers surging forward, the captain at the lock — is a tracked, understood scene.",
+      title: "Scene understood in under 2 s",
+      body: "Cameras flag violent contact and posture collapse. Every person tracked.",
       hero: true,
     },
   },
   {
     clock: "T+0:08",
     today: null,
-    ghostToday: "— nobody on the ground knows anything —",
+    ghostToday: "— nobody on the ground knows —",
     ai: {
       tag: "Summarize",
-      title: "One sentence and a 6-second clip",
-      body: "\"Violent intrusion in flight deck; captain unresponsive; aircraft deviating.\" Streamed live to ATC, airline ops, and your airport. A human acknowledges — that is your human-in-the-loop, in seconds, not hours.",
+      title: "One sentence + a 6-second clip",
+      body: "Streamed to ATC, airline, airport. A human acknowledges — in seconds.",
       hero: true,
     },
   },
@@ -44,12 +45,12 @@ const AIR_ROWS: Row[] = [
     today: {
       tag: "Falling",
       title: "The dive",
-      body: "14,000 feet in under 30 seconds. On the ground, a radar symbol falls.",
+      body: "14,000 ft in 30 s. On the ground, a radar symbol falls.",
     },
     ai: {
       tag: "Guard",
-      title: "The uncommanded dive is rejected",
-      body: "Envelope protection escalates to intent-guard: the aircraft holds its assigned altitude until lawful control is re-established.",
+      title: "The dive is rejected",
+      body: "Envelope protection holds altitude until lawful control returns.",
       hero: true,
     },
   },
@@ -57,13 +58,13 @@ const AIR_ROWS: Row[] = [
     clock: "T+1:05",
     today: {
       tag: "Nothing",
-      title: "The rulebook has nothing for this",
+      title: "No rule for this",
       body: "The binder says: the door does not open.",
     },
     ai: {
       tag: "Judge",
-      title: "No playbook matches — so it doesn't look one up",
-      body: "It sees the scene instead. Recognized faces, crew state, aircraft state. It summarizes, recommends, and asks a live human once.",
+      title: "No playbook matches — so it sees",
+      body: "Faces, crew state, aircraft state. Summarize. Recommend. Ask one human.",
       hero: true,
     },
     jump: true,
@@ -71,11 +72,11 @@ const AIR_ROWS: Row[] = [
   {
     clock: "T+1:09",
     today: null,
-    ghostToday: "— a human would need minutes to be told, convinced, authorized —",
+    ghostToday: "— minutes to tell, convince, authorize —",
     ai: {
       tag: "Confirmed",
-      title: "A human says yes in 4.2 seconds",
-      body: "The door opens ~40 seconds sooner than a dying man's arm managed. Nobody consulted a rule. The machine saw; a human decided.",
+      title: "A human says yes in 4.2 s",
+      body: "Door opens ~40 s sooner. The machine saw; a human decided.",
       hero: true,
     },
     jump: true,
@@ -84,25 +85,25 @@ const AIR_ROWS: Row[] = [
     clock: "T+3:00",
     today: {
       tag: "Luck",
-      title: "Two off-duty pilots take the controls",
+      title: "Two off-duty pilots take over",
       body: "They happened to be sitting in the cabin.",
     },
     ai: {
       tag: "No luck",
-      title: "Stabilised automation flies the aircraft",
-      body: "A ground pilot monitors and can take over. The nearest suitable airport — yours — is already choreographing.",
+      title: "Automation flies",
+      body: "A ground pilot monitors. Your airport is already choreographing.",
     },
   },
   {
     clock: "T+9:00",
     today: {
       tag: "Wheels down",
-      title: "The aerodrome learns the severity by radio",
+      title: "Severity learned by radio",
       body: "Mid-approach. Fire trucks still positioning.",
     },
     ai: {
       tag: "Wheels down",
-      title: "The airport has known for 8 minutes 52 seconds",
+      title: "Known for 8 min 52 s",
       body: "The response is already in motion.",
     },
   },
@@ -113,26 +114,26 @@ const GROUND_ROWS: Row[] = [
     clock: "T+9:00",
     today: {
       tag: "Landing",
-      title: "Fire trucks still positioning",
-      body: "Stairs not assigned. Squawk 7500 arrives by phone from ATC.",
+      title: "Fire still positioning",
+      body: "Stairs unassigned. Squawk 7500 arrives by phone.",
     },
     ai: {
       tag: "Landing",
-      title: "Fire arrives before the aircraft stops rolling",
-      body: "Runway–stand–apparatus choreography was computed at T+0:45.",
+      title: "Fire arrives before chocks",
+      body: "Runway–stand–apparatus computed at T+0:45.",
     },
   },
   {
     clock: "T+10:30",
     today: {
       tag: "Waiting",
-      title: "Still on hold with the airline",
+      title: "On hold with the airline",
       body: "For a passenger manifest.",
     },
     ai: {
       tag: "Reconciled",
       title: "Manifest already built",
-      body: "From your own bag-drop and border data: who needs medical, who is a minor, who connects.",
+      body: "Your bag-drop + border data: medical, minors, connections.",
     },
   },
   {
@@ -140,12 +141,12 @@ const GROUND_ROWS: Row[] = [
     today: {
       tag: "Muster",
       title: "Stand not cleared",
-      body: "Fire crews assembling at a muster point. The injured captain waits for a bus.",
+      body: "Crews mustering. The injured captain waits for a bus.",
     },
     ai: {
       tag: "Act",
       title: "The apron moves itself",
-      body: "Remote stand cleared by autonomous apron vehicles; 2,000 pax rerouted from Pier E; medical robot at the door; police on green-wave access; family-assistance area open, counsellors briefed before the first family calls.",
+      body: "Stand auto-cleared · 2,000 pax rerouted · medical robot at the door · counsellors briefed.",
       hero: true,
     },
   },
@@ -154,38 +155,38 @@ const GROUND_ROWS: Row[] = [
     today: {
       tag: "On stand",
       title: "Buses, one at a time",
-      body: "The first media inquiry arrives before the passenger list is confirmed.",
+      body: "Media asks before the manifest is confirmed.",
     },
     ai: {
       tag: "On stand",
-      title: "Everything already where it belongs",
-      body: "Stairs, medical, police and the media cordon. Holding statement drafted against your crisis policy.",
+      title: "Everything in place",
+      body: "Stairs, medical, police, cordon. Statement drafted.",
     },
   },
   {
     clock: "T+38:00",
     today: {
       tag: "Deplaning",
-      title: "The report will be written from memory",
+      title: "Report written from memory",
       body: "Weeks later.",
     },
     ai: {
       tag: "Last pax off",
       title: "Care already running",
-      body: "Next-of-kin notifications matched; rebooking already in progress.",
+      body: "Next-of-kin matched; rebooking in progress.",
     },
   },
   {
     clock: "T+2:00:00",
     today: {
       tag: "Manual",
-      title: "The aftermath is manual",
+      title: "Aftermath is manual",
       body: "Aircraft blocks two rotations.",
     },
     ai: {
       tag: "Re-planned",
       title: "The day is re-planned",
-      body: "Rotations re-sequenced; incident report auto-assembled from the full sensor and action log — second by second, court-ready.",
+      body: "Rotations re-sequenced; court-ready report auto-assembled.",
     },
   },
 ];
@@ -296,7 +297,6 @@ function FlightDeckSchematic({ doorOpen }: { doorOpen: boolean }) {
     const t = setTimeout(() => setStep((s) => s + 1), step === 0 ? 260 : 620);
     return () => clearTimeout(t);
   }, [inView, step]);
-
   const A = (n: number) => ({
     initial: { opacity: 0 },
     animate: step >= n ? { opacity: 1 } : { opacity: 0 },
@@ -450,13 +450,11 @@ function JudgmentBeat() {
     const t = setTimeout(() => setPhase(1), 500);
     return () => clearTimeout(t);
   }, [inView, phase]);
-
   useEffect(() => {
     if (phase !== 1) return;
     const t = setTimeout(() => setPhase(2), 2600);
     return () => clearTimeout(t);
   }, [phase]);
-
   useEffect(() => {
     if (phase !== 2) return;
     const t = setTimeout(() => setPhase(3), 900);
@@ -479,10 +477,10 @@ function JudgmentBeat() {
 
   const confirmed = phase === 3 && ms === 0;
   const lines = [
-    { st: "SEES", txt: <>Faces at the door: <b>senior cabin crew, 3 recognized</b>. No weapon visible.</> },
-    { st: "SEES", txt: <>Inside: <b>captain down</b> at the lock, unresponsive. <b>Co-pilot at the controls.</b></> },
-    { st: "SEES", txt: <>Aircraft: <b>envelope guarded</b>, assigned altitude held, 40 min of fuel.</> },
-    { st: "NO MATCH", txt: <>Searches <b>412 playbook branches</b>. None fit this scene.</> },
+    { st: "SEES", txt: <>Door: <b>3 recognized cabin crew</b>. No weapon.</> },
+    { st: "SEES", txt: <>Inside: <b>captain down</b> at the lock. <b>Co-pilot flying.</b></> },
+    { st: "SEES", txt: <>Aircraft: <b>envelope guarded</b>. 40 min fuel.</> },
+    { st: "NO MATCH", txt: <><b>412 playbook branches</b> searched. None fit.</> },
   ];
 
   return (
@@ -509,7 +507,7 @@ function JudgmentBeat() {
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="lab">Recommendation · T+1:05</div>
-          <p>Release the flight-deck lock. Scene supports entry by recognized crew; co-pilot is at the controls and crew have his position and status; aircraft is guarded; the captain requires medical aid. Confidence: high.</p>
+          <p>Release the flight-deck lock. Recognized crew at the door · co-pilot at the controls · aircraft guarded · captain needs medical. Confidence: high.</p>
         </motion.div>
 
         <motion.div
@@ -522,9 +520,9 @@ function JudgmentBeat() {
           <div className="counter">{(ms / 1000).toFixed(1)}s</div>
           <div className="who-said">
             {confirmed ? (
-              <><b>A human at ATC ops said yes.</b> The door opened ~40 s sooner than a dying man's arm managed. Nobody consulted a rule.</>
+              <><b>A human at ATC ops said yes.</b> Door open ~40 s sooner. Nobody consulted a rule.</>
             ) : (
-              <>A live human at ATC ops is being asked once. This is the only part that waits.</>
+              <>One live human, asked once. The only part that waits.</>
             )}
           </div>
         </motion.div>
@@ -545,22 +543,22 @@ function AuthorityInbox() {
     standing: (
       <>
         ✓ GRANTED · T+38:04<br />
-        <span className="dim">Irreversible acts proceed on scene judgment: logged, streamed to ATC, instantly countermandable by any conscious crew member. Low-confidence scenes still escalate — the system knows what it doesn't know.</span><br />
-        Every action builds the trust record. Reviewable quarterly. Revocable in one tap.
+        <span className="dim">Irreversible acts proceed on scene judgment — logged, streamed, countermandable by any conscious crew. Low-confidence scenes still escalate.</span><br />
+        Reviewable quarterly. Revocable in one tap.
       </>
     ),
     confirms: (
       <>
         ✓ RECORDED · T+38:04<br />
-        <span className="dim">Your ops floor's median confirm time: 4.2 s. Every confirm builds the trust record; the system will propose standing authority once it has earned it.</span><br />
+        <span className="dim">Median confirm: 4.2 s. Every confirm builds the trust record; standing authority is proposed once earned.</span><br />
         You decide. It never does.
       </>
     ),
     doctrine: (
       <>
         ✓ RECORDED · T+38:04<br />
-        <span className="dim">Current door policy retained. The system will log every scene that diverges from the playbook and show you a divergence report after each event.</span><br />
-        For reference: last month's T+1:05 scene had no matching rule — and would have waited for one.
+        <span className="dim">Policy retained. Every divergent scene logged; a divergence report after each event.</span><br />
+        Last month's T+1:05 scene had no matching rule — and would have waited for one.
       </>
     ),
   };
@@ -581,8 +579,8 @@ function AuthorityInbox() {
               <div className="nm">Airport · Nerve Center</div>
               <div className="tm">T+38</div>
             </div>
-            <h4>Flight-deck event · T+0:00 — resolved</h4>
-            <p>174 souls. Captain in surgery, stable. 0 further injuries. Full second-by-second audit trail attached. One decision needs you.</p>
+            <h4>Flight-deck event · resolved</h4>
+            <p>174 souls. Captain stable. 0 further injuries. Audit trail attached. One decision needs you.</p>
             <div className="cta">{open ? "Opened" : "Tap to open →"}</div>
           </motion.div>
           <div className="hint">Your new inbox · ~3 cards a day</div>
@@ -602,30 +600,28 @@ function AuthorityInbox() {
                 <span className="pill clock">T+0:00 → T+38:00</span>
                 <span className="pill action">1 decision</span>
               </div>
-              <h3>Flight-deck event — handled before you were called</h3>
-              <p className="sub">Detected at T+0:00 from cabin and flight-deck sensing. Escalated to a human at T+0:08. Full sensor and action log attached, court-ready.</p>
-
+              <h3>Handled before you were called</h3>
+              <p className="sub">Detected T+0:00 · escalated to a human T+0:08 · court-ready log attached.</p>
               <ul className="audit">
-                <li><span className="st">T+0:02 ✓</span><span><b>Scene understood.</b> Violent contact and crew posture collapse flagged in under 2 s</span></li>
-                <li><span className="st">T+0:08 ✓</span><span><b>Summary streamed.</b> One sentence + 6-second clip to ATC, airline ops, airport. Human acknowledged</span></li>
-                <li><span className="st">T+0:30 ✓</span><span><b>Dive rejected.</b> Intent-guard held assigned altitude</span></li>
-                <li><span className="st">T+0:45 ✓</span><span><b>Choreography computed.</b> Runway, stand and apparatus routes for your arrival</span></li>
-                <li><span className="st">T+1:05 ✓</span><span><b>No playbook matched</b> — scene judgment invoked, recommendation issued</span></li>
-                <li><span className="st">T+1:09 ✓</span><span><b>Door released</b> on live human confirm (4.2 s). ~40 s sooner than manual unlock</span></li>
-                <li><span className="st">T+9:00 ✓</span><span><b>Fire at the door</b> before the aircraft stopped rolling</span></li>
-                <li><span className="st">T+13:00 ✓</span><span><b>Counsellors briefed</b> before the first family called; 2,000 pax rerouted from Pier E</span></li>
-                <li><span className="st">T+17:00 ✓</span><span><b>Holding statement drafted</b> against your crisis policy; media cordon placed</span></li>
-                <li><span className="st">T+38:00 ✓</span><span><b>Last passenger off.</b> Next-of-kin matched; rebooking running</span></li>
+                <li><span className="st">T+0:02 ✓</span><span><b>Scene understood</b> — violent contact flagged in &lt;2 s</span></li>
+                <li><span className="st">T+0:08 ✓</span><span><b>Summary streamed</b> — sentence + clip; human acknowledged</span></li>
+                <li><span className="st">T+0:30 ✓</span><span><b>Dive rejected</b> — altitude held</span></li>
+                <li><span className="st">T+0:45 ✓</span><span><b>Choreography computed</b> — runway, stand, apparatus</span></li>
+                <li><span className="st">T+1:05 ✓</span><span><b>No playbook matched</b> — scene judgment invoked</span></li>
+                <li><span className="st">T+1:09 ✓</span><span><b>Door released</b> — human confirm, 4.2 s</span></li>
+                <li><span className="st">T+9:00 ✓</span><span><b>Fire at the door</b> — before the aircraft stopped</span></li>
+                <li><span className="st">T+13:00 ✓</span><span><b>Counsellors briefed</b> — before the first family called</span></li>
+                <li><span className="st">T+17:00 ✓</span><span><b>Statement drafted</b> — against your crisis policy</span></li>
+                <li><span className="st">T+38:00 ✓</span><span><b>Last pax off</b> — kin matched, rebooking running</span></li>
               </ul>
 
               <div className="decision">
                 <span className="pill action">Needs you</span>
                 <div className="dq">How much judgment do we give the nervous system?</div>
-                <p className="dc">At T+1:05 the system met a scene no playbook covered. It saw, summarized, recommended — and waited <strong>4.2 seconds</strong> for a human yes. The door opened. 174 people lived.</p>
-                <p className="dc">The alternative was not safer. It was 2015: a rule that could not be broken, a captain knocking on a door that would not open. <strong>Rules fail quietly in scenes nobody enumerated.</strong> Judgment has to be granted, logged, and revocable.</p>
+                <p className="dc">At T+1:05 it met a scene no playbook covered. It saw, recommended — and waited <strong>4.2 s</strong> for a human yes. The alternative was 2015: a rule that could not be broken. <strong>Rules fail quietly in scenes nobody enumerated.</strong> Judgment must be granted, logged, revocable.</p>
                 <div className="btns">
-                  <button className="btn gold" onClick={() => setChoice("standing")}>Grant standing adaptive authority</button>
-                  <button className="btn" onClick={() => setChoice("confirms")}>Keep live human confirms (4.2 s)</button>
+                  <button className="btn gold" onClick={() => setChoice("standing")}>Grant standing authority</button>
+                  <button className="btn" onClick={() => setChoice("confirms")}>Keep live confirms (4.2 s)</button>
                   <button className="btn" onClick={() => setChoice("doctrine")}>Keep fixed doctrine</button>
                 </div>
                 {choice && (
@@ -637,10 +633,9 @@ function AuthorityInbox() {
             </div>
 
             <p className="inbox-caption">
-              <b>This is the whole idea.</b> Not more dashboards — an inbox of decisions. The card never asks
-              <i> "what happened?"</i>; the airport handled that and reported it. It asks <i>"how much judgment
-              are we willing to give a system that can see?"</i> Risk, trust, governance. That is a CEO-shaped
-              question — and it arrives about three times a day, not three hundred.
+              <b>The whole idea:</b> not more dashboards — an inbox of decisions. It never asks <i>"what
+              happened?"</i> — the airport handled that. It asks <i>"how much judgment do we grant a system
+              that can see?"</i> ~3 cards a day, not 300.
             </p>
           </motion.div>
         )}
@@ -702,9 +697,9 @@ function SplitTimeline({ onJump }: { onJump: () => void }) {
       <div className="boundary">
         <div className="lab">The honest boundary</div>
         <p>
-          The airport could not stop the axe from swinging. It did not happen in your sky. What changed is the
-          four minutes in the air and the eight minutes to the chocks — today a dying man's arm, two strangers'
-          licences, and a rule that fails quietly. Then a nervous system that sees, and hands that act.
+          The airport could not stop the axe from swinging. What changed is the four minutes in the air
+          and the eight minutes to the chocks: a nervous system that <span className="accent">sees</span>,
+          and hands that act.
         </p>
       </div>
     </div>
@@ -751,20 +746,13 @@ export default function DeepDive() {
             the urgent steps are <span className="accent">already taken care of.</span>
           </motion.h1>
           <motion.p className="hero-sub" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.54, duration: 0.9 }}>
-            One event. One clock. Two airports. It starts inside an aircraft at T+0:00, with zero seconds of
-            warning — and it turns on a door that only opens from one side.
+            One event. One clock. Two airports. It turns on a door that only opens from one side.
           </motion.p>
           <motion.div className="hero-clock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.78, duration: 0.9 }}>
             <span className="t">T+0:00</span>
             <span>→ T+1:09 door released</span>
             <span>→ T+9:00 wheels down</span>
             <span>→ T+38:00 last passenger off</span>
-          </motion.div>
-          <motion.div className="hero-meta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.92, duration: 1 }}>
-            <div className="m">Audience<b>The CEO, personally</b></div>
-            <div className="m">Moment<b>T+0:00 · zero warning</b></div>
-            <div className="m">Idea<b>From dashboards to a decision inbox</b></div>
-            <div className="m">Mechanism<b>Physical AI: sense → judge → act</b></div>
           </motion.div>
         </div>
         <div className="scroll-cue"><div className="bar" />Scroll</div>
@@ -775,13 +763,12 @@ export default function DeepDive() {
         <div className="wrap">
           <Reveal>
             <div className="kicker coral">01 · The complaint, decoded</div>
-            <h2 className="head">"Screens and data everywhere — and we still find out too late."</h2>
+            <h2 className="head">"Screens everywhere — and we still find out too late."</h2>
           </Reveal>
           <Reveal delay={0.06}>
             <div className="pullquote">
-              The dashboard is not the airport. It is a report about the airport, written forty minutes ago.
-              The playbook is worse: a report about the <em>last</em> crisis, written after it. Neither can see
-              the next one.
+              The dashboard is a report about the airport, written forty minutes ago. The playbook is a
+              report about the <em>last</em> crisis. Neither can see the next one.
               <span className="who">— the core insight of this concept</span>
             </div>
           </Reveal>
@@ -790,29 +777,28 @@ export default function DeepDive() {
               <div className="card coral">
                 <div className="n">Symptom 01</div>
                 <h3>Data reports the past</h3>
-                <p>Every KPI is a lagging indicator. By the time it turns red, the queue has formed, the bag has jammed, the passenger has posted.</p>
+                <p>By the time a KPI turns red, the queue has already formed.</p>
               </div>
             </Reveal>
             <Reveal delay={0.13}>
               <div className="card coral">
                 <div className="n">Symptom 02</div>
                 <h3>Rules rehearse the last disaster</h3>
-                <p>Post-9/11 doors, post-2015 two-person crews — every doctrine is an autopsy turned into policy. It holds, right up to the scenario it never enumerated.</p>
+                <p>Every doctrine is an autopsy turned into policy.</p>
               </div>
             </Reveal>
             <Reveal delay={0.21}>
               <div className="card coral">
                 <div className="n">Symptom 03</div>
                 <h3>Problems are physical</h3>
-                <p>A door that only opens from one side. An aircraft in a dive. A stand that must be cleared. Software that can only warn still needs a human with a radio to fix. That human is the latency.</p>
+                <p>A door. A dive. A stand. Warning is not fixing — the human with the radio is the latency.</p>
               </div>
             </Reveal>
           </div>
           <Reveal delay={0.1}>
             <div className="pivot">
-              So this is not a data problem, and it is not a rulebook problem. It is an{" "}
-              <span className="accent">eyes-and-hands</span> problem. And the hardest proof is an event that
-              gives you zero seconds.
+              Not a data problem. Not a rulebook problem. An <span className="accent">eyes-and-hands</span>{" "}
+              problem — and the hardest proof gives you zero seconds.
             </div>
           </Reveal>
         </div>
@@ -829,32 +815,31 @@ export default function DeepDive() {
           <Reveal delay={0.06}>
             <div className="ground-card">
               <p>
-                Last month, on a Dubai–Tel Aviv flight, a co-pilot attacked the captain with the cockpit's own
-                crash axe and drove the aircraft into a dive — <strong>nearly 14,000 feet in under 30 seconds</strong>.
-                Passengers forced their way into the flight deck and subdued him. The aircraft was flown to the
-                nearest suitable airport by <strong>two off-duty pilots who happened to be sitting in the cabin</strong>.
-                174 people landed safely.
+                Last month, Dubai–Tel Aviv: a co-pilot attacked the captain with the cockpit's own crash axe
+                and drove the aircraft into a dive — <strong>14,000 ft in 30 seconds</strong>. Passengers broke
+                into the flight deck and subdued him; <strong>two off-duty pilots who happened to be
+                aboard</strong> flew it down. 174 lived.
               </p>
-              <p>Two details decide everything about this concept:</p>
-              <div className="branch">
-                <h4>1 · The door</h4>
-                <p>The reason passengers could get in: the captain — stabbed, bleeding — spent his remaining
-                strength unlocking the flight-deck door from the inside. Since 9/11 that door cannot be opened
-                from outside. Ten seconds earlier into unconsciousness, the door is a wall, and everyone aboard
-                is doomed.</p>
-              </div>
-              <div className="branch">
-                <h4>2 · The controls</h4>
-                <p>The reason the aircraft could be flown: two off-duty crew were aboard by chance. Had they not
-                been, nobody left alive could fly the aircraft, and everyone aboard is doomed.</p>
+              <p>Two details decide everything:</p>
+              <div className="hinges">
+                <div className="branch">
+                  <h4>Hinge 1 · The door</h4>
+                  <p>Opened only because the stabbed captain unlocked it from inside, with his last
+                  strength. Ten seconds later: a wall, and everyone doomed.</p>
+                </div>
+                <div className="branch">
+                  <h4>Hinge 2 · The controls</h4>
+                  <p>Flyable only by two strangers' licences, aboard by chance. Without them, nobody left
+                  alive could fly.</p>
+                </div>
               </div>
               <p style={{ marginTop: 20 }}>
-                And one detail from before the flight: investigators later reported the attacker had been{" "}
-                <strong>barred from flying by his home country's regulator over extremism concerns</strong>. The
-                airline that rostered him that morning did not know. The signal existed — and reached no one.
+                Before the flight: the attacker had been <strong>barred from flying over extremism
+                concerns</strong>. The airline that rostered him did not know. The signal existed — and
+                reached no one.
               </p>
               <div className="punch">
-                174 people lived because of a dying man's arm and two strangers' licences.{" "}
+                174 lived on a dying man's arm and two strangers' licences.{" "}
                 <span className="accent">Luck is not a safety system.</span>
               </div>
             </div>
@@ -881,9 +866,8 @@ export default function DeepDive() {
             <Reveal delay={0.05}>
               <div className="door one">
                 <div className="when">March 2015 · the French Alps</div>
-                <h3>The rule kept the wrong man at the controls</h3>
-                <p>A suicidal co-pilot locks the captain out and flies into a mountain. The captain knocks,
-                pleads, attacks the door with an axe. The rule holds.</p>
+                <h3>Kept the wrong man at the controls</h3>
+                <p>A suicidal co-pilot locks the captain out. The captain knocks, pleads, axes the door. The rule holds.</p>
                 <div className="toll"><span className="big">150</span><span className="lab">Dead</span></div>
                 <div className="verdict">The rule worked exactly as written.</div>
               </div>
@@ -891,9 +875,8 @@ export default function DeepDive() {
             <Reveal delay={0.14}>
               <div className="door two">
                 <div className="when">Last month · diverted to your nearest suitable</div>
-                <h3>The rule kept help outside</h3>
-                <p>The same rule holds — until a stabbed captain reaches the lock from the inside with his
-                remaining strength.</p>
+                <h3>Kept help outside</h3>
+                <p>The same rule holds — until a stabbed captain reaches the lock from inside.</p>
                 <div className="toll"><span className="big">174</span><span className="lab">Live, by inches</span></div>
                 <div className="verdict">The rule nearly worked exactly as written.</div>
               </div>
@@ -904,12 +887,9 @@ export default function DeepDive() {
           </Reveal>
           <Reveal delay={0.08}>
             <div className="trap">
-              <p>And here is the trap: <strong>doctrine is written from the last disaster.</strong> The rule born
-              of 2015 — <em>never leave a pilot alone in the cockpit</em> — was satisfied last month. The attacker{" "}
-              <strong>was</strong> the second person.</p>
-              <p>Write the next doctrine — <em>release the lock when the crew is unresponsive</em> — and you have
-              written the autopsy report of the disaster after that one. Every rule is a scar from a scenario
-              that already happened. What remains are the scenarios nobody has enumerated yet.</p>
+              <p>The trap: <strong>doctrine is written from the last disaster.</strong> The 2015 rule — <em>never
+              leave a pilot alone</em> — was satisfied last month. The attacker <strong>was</strong> the second
+              person. Write the next rule and you have written the autopsy of the disaster after that one.</p>
               <div className="concl">
                 You cannot enumerate the future. The door needs to <span className="accent">see</span> — not to obey.
               </div>
@@ -933,9 +913,8 @@ export default function DeepDive() {
               </div>
             </div>
             <p className="lede">
-              No model predicts this event, and no rulebook covers it. So the question is not "could the airport
-              have known?" It is: when the second arrives, <em>who is watching, how fast does anyone understand —
-              and what has hands to act?</em>
+              No model predicts this; no rulebook covers it. The question: <em>who is watching, how fast do
+              they understand — and what has hands?</em>
             </p>
           </Reveal>
           <Reveal delay={0.06}>
@@ -954,9 +933,8 @@ export default function DeepDive() {
             <div className="kicker">05 · T+1:05 — the moment the idea turns on</div>
             <h2 className="head">The scene matches no playbook. <span className="accent-gold">So it doesn't look one up.</span></h2>
             <p className="lede">
-              This is the whole concept in one screen: a system that sees a scene it has never been given a rule
-              for, says so, recommends — and waits for a human. Everything else in the piece counts up. Only
-              this counts down.
+              The whole concept in one screen: it sees a scene with no rule, says so, recommends — and waits
+              for a human. Everything else counts up. Only this counts down.
             </p>
           </Reveal>
           <Reveal delay={0.08}>
@@ -978,10 +956,9 @@ export default function DeepDive() {
             <div className="kicker teal">06 · Why physical, not just AI</div>
             <h2 className="head">Software alone can only warn. A nervous system can act.</h2>
             <p className="lede">
-              Better analytics cannot run this event — there was nothing to predict. And a better rulebook cannot
-              run it either: the rule existed, it held, and it nearly killed everyone aboard. What's missing is not
-              data and not doctrine. It is eyes that see this door, this second — and hands that can act on what
-              they see.
+              Analytics can't run this event — there was nothing to predict. A better rulebook can't either —
+              the rule held and nearly killed everyone. What's missing is <em>eyes on this door, this
+              second — and hands</em>.
             </p>
           </Reveal>
           <div className="organs">
@@ -990,11 +967,11 @@ export default function DeepDive() {
                 <span className="glyph">👁</span>
                 <div className="role">Eyes · Sensing</div>
                 <h3>One world-model, seat 14A to stand B7</h3>
-                <p>Smart cameras in the cabin and flight deck, fused with airport cameras, LiDAR, IoT and the ATC data link — not thirty siloed dashboards.</p>
+                <p>Cabin and flight-deck cameras fused with airport cameras, LiDAR, IoT, ATC data link — not thirty dashboards.</p>
                 <ul>
-                  <li>Pose, movement and identity understanding of passengers and crew</li>
-                  <li>The squawk reaches you in the same second it reaches ATC</li>
-                  <li>Queue lengths, spills and stand states measured, not estimated</li>
+                  <li>Pose, movement, identity — crew and passengers</li>
+                  <li>The squawk reaches you the same second as ATC</li>
+                  <li>Queues, spills, stands — measured, not estimated</li>
                 </ul>
               </div>
             </Reveal>
@@ -1003,11 +980,11 @@ export default function DeepDive() {
                 <span className="glyph">🧠</span>
                 <div className="role">Brain · Twin + Agents</div>
                 <h3>Judges scenes no playbook enumerated</h3>
-                <p>Turns live video into plain-language situational reports in seconds, rehearses response choreographies while the aircraft is still inbound, and says so when it is uncertain.</p>
+                <p>Video becomes a sentence and a 6-second clip. Rehearses the response while the aircraft is inbound. Says so when uncertain.</p>
                 <ul>
-                  <li>Video becomes a sentence and a 6-second clip, not a wall of feeds</li>
-                  <li>Fuses crew-risk signals across jurisdictions — branch 3 dies before the roster is built</li>
-                  <li>Diffs prediction against outcome, so every event makes the next faster</li>
+                  <li>One summary, not a wall of feeds</li>
+                  <li>Crew-risk signals fused across jurisdictions</li>
+                  <li>Prediction diffed against outcome — every event trains the next</li>
                 </ul>
               </div>
             </Reveal>
@@ -1016,11 +993,11 @@ export default function DeepDive() {
                 <span className="glyph">🦾</span>
                 <div className="role">Hands · Actuation</div>
                 <h3>The plan moves things</h3>
-                <p>The smart door lock, the guarded autopilot, autonomous apron vehicles, medical and cleaning robots, reconfigurable signage, green-wave access.</p>
+                <p>Smart door lock, guarded autopilot, autonomous apron vehicles, medical robots, dynamic signage, green-wave access.</p>
                 <ul>
-                  <li>In the air: the lock releases, the dive is rejected, automation flies</li>
-                  <li>On the ground: the stand is cleared before the aircraft parks</li>
-                  <li>Executed without a phone call per action</li>
+                  <li>Air: lock releases · dive rejected · automation flies</li>
+                  <li>Ground: stand cleared before the aircraft parks</li>
+                  <li>No phone call per action</li>
                 </ul>
               </div>
             </Reveal>
@@ -1035,9 +1012,9 @@ export default function DeepDive() {
           <Reveal delay={0.08}>
             <div className="apron-wrap">
               <div className="cap">
-                <span>T+13:00 · apron choreography, computed at T+0:45</span>
+                <span>T+13:00 · computed at T+0:45</span>
                 <i>autonomous apron vehicles</i>
-                <b>apparatus routed to arrive before chocks</b>
+                <b>apparatus arrives before chocks</b>
               </div>
               <ApronDiagram />
             </div>
@@ -1052,9 +1029,8 @@ export default function DeepDive() {
             <div className="kicker">07 · Your new interface</div>
             <h2 className="head">From a wall of dashboards to <span className="accent-gold">an inbox of decisions.</span></h2>
             <p className="lede">
-              In the AI-native airport you are not the person who finds out last, and not the person who
-              coordinates either. About three times a day the airport surfaces the only things that deserve a
-              human: what we spend, what we say, and how much judgment the machine is allowed to exercise.
+              You are not the one who finds out last — or the one who coordinates. ~3× a day the airport
+              surfaces what deserves a human: what we spend, what we say, how much judgment the machine gets.
             </p>
           </Reveal>
           <Reveal delay={0.06}>
@@ -1069,20 +1045,17 @@ export default function DeepDive() {
           <Reveal>
             <div className="kicker">08 · How this was thought through</div>
             <h2 className="head">The thinking behind the story</h2>
-            <p className="lede">
-              A concept for a CEO should show its reasoning, not just its render. The choices, the rejected
-              alternatives, and the assumptions — including the ones that are contested.
-            </p>
+            <p className="lede">The choices, the rejected alternatives, and the contested assumptions.</p>
           </Reveal>
           <div className="think">
             <Reveal delay={0.05}>
               <div className="card teal">
                 <h3><span className="idx">A</span>Why this moment, and only this moment</h3>
                 <ul>
-                  <li><b>Rejected first: a weather diversion.</b> Predictable events invite "better analytics could do that" — and a CEO would be right.</li>
-                  <li><b>Rejected second: the squawk alone.</b> Starting at the squawk skips the two minutes where the real event was decided — the door and the controls.</li>
-                  <li><b>Chosen: T+0:00, zero seconds.</b> If the nervous system survives an event with nothing to predict, every forecastable day follows trivially. The hardest case makes the shortest argument.</li>
-                  <li><b>Cost, honestly:</b> it is rare. So the 90-day roadmap starts on an ordinary transfer queue — the emergency is the proof point, the everyday is the product.</li>
+                  <li><b>Rejected: a weather diversion</b> — predictable events invite "analytics could do that."</li>
+                  <li><b>Rejected: starting at the squawk</b> — skips the two minutes that decided it.</li>
+                  <li><b>Chosen: T+0:00, zero warning</b> — the hardest case makes the shortest argument.</li>
+                  <li><b>Cost: it's rare</b> — so the 90-day roadmap starts on an ordinary transfer queue.</li>
                 </ul>
               </div>
             </Reveal>
@@ -1090,10 +1063,10 @@ export default function DeepDive() {
               <div className="card teal">
                 <h3><span className="idx">B</span>Why Germanwings is evidence, not a counter-case</h3>
                 <ul>
-                  <li>A locked door kept a suicidal co-pilot <b>in</b> in 2015, and kept help <b>out</b> last month. One rule, two opposite failures.</li>
-                  <li>The post-2015 rule was <b>satisfied</b> last month — the attacker was the second person. Doctrine always lags one disaster.</li>
-                  <li>So the answer isn't a smarter trigger table. It's <b>no rule lookup at all</b>: see the scene, recommend, let a human confirm.</li>
-                  <li>Stated out loud on the page, not buried in an appendix — conceding the boundary is what buys the rest of the story.</li>
+                  <li><b>One door, two opposite failures:</b> kept a suicidal co-pilot in (2015); kept help out (last month).</li>
+                  <li><b>The post-2015 rule was satisfied</b> — the attacker was the second person. Doctrine lags one disaster.</li>
+                  <li><b>So: no rule lookup at all.</b> See the scene, recommend, human confirms.</li>
+                  <li><b>Conceded out loud, not buried</b> — the boundary buys the rest of the story.</li>
                 </ul>
               </div>
             </Reveal>
@@ -1101,11 +1074,11 @@ export default function DeepDive() {
               <div className="card teal">
                 <h3><span className="idx">C</span>Assumptions, made explicit</h3>
                 <ul>
-                  <li><b>Sensing largely exists.</b> Outward-facing cockpit-door cameras are already certified and flying; the extension inward is the new — and contested — part.</li>
-                  <li><b>Flight-deck cameras are the hardest sell.</b> Post-2015 rules restrict cockpit recordings to accident investigation; crews resist live monitoring. The concept proposes governance to win it, not a technical bypass.</li>
-                  <li><b>Judgment ≠ unbounded autonomy.</b> Authority is a dial you set: live confirms by default, standing authority granted and revocable, low-confidence scenes always escalate.</li>
-                  <li><b>The airport doesn't own the aircraft.</b> Cabin sensing is an airline/OEM capability; the airport is the federation point where the two nervous systems meet.</li>
-                  <li><b>Numbers are mixed-source.</b> The dive, the souls, the off-duty pilots, the ban: from reporting. Detection times, the 4.2 s confirm, ground-phase clocks: illustrative.</li>
+                  <li><b>Sensing largely exists</b> — outward door cameras already fly; inward is the contested part.</li>
+                  <li><b>Flight-deck cameras are the hardest sell</b> — the pitch is governance, not a technical bypass.</li>
+                  <li><b>Judgment ≠ autonomy</b> — authority is a dial: live confirms by default, standing authority granted and revocable, low confidence always escalates.</li>
+                  <li><b>The airport doesn't own the aircraft</b> — it's the federation point where two nervous systems meet.</li>
+                  <li><b>Numbers are mixed-source</b> — event facts from reporting; detection times and clocks illustrative.</li>
                 </ul>
               </div>
             </Reveal>
@@ -1113,9 +1086,9 @@ export default function DeepDive() {
               <div className="card teal">
                 <h3><span className="idx">D</span>Why physical AI is the hero, not "AI"</h3>
                 <ul>
-                  <li>An airport — and an aircraft — is a <b>physical machine</b>. An AI that only predicts leaves the phone calls intact; the latency just moves from discovery to coordination.</li>
-                  <li>The unlock is closing the loop: a judgment that <b>opens a lock, rejects a dive, clears a stand</b> makes "resolved before you knew" literally true.</li>
-                  <li>Grounding, not hand-waving: DARPA's ALIAS autonomously landed a 737-800 simulator in a pilot-incapacitation scenario in 2016; envelope protection is standard today. Intent-guard plus stabilised diversion is a stated extrapolation.</li>
+                  <li><b>An airport is a physical machine</b> — prediction-only AI just moves the latency to coordination.</li>
+                  <li><b>Closing the loop</b> — a judgment that opens a lock, rejects a dive, clears a stand — makes "resolved before you knew" literally true.</li>
+                  <li><b>Grounded, not hand-waved:</b> DARPA's ALIAS landed a 737 sim in 2016; envelope protection is standard. Intent-guard is a stated extrapolation.</li>
                 </ul>
               </div>
             </Reveal>
@@ -1134,8 +1107,8 @@ export default function DeepDive() {
               You teach it <span className="accent">one reflex</span> — then you add the next.
             </div>
             <p className="closing-sub">
-              The emergency day isn't a special project. It's the same nervous system at full stretch, reaching
-              past your fence into the aircraft on approach.
+              The emergency day isn't a special project — it's the same nervous system at full stretch,
+              reaching past your fence into the aircraft on approach.
             </p>
           </Reveal>
           <div className="path" style={{ textAlign: "left" }}>
@@ -1143,28 +1116,25 @@ export default function DeepDive() {
               <div className="p">
                 <div className="ph">First 90 days</div>
                 <h4>One closed loop, on the ground</h4>
-                <p>Not the emergency. Pick the most expensive recurring physical problem — transfer queues in
-                irregular ops. Fuse existing feeds, let one actuation (dynamic signage + tractor rerouting) close
-                the loop. Measure one number: the delay between cause and understanding. Authority starts at
-                live confirms and earns its way up.</p>
+                <p>Transfer queues in irregular ops. Fuse existing feeds; one actuation (signage + tractor
+                rerouting) closes the loop. Measure one number: cause → understanding. Authority starts at
+                live confirms.</p>
               </div>
             </Reveal>
             <Reveal delay={0.12}>
               <div className="p">
                 <div className="ph">Year one</div>
                 <h4>The nervous system federates</h4>
-                <p>One terminal end-to-end, then the ecosystem links: airline ops feeds, ATC data link, crew-risk
-                data sharing, and the governance conversations with crews and regulators. The decision inbox goes
-                live; every confirm and every divergence builds the trust record.</p>
+                <p>One terminal end-to-end, then airline ops, ATC data link, crew-risk sharing — and the
+                governance talks. The decision inbox goes live; every confirm builds the trust record.</p>
               </div>
             </Reveal>
             <Reveal delay={0.19}>
               <div className="p">
                 <div className="ph">Steady state</div>
                 <h4>An airport that compounds</h4>
-                <p>Eyes from seat 14A to stand B7. Hands from the door lock to the apron. Judgment earned event by
-                event. The moat is not the robots or the models — it's the accumulated physical memory of how
-                <em> your</em> airport, and the aircraft coming to it, behave.</p>
+                <p>Eyes from seat 14A to stand B7. Hands from the door lock to the apron. The moat: the
+                accumulated physical memory of how <em>your</em> airport behaves.</p>
               </div>
             </Reveal>
           </div>
