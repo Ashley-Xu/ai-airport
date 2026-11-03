@@ -345,7 +345,7 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
             <ReportCard
               t={t}
               said={<>Nearest suitable airport <span className="em">contacted</span>. Fire and medical rolling, stand clearing, family assistance opening.</>}
-              rec={<>They have it before you're on approach. <b>No phone tree.</b> Confirm services.</>}
+              rec={<>They have it before the chocks. <b>No phone tree.</b> Confirm services.</>}
               actions={[
                 { label: "Confirm", kind: "teal", onClick: () => go("d3_result", { airport: "confirm" }) },
               ]}
@@ -356,13 +356,13 @@ export default function Run2({ onComplete, onChoices, clockRef, demo = false }: 
         )}
         {step === "d3_result" && (
           <Run2Scene key="d3r" demo={demo} holdBrief
-            brief={<>Everything is in place before you're on approach.</>}
+            brief={<>Everything is in place before the chocks.</>}
             statusLabel="Ground response · live" label="Scene 3 · The ground"
-            /* T+13:00 — the aircraft is still flying and does not land until
-               T+38:00, so the on-stand shot (door open, airstair attached)
-               gave away the ending 25 minutes early. The ops control room is
-               accurate for this moment. Plate skips, since d3_airport just
-               showed this image: the rows and caption are what change. */
+            /* T+13:00 — landed at T+9:00, but doors and stairs are T+17:00:
+               the on-stand shot (door open, airstair attached) showed a moment
+               the player has not reached. The ops control room is accurate for
+               this one. Plate skips, since d3_airport just showed this image:
+               the rows and caption are what change. */
             photo="r2-airport-alarm" sub="You are the decision-maker" subClass="teal" clock={t}
             status={[["Fire", "On stand"], ["Medical", "On stand"], ["Counsellors", "Briefed"], ["Log", "Court-ready"]]}
             vignette="teal">
